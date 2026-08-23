@@ -75,7 +75,8 @@ router.post('/register', async (req, res, next) => {
     }
 
     // Send 6-digit OTP email
-    sendOtpEmail(user.email, user.name, otp).catch(console.error);
+    const emailResult = await sendOtpEmail(user.email, user.name, otp);
+    console.log('Registration OTP dispatch result:', emailResult);
 
     res.status(200).json({
       message: 'Verification code sent to your email. It is valid for 5 minutes.',
@@ -187,7 +188,8 @@ router.post('/resend-otp', async (req, res, next) => {
     } catch (e) {}
 
     // Send email
-    sendOtpEmail(user.email, user.name, otp).catch(console.error);
+    const emailResult = await sendOtpEmail(user.email, user.name, otp);
+    console.log('Resend OTP dispatch result:', emailResult);
 
     res.json({
       message: 'A fresh 6-digit verification code has been sent to your email. Valid for 5 minutes.',

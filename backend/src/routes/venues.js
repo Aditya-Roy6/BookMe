@@ -183,7 +183,7 @@ router.get('/', async (req, res, next) => {
         { model: SeatCategory, as: 'categories' },
         { model: Seat, as: 'seats' },
       ],
-      order: [['createdAt', 'DESC']],
+      order: [['created_at', 'DESC']],
     });
     res.json({ venues });
   } catch (error) {

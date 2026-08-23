@@ -1,0 +1,39 @@
+{
+  "name": "luminatix-backend",
+  "version": "1.0.0",
+  "description": "LuminaTix Ticket Booking System - Backend API",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "test": "jest --runInBand --forceExit --detectOpenHandles",
+    "test:phase1": "jest tests/phase1.test.js --runInBand --forceExit",
+    "test:phase2": "jest tests/phase2.test.js --runInBand --forceExit",
+    "test:phase3": "jest tests/phase3.test.js --runInBand --forceExit",
+    "test:phase4": "jest tests/phase4.test.js --runInBand --forceExit",
+    "test:phase5": "jest tests/phase5.test.js --runInBand --forceExit",
+    "test:phase6": "jest tests/phase6.test.js --runInBand --forceExit"
+  },
+  "dependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "bcryptjs": "^2.4.3",
+    "bull": "^4.16.5",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "helmet": "^8.0.0",
+    "ioredis": "^5.4.2",
+    "jsonwebtoken": "^9.0.2",
+    "nodemailer": "^6.9.16",
+    "pg": "^8.13.1",
+    "pg-hstore": "^2.3.4",
+    "qrcode": "^1.5.4",
+    "sequelize": "^6.37.5",
+    "uuid": "^11.0.5"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.9",
+    "supertest": "^7.0.0"
+  }
+}

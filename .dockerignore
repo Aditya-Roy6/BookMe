@@ -1,0 +1,14 @@
+node_modules
+.git
+.gitignore
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.env.local
+.env.*.local
+dist
+build
+coverage
+.system_generated
+.gemini
+*.log

@@ -1,0 +1,365 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-[#121212] text-[#ffffff] font-sans antialiased selection:bg-[#1ed760] selection:text-[#000000];
+  }
+
+  /* Prevent Chrome / Browser Autofill from changing dark background color */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover, 
+  input:-webkit-autofill:focus, 
+  input:-webkit-autofill:active,
+  select:-webkit-autofill,
+  textarea:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px #181818 inset !important;
+    box-shadow: 0 0 0 1000px #181818 inset !important;
+    -webkit-text-fill-color: #ffffff !important;
+    color: #ffffff !important;
+    caret-color: #1ed760 !important;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+}
+
+/* LuminaTix Surface & Shadow Utilities */
+.LuminaTix-surface {
+  background-color: #181818;
+  border-radius: 8px;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.LuminaTix-surface:hover {
+  background-color: #222222;
+}
+
+.LuminaTix-elevated {
+  background-color: #252525;
+  box-shadow: rgba(0, 0, 0, 0.5) 0px 8px 24px;
+}
+
+.LuminaTix-inset-input {
+  background-color: #1f1f1f;
+  color: #ffffff;
+  border-radius: 500px;
+  box-shadow: rgb(18, 18, 18) 0px 1px 0px, rgb(124, 124, 124) 0px 0px 0px 1px inset;
+}
+
+.LuminaTix-inset-input:focus {
+  box-shadow: rgb(18, 18, 18) 0px 1px 0px, rgb(255, 255, 255) 0px 0px 0px 1px inset;
+  outline: none;
+}
+
+/* LuminaTix Button Utilities */
+.LuminaTix-btn-primary {
+  background-color: #1ed760;
+  color: #000000;
+  border-radius: 9999px;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.LuminaTix-btn-primary:hover {
+  background-color: #1fdf64;
+  transform: scale(1.04);
+}
+
+.LuminaTix-btn-primary:active {
+  transform: scale(0.98);
+}
+
+.LuminaTix-btn-secondary {
+  background-color: #1f1f1f;
+  color: #ffffff;
+  border-radius: 9999px;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  transition: transform 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+.LuminaTix-btn-secondary:hover {
+  background-color: #2a2a2a;
+  color: #ffffff;
+  transform: scale(1.02);
+}
+
+.LuminaTix-btn-outlined {
+  background-color: transparent;
+  color: #ffffff;
+  border: 1px solid #7c7c7c;
+  border-radius: 9999px;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.LuminaTix-btn-outlined:hover {
+  border-color: #ffffff;
+  transform: scale(1.02);
+}
+
+/* Custom Scrollbar for LuminaTix */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #121212;
+}
+::-webkit-scrollbar-thumb {
+  background: hsla(0, 0%, 100%, 0.3);
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsla(0, 0%, 100%, 0.5);
+}
+
+/* Sound Wave Animation */
+@keyframes LuminaTix-sound-pulse {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(0.95);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+.animate-ping-slow {
+  animation: ping 2.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* ─── Light Mode Theme (Explicit Color Mapping) & View Transitions ─── */
+
+/* Base Backgrounds */
+html.light-mode { background-color: #f2f2f7 !important; color: #000000 !important; }
+html.light-mode body { background-color: #f2f2f7 !important; color: #000000 !important; }
+
+/* Surfaces */
+html.light-mode .bg-\[\#121212\] { background-color: #f5f5f7 !important; }
+html.light-mode .bg-\[\#101010\] { background-color: #e5e5ea !important; }
+html.light-mode .bg-\[\#141414\] { background-color: #f5f5f7 !important; }
+html.light-mode .bg-\[\#181818\] { background-color: #ffffff !important; box-shadow: none !important; border-color: #e5e5ea !important; }
+html.light-mode .bg-\[\#181818\]\/95 { background-color: rgba(255, 255, 255, 0.96) !important; border-color: #e5e5ea !important; box-shadow: none !important; }
+html.light-mode .bg-\[\#181822\] { background-color: #ffffff !important; box-shadow: none !important; border-color: #e5e5ea !important; }
+html.light-mode .bg-\[\#1a1a1a\] { background-color: #ffffff !important; }
+html.light-mode .bg-\[\#1c1c1c\] { background-color: #fcfcfc !important; }
+html.light-mode .bg-\[\#1e1e1e\] { background-color: #f9f9fb !important; }
+html.light-mode .bg-\[\#1f1f1f\] { background-color: #f4f4f5 !important; border-color: #e4e4e7 !important; }
+html.light-mode .bg-\[\#202020\] { background-color: #f0f0f2 !important; }
+html.light-mode .bg-\[\#222222\] { background-color: #f0f0f2 !important; }
+html.light-mode .bg-\[\#242424\] { background-color: #e5e5ea !important; }
+html.light-mode .bg-\[\#252525\] { background-color: #e4e4e7 !important; color: #000000 !important; }
+html.light-mode .bg-\[\#282828\] { background-color: #d4d4d8 !important; }
+html.light-mode .bg-\[\#333333\] { background-color: #d1d1d6 !important; }
+html.light-mode .bg-\[\#0a0a0a\], html.light-mode .bg-\[\#0a0a0c\] { background-color: #e5e5ea !important; }
+html.light-mode .bg-\[\#0f0f0f\] { background-color: #f0f0f0 !important; }
+
+/* Gradients for Carousel and Hero: Keep dark gradient overlay for cinematic legibility */
+html.light-mode .hero-showcase-carousel .from-\[\#121218\] { --tw-gradient-from: #121218 !important; }
+html.light-mode .hero-showcase-carousel .via-\[\#121218\]\/90 { --tw-gradient-stops: #121218, rgba(18, 18, 24, 0.9), transparent !important; }
+
+/* SVG Seat Color Overrides */
+html.light-mode [fill="#1f1f1f"] { fill: #ffffff !important; }
+html.light-mode [stroke="#383838"] { stroke: #c4c4c4 !important; }
+html.light-mode [fill="#242424"] { fill: #ffffff !important; }
+html.light-mode [fill="#121212"] { fill: #e5e5ea !important; }
+html.light-mode [stroke="#222222"] { stroke: #d1d1d6 !important; }
+html.light-mode text[fill="#b3b3b3"] { fill: #000000 !important; }
+html.light-mode text[fill="#ffffff"] { fill: #000000 !important; }
+html.light-mode text[fill="#404040"] { fill: #a1a1aa !important; }
+html.light-mode [fill="#282828"] { fill: #fcfcfc !important; }
+html.light-mode [stroke="#b3b3b3"] { stroke: #a1a1aa !important; }
+
+/* High Contrast Buttons & Pills (e.g. active dates, primary actions) */
+.btn-high-contrast { background-color: #ffffff !important; color: #000000 !important; }
+html.light-mode .btn-high-contrast { background-color: #1c1c1e !important; color: #ffffff !important; box-shadow: none !important; }
+html.light-mode .btn-high-contrast:hover { background-color: #2c2c2e !important; }
+
+/* Catch-all for hardcoded white pills/buttons */
+html.light-mode .bg-white.text-black { background-color: #1c1c1e !important; color: #ffffff !important; box-shadow: none !important; }
+html.light-mode .hover\:bg-\[\#f0f0f0\]:hover { background-color: #2c2c2e !important; }
+
+/* Text */
+html.light-mode .text-white { color: #000000 !important; }
+html.light-mode .text-white\/90 { color: #000000 !important; }
+html.light-mode .text-white\/80 { color: #1c1c1e !important; }
+html.light-mode .text-white\/75 { color: #1c1c1e !important; }
+html.light-mode .text-white\/70 { color: #2c2c2e !important; }
+html.light-mode .text-white\/60 { color: #3c3c3e !important; }
+html.light-mode .text-white\/50 { color: #4c4c4e !important; }
+html.light-mode .text-\[\#f5f5f7\] { color: #000000 !important; }
+html.light-mode .text-\[\#b3b3b3\] { color: #555555 !important; }
+html.light-mode .text-\[\#7c7c7c\] { color: #737373 !important; }
+html.light-mode .text-\[\#666666\] { color: #808080 !important; }
+
+/* Badges on Top of Posters / Dark Media (Must preserve white text) */
+html.light-mode .bg-black\/75,
+html.light-mode .bg-black\/70,
+html.light-mode .bg-black\/80,
+html.light-mode .bg-black\/90,
+html.light-mode .bg-black\/60 {
+  color: #ffffff !important;
+}
+
+/* Borders */
+html.light-mode .border-\[\#222222\] { border-color: #e5e5ea !important; }
+html.light-mode .border-\[\#282828\] { border-color: #d1d1d6 !important; }
+html.light-mode .border-\[\#2e2e2e\] { border-color: #c7c7cc !important; }
+html.light-mode .border-\[\#333333\] { border-color: #aeaeb2 !important; }
+html.light-mode .border-\[\#383838\] { border-color: #e5e5ea !important; }
+html.light-mode .border-white\/5 { border-color: rgba(0,0,0,0.06) !important; }
+html.light-mode .border-white\/10 { border-color: rgba(0,0,0,0.1) !important; }
+html.light-mode .border-white\/20 { border-color: rgba(0,0,0,0.15) !important; }
+
+/* Interactive States */
+html.light-mode .hover\:bg-\[\#282828\]:hover { background-color: #e5e5ea !important; }
+html.light-mode .hover\:bg-\[\#202020\]:hover { background-color: #d1d1d6 !important; }
+html.light-mode .hover\:bg-\[\#222222\]:hover { background-color: #e5e5ea !important; }
+html.light-mode .hover\:bg-\[\#333333\]:hover { background-color: #c7c7cc !important; }
+html.light-mode .hover\:text-white:hover { color: #1c1c1e !important; }
+html.light-mode .focus\:bg-\[\#282828\]:focus { background-color: #ffffff !important; }
+html.light-mode .focus\:border-white:focus { border-color: #1c1c1e !important; }
+
+/* Remove ALL Shadows Globally (Dark & Light Mode) for clean, flat Spotify aesthetic */
+.shadow-2xl,
+.shadow-xl,
+.shadow-lg,
+.shadow-md,
+.shadow-sm,
+.shadow,
+[class*="shadow-"] {
+  box-shadow: none !important;
+}
+
+/* Circular Wipe View Transitions */
+::view-transition-group(root) {
+  animation-duration: 0.7s;
+  animation-timing-function: cubic-bezier(0.8, 0, 0.2, 1);
+}
+
+::view-transition-new(root) {
+  animation-name: reveal-theme;
+}
+
+::view-transition-old(root) {
+  animation: none;
+  z-index: -1;
+}
+
+@keyframes reveal-theme {
+  from {
+    clip-path: circle(0% at top right);
+  }
+  to {
+    clip-path: circle(150% at top right);
+  }
+}
+
+.atmos-wave-1 {
+  animation: LuminaTix-sound-pulse 2.2s infinite ease-in-out;
+}
+
+.atmos-wave-2 {
+  animation: LuminaTix-sound-pulse 2.2s infinite ease-in-out 0.4s;
+}
+
+.atmos-wave-3 {
+  animation: LuminaTix-sound-pulse 2.2s infinite ease-in-out 0.8s;
+}
+
+@keyframes carouselRadial {
+  0% {
+    stroke-dashoffset: 47.12;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-carousel-radial {
+  animation: carouselRadial 4000ms linear forwards;
+}
+
+/* ─── ULTRA-THIN SLEEK SPOTIFY SCROLLBARS ─── */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #1ed760;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}
+
+/* ─── SMOOTH HERO CAROUSEL CROSSFADE ─── */
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeInSlide 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ─── PRESERVE CRISP WHITE TEXT ON DARK HERO MEDIA CAROUSEL IN LIGHT MODE ─── */
+html.light-mode .hero-showcase-carousel {
+  background-color: #181824 !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+html.light-mode .hero-showcase-carousel h1,
+html.light-mode .hero-showcase-carousel .text-white,
+html.light-mode .hero-showcase-carousel .text-\[\#e5e5e5\] {
+  color: #ffffff !important;
+}
+
+html.light-mode .hero-showcase-carousel p.text-\[\#b3b3b3\] {
+  color: #e2e8f0 !important;
+}
+
+html.light-mode .hero-showcase-carousel p.text-\[\#a3a3a3\] {
+  color: #cbd5e1 !important;
+}
+
+/* ─── NAVBAR LIGHT MODE CONTRAST & VISIBILITY ─── */
+html.light-mode nav .text-\[\#b3b3b3\] {
+  color: #64748b !important;
+}
+
+html.light-mode nav .text-\[\#b3b3b3\]:hover {
+  color: #0f172a !important;
+}
+
+html.light-mode nav .bg-\[\#282828\] {
+  background-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}

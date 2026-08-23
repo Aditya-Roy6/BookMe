@@ -41,7 +41,7 @@ export default function Footer() {
 
   return (
     <>
-      <footer className="bg-[#121212] border-t border-[#222226] text-[#b3b3b3] font-sans pt-14 pb-8 mt-20 relative z-20">
+      <footer className="bg-[#121212] border-t border-[#282828] text-[#b3b3b3] font-sans pt-14 pb-8 mt-auto relative z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           {/* Top Row: Brand & Live Engine Status */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start pb-10 border-b border-[#222226]">

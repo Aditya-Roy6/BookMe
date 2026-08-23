@@ -839,8 +839,28 @@ export default function OrganiserDashboard() {
             </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {eventsList.map((ev) => (
+          {eventsList.length === 0 ? (
+            <div className="py-16 px-6 bg-[#181818] border border-[#282828] rounded-2xl text-center flex flex-col items-center justify-center space-y-4">
+              <div className="w-14 h-14 rounded-2xl bg-[#222222] flex items-center justify-center text-[#1ed760] shadow-inner">
+                <Film className="w-7 h-7" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-base font-bold text-white">No Productions Listed Yet</h3>
+                <p className="text-xs text-[#b3b3b3] max-w-sm">
+                  Create your first movie screening, live concert, or theatre event to assign showtimes and start selling tickets.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setCreateModalOpen(true)}
+                className="px-5 py-2.5 bg-[#1ed760] hover:bg-[#1db954] text-black font-bold text-xs rounded-full flex items-center gap-2 cursor-pointer transition-all shadow-lg hover:scale-105"
+              >
+                <Plus className="w-4 h-4" /> Create First Production
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {eventsList.map((ev) => (
               <div
                 key={ev.eventId || ev.id}
                 className="bg-[#181818] hover:bg-[#1c1c1c] transition-colors border border-[#282828] p-6 rounded-2xl shadow-2xl space-y-4"
@@ -965,8 +985,9 @@ export default function OrganiserDashboard() {
               </div>
             ))}
           </div>
-        </div>
-      )}
+        )}
+      </div>
+    )}
 
       {/* ─── WIDE CREATE EVENT MODAL ─── */}
       <Modal

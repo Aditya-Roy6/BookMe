@@ -41,7 +41,7 @@ export default function App() {
     <AuthProvider>
       <ToastProvider>
         <BrowserRouter>
-        <div className="min-h-screen flex flex-col bg-[#0a0a0c] text-[#f5f5f7]">
+        <div className="min-h-screen flex flex-col bg-[#121212] text-[#f5f5f7]">
           <Navbar />
           <main className="flex-1">
             <Routes>

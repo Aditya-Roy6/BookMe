@@ -366,38 +366,34 @@ export default function EventDiscovery() {
                         key={idx}
                         type="button"
                         onClick={() => setActiveSlide(idx)}
-                        className={`relative w-8 h-8 rounded-full overflow-hidden flex items-center justify-center transition-all duration-300 cursor-pointer select-none ${
+                        className={`relative w-8 h-8 rounded-full overflow-hidden flex items-center justify-center transition-all duration-300 cursor-pointer select-none bg-[#282828] border border-white/10 ${
                           isActive
-                            ? 'scale-110 shadow-xl shadow-[#1ed760]/40'
-                            : 'bg-[#282828] hover:bg-[#383838] border border-white/10 hover:scale-105'
+                            ? 'scale-110 ring-1 ring-[#1ed760]/50'
+                            : 'hover:bg-[#383838] hover:scale-105'
                         }`}
                       >
-                        {isActive ? (
-                          <>
-                            <svg className="absolute inset-0 w-full h-full -rotate-90 pointer-events-none">
-                              <circle cx="16" cy="16" r="15" fill="#ffffff" />
-                              <circle
-                                key={`radial-fill-${activeSlide}`}
-                                cx="16"
-                                cy="16"
-                                r="7.5"
-                                fill="none"
-                                stroke="#1ed760"
-                                strokeWidth="15"
-                                strokeDasharray={47.12}
-                                strokeDashoffset={47.12}
-                                className="animate-carousel-radial"
-                              />
-                            </svg>
-                            <span className="relative z-10 text-black font-black text-xs drop-shadow-sm">
-                              {idx + 1}
-                            </span>
-                          </>
-                        ) : (
-                          <span className="relative z-10 text-xs font-bold text-[#b3b3b3]">
-                            {idx + 1}
-                          </span>
+                        {isActive && (
+                          <svg className="absolute inset-0 w-full h-full -rotate-90 pointer-events-none">
+                            <circle cx="16" cy="16" r="15" className="fill-[#282828]" />
+                            <circle
+                              key={`radial-fill-${activeSlide}`}
+                              cx="16"
+                              cy="16"
+                              r="7.5"
+                              fill="none"
+                              stroke="#1ed760"
+                              strokeWidth="15"
+                              strokeDasharray={47.12}
+                              strokeDashoffset={47.12}
+                              className="animate-carousel-radial"
+                            />
+                          </svg>
                         )}
+                        <span className={`relative z-10 text-xs font-black ${
+                          isActive ? 'text-white' : 'text-[#b3b3b3]'
+                        }`}>
+                          {idx + 1}
+                        </span>
                       </button>
                     );
                   })}

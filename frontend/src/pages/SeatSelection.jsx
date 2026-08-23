@@ -897,11 +897,11 @@ export default function SeatSelection() {
         });
       }
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to load seat map.');
+      toast.error(err.response?.data?.error || 'Failed to load seat map.', 'Seat Map Error');
     } finally {
       setLoading(false);
     }
-  }, [showtimeId]);
+  }, [showtimeId, toast]);
 
   useEffect(() => {
     fetchSeatMap();
@@ -934,7 +934,6 @@ export default function SeatSelection() {
     if (seat.status === 'booked') return;
     if (seat.status === 'held' && !seat.isHeldByMe) return;
 
-    setError('');
     setActiveFocusedSeat(seat);
 
     if (selectedSeatIds.includes(seat.id)) {
@@ -964,7 +963,7 @@ export default function SeatSelection() {
       }
     } else {
       if (selectedSeatIds.length >= 8) {
-        setError('Maximum 8 seats per reservation.');
+        toast.warning('Maximum 8 seats per reservation.', 'Seat Limit');
         return;
       }
       setSelectedSeatIds([...selectedSeatIds, seat.id]);
@@ -979,12 +978,11 @@ export default function SeatSelection() {
     }
 
     if (selectedSeatIds.length === 0) {
-      setError('Please select at least one seat.');
+      toast.warning('Please select at least one seat.', 'Selection Needed');
       return;
     }
 
     setHolding(true);
-    setError('');
 
     try {
       const res = await api.post(`/showtimes/${showtimeId}/hold`, {
@@ -999,7 +997,7 @@ export default function SeatSelection() {
         state: { seatIds: selectedSeatIds, totalPrice },
       });
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to hold seats. A seat may have just been claimed.');
+      toast.error(err.response?.data?.error || 'Failed to hold seats. A seat may have just been claimed.', 'Hold Failed');
       await fetchSeatMap();
     } finally {
       setHolding(false);
@@ -1183,18 +1181,7 @@ export default function SeatSelection() {
         </div>
       </div>
 
-      {/* Error Alert */}
-      {error && (
-        <div className="bg-[#281818] border border-[#f3727f]/40 p-3.5 flex flex-row items-center justify-between gap-3 text-[#f3727f] text-xs font-bold rounded-lg">
-          <div className="flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 flex-shrink-0" />
-            <span>{error}</span>
-          </div>
-          <button onClick={() => setError('')} className="text-[#b3b3b3] hover:text-white cursor-pointer">
-            ✕
-          </button>
-        </div>
-      )}
+
 
       {/* FULL PAGE AUDITORIUM (Directly on page background) */}
       <div className="w-full flex flex-col items-center justify-center py-2 relative">

@@ -644,11 +644,11 @@ router.get('/', async (req, res, next) => {
       where.genre = { [Op.iLike]: `%${genre}%` };
     }
 
-    let order = [['created_at', 'DESC']];
+    let order = [['createdAt', 'DESC']];
     if (sort === 'rating') {
-      order = [['imdb_rating', 'DESC']];
+      order = [['imdbRating', 'DESC']];
     } else if (sort === 'release') {
-      order = [['release_date', 'DESC'], ['created_at', 'DESC']];
+      order = [['releaseDate', 'DESC'], ['createdAt', 'DESC']];
     }
 
     const include = [
@@ -665,7 +665,6 @@ router.get('/', async (req, res, next) => {
             },
           },
         } : {}),
-        order: [['dateTime', 'ASC']],
       },
     ];
 

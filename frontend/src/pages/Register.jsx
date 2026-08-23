@@ -31,10 +31,10 @@ export default function Register() {
 
   // OTP State
   const [otpValues, setOtpValues] = useState(['', '', '', '', '', '']);
+  const [focusedIndex, setFocusedIndex] = useState(null);
   const [timeLeft, setTimeLeft] = useState(300); // 5 minutes = 300 seconds
   const [resending, setResending] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(0);
-  const [demoOtp, setDemoOtp] = useState('');
 
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
@@ -81,15 +81,11 @@ export default function Register() {
     setLoading(true);
 
     try {
-      const res = await register(name, email, password, role);
-      if (res && res.otp) {
-        setDemoOtp(res.otp);
-      }
+      await register(name, email, password, role);
       setStep(2);
       setTimeLeft(300); // 5 minutes
       setResendCooldown(30); // 30s cooldown before resend
-      setSuccessMessage('A 6-digit verification code has been dispatched to your email.');
-      toast.info('A 6-digit verification code has been dispatched to your email.');
+      toast.success('A 6-digit verification code has been dispatched to your email.');
       setTimeout(() => {
         if (otpInputsRef.current[0]) {
           otpInputsRef.current[0].focus();
@@ -353,29 +349,30 @@ export default function Register() {
         ) : (
           /* ─── STEP 2: OTP VERIFICATION CODE SCREEN ─── */
           <>
-            {/* Header */}
-            <div className="flex flex-col items-center text-center space-y-2">
-              <div className="w-12 h-12 rounded-full bg-[#1ed760]/20 border border-[#1ed760] flex items-center justify-center text-[#1ed760] mb-1">
-                <ShieldCheck className="w-6 h-6" />
+            <button
+              onClick={() => {
+                setStep(1);
+                setError('');
+                setSuccessMessage('');
+              }}
+              className="text-xs text-[#b3b3b3] hover:text-white font-bold flex items-center gap-1.5 transition-colors cursor-pointer group"
+            >
+              <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
+              <span>Back to Details</span>
+            </button>
+
+            <div className="flex flex-col items-center text-center space-y-3 pt-1">
+              <div className="w-14 h-14 rounded-full bg-[#1ed760] flex items-center justify-center text-black shadow-[0_0_25px_rgba(30,215,96,0.3)] mb-1">
+                <Lock className="w-7 h-7 stroke-[2.5]" />
               </div>
-              <h1 className="font-display text-2xl sm:text-3xl font-black text-white tracking-tight">
+              <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
                 Enter Verification Code
               </h1>
-              <p className="text-xs text-[#b3b3b3] leading-relaxed">
-                We sent a 6-digit verification code to<br />
-                <strong className="text-white">{email}</strong>
+              <p className="text-xs text-[#b3b3b3] max-w-[300px] leading-relaxed">
+                We sent a 6-digit code to <strong className="text-white font-bold">{email}</strong>
               </p>
             </div>
 
-            {/* Success Notification */}
-            {successMessage && (
-              <div className="p-3.5 rounded-xl bg-[#1ed760]/15 border border-[#1ed760] flex items-center gap-2 text-[#1ed760] text-xs font-bold">
-                <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
-                <span>{successMessage}</span>
-              </div>
-            )}
-
-            {/* Error Notification */}
             {error && (
               <div className="p-3.5 rounded-xl bg-[#281818] border border-[#f3727f]/50 flex items-center gap-2 text-[#f3727f] text-xs font-bold">
                 <AlertCircle className="w-4 h-4 flex-shrink-0" />
@@ -383,99 +380,86 @@ export default function Register() {
               </div>
             )}
 
-            <form onSubmit={handleVerifyOtp} className="space-y-5">
-              {demoOtp && (
-                <div className="flex items-center justify-center">
+            <form onSubmit={handleVerifyOtp} className="space-y-6">
+              <div className="space-y-3">
+                <label className="block text-[11px] font-black uppercase tracking-wider text-[#b3b3b3] text-center">
+                  6-Digit Verification Code
+                </label>
+
+                {/* Spotify-style Rounded OTP Boxes */}
+                <div className="flex justify-center gap-2 sm:gap-2.5" onPaste={handleOtpPaste}>
+                  {otpValues.map((digit, idx) => {
+                    const isFocused = focusedIndex === idx;
+                    const hasValue = Boolean(digit);
+
+                    return (
+                      <input
+                        key={idx}
+                        ref={(el) => (otpInputsRef.current[idx] = el)}
+                        type="text"
+                        inputMode="numeric"
+                        pattern="[0-9]*"
+                        maxLength={1}
+                        value={digit}
+                        onFocus={() => setFocusedIndex(idx)}
+                        onBlur={() => setFocusedIndex(null)}
+                        onChange={(e) => handleOtpChange(idx, e.target.value)}
+                        onKeyDown={(e) => handleOtpKeyDown(idx, e)}
+                        className={`w-11 h-14 sm:w-12 sm:h-16 text-center text-xl sm:text-2xl font-black font-mono rounded-2xl transition-all duration-200 outline-none ${
+                          isFocused
+                            ? 'bg-[#181818] border-2 border-[#1ed760] shadow-[0_0_15px_rgba(30,215,96,0.35)] text-white scale-105'
+                            : hasValue
+                            ? 'bg-[#222222] border border-[#555] text-white'
+                            : 'bg-[#181818] border border-[#333] text-[#666]'
+                        }`}
+                      />
+                    );
+                  })}
+                </div>
+
+                {/* Expiry & Resend Bar */}
+                <div className="flex items-center justify-between px-1 pt-2 text-xs font-semibold">
+                  {timeLeft > 0 ? (
+                    <span className="text-[#1ed760] flex items-center gap-1.5">
+                      <Clock className="w-3.5 h-3.5" />
+                      <span>Expires in <strong className="font-mono font-bold">{formatTimer(timeLeft)}</strong></span>
+                    </span>
+                  ) : (
+                    <span className="text-red-400 flex items-center gap-1.5 font-bold">
+                      <AlertCircle className="w-3.5 h-3.5" />
+                      <span>Code Expired</span>
+                    </span>
+                  )}
+
                   <button
                     type="button"
-                    onClick={() => {
-                      const digits = String(demoOtp).split('').slice(0, 6);
-                      setOtpValues(digits);
-                    }}
-                    className="text-xs bg-[#1ed760]/15 hover:bg-[#1ed760]/25 text-[#1ed760] font-bold py-1.5 px-3 rounded-full border border-[#1ed760]/40 flex items-center gap-1.5 transition-all cursor-pointer"
+                    onClick={handleResend}
+                    disabled={resending || resendCooldown > 0}
+                    className="flex items-center gap-1.5 text-[#b3b3b3] hover:text-[#1ed760] transition-colors disabled:opacity-40 disabled:hover:text-[#b3b3b3] cursor-pointer"
                   >
-                    <span>⚡ Quick Fill Code: <strong className="underline tracking-widest">{demoOtp}</strong></span>
+                    <RotateCw className={`w-3.5 h-3.5 ${resending ? 'animate-spin text-[#1ed760]' : ''}`} />
+                    <span>
+                      {resending ? 'Sending...' : resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend Code'}
+                    </span>
                   </button>
                 </div>
-              )}
-
-              {/* 6-Digit OTP Boxes */}
-              <div className="flex items-center justify-center gap-2 sm:gap-3" onPaste={handleOtpPaste}>
-                {otpValues.map((val, idx) => (
-                  <input
-                    key={idx}
-                    ref={(el) => (otpInputsRef.current[idx] = el)}
-                    type="text"
-                    inputMode="numeric"
-                    maxLength={1}
-                    value={val}
-                    onChange={(e) => handleOtpChange(idx, e.target.value)}
-                    onKeyDown={(e) => handleOtpKeyDown(idx, e)}
-                    className="w-11 h-13 sm:w-13 sm:h-15 text-center text-xl sm:text-2xl font-mono font-black bg-[#121212] border border-[#383838] focus:border-[#1ed760] text-white rounded-xl focus:outline-none transition-all"
-                  />
-                ))}
-              </div>
-
-              {/* 5-Minute Countdown Indicator */}
-              <div className="flex items-center justify-between text-xs bg-[#121212] p-3 rounded-xl border border-white/5 font-mono">
-                <span className="flex items-center gap-1.5 text-[#b3b3b3]">
-                  <Clock className="w-3.5 h-3.5 text-[#1ed760]" /> Code Expires In:
-                </span>
-                <span
-                  className={`font-black ${
-                    timeLeft > 60 ? 'text-[#1ed760]' : timeLeft > 0 ? 'text-amber-400' : 'text-[#f3727f]'
-                  }`}
-                >
-                  {timeLeft > 0 ? formatTimer(timeLeft) : 'Expired (5m)'}
-                </span>
               </div>
 
               {/* Verify Button */}
               <button
                 type="submit"
                 disabled={loading || otpValues.join('').length !== 6 || timeLeft <= 0}
-                className="w-full py-3.5 bg-[#1ed760] hover:bg-[#1fdf64] text-black font-bold uppercase tracking-[1.4px] text-xs rounded-full shadow-none hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-40 cursor-pointer"
+                className="w-full py-3.5 bg-[#1ed760] hover:bg-[#1fdf64] text-black font-black uppercase tracking-[1.5px] text-xs rounded-full transition-all shadow-lg hover:shadow-[#1ed760]/25 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 disabled:hover:scale-100 cursor-pointer disabled:cursor-not-allowed"
               >
                 {loading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin text-black" />
-                    <span>Verifying Code...</span>
-                  </>
+                  <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
                   <>
                     <span>Verify & Activate Account</span>
-                    <ArrowRight className="w-4 h-4" />
+                    <ArrowRight className="w-4 h-4 stroke-[2.5]" />
                   </>
                 )}
               </button>
-
-              {/* Resend & Back options */}
-              <div className="flex items-center justify-between pt-2 text-xs">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setStep(1);
-                    setError('');
-                    setSuccessMessage('');
-                  }}
-                  className="text-[#b3b3b3] hover:text-white flex items-center gap-1 cursor-pointer"
-                >
-                  <ArrowLeft className="w-3.5 h-3.5" />
-                  <span>Edit details</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handleResend}
-                  disabled={resending || resendCooldown > 0}
-                  className="text-[#1ed760] hover:underline font-bold disabled:text-[#555555] disabled:no-underline flex items-center gap-1 cursor-pointer"
-                >
-                  <RotateCw className={`w-3.5 h-3.5 ${resending ? 'animate-spin' : ''}`} />
-                  <span>
-                    {resendCooldown > 0 ? `Resend code in ${resendCooldown}s` : 'Resend Code'}
-                  </span>
-                </button>
-              </div>
             </form>
           </>
         )}

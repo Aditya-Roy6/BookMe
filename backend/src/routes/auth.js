@@ -83,7 +83,6 @@ router.post('/register', async (req, res, next) => {
       message: 'Verification code sent to your email. It is valid for 5 minutes.',
       requiresOtp: true,
       email: user.email,
-      otp,
     });
   } catch (error) {
     next(error);
@@ -196,7 +195,6 @@ router.post('/resend-otp', async (req, res, next) => {
 
     res.json({
       message: 'A fresh 6-digit verification code has been sent to your email. Valid for 5 minutes.',
-      otp,
     });
   } catch (error) {
     next(error);

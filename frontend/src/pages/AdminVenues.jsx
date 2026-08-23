@@ -790,14 +790,10 @@ export default function AdminVenues() {
                         <div
                           key={rIdx}
                           onClick={() => setSelectedRowIndex(rIdx)}
-                          className={`w-full max-w-3xl flex items-center justify-center gap-2 sm:gap-4 p-2 rounded-2xl transition-all cursor-pointer border ${
-                            isSelected
-                              ? 'bg-[#181824] border-[#1ed760] shadow-[0_0_20px_rgba(30,215,96,0.15)] scale-[1.01]'
-                              : 'hover:bg-[#121218] border-transparent'
-                          }`}
+                          className="w-full max-w-3xl flex items-center justify-center gap-2 sm:gap-4 p-2 rounded-2xl transition-all cursor-pointer border border-transparent hover:bg-[#15151c]"
                         >
                           {/* Row Letter Left */}
-                          <span className="w-6 text-xs font-mono font-black text-center text-[#b3b3b3]">
+                          <span className={`w-6 text-xs font-mono font-black text-center ${isSelected ? 'text-[#1ed760]' : 'text-[#b3b3b3]'}`}>
                             {rConfig.label}
                           </span>
 
@@ -806,23 +802,27 @@ export default function AdminVenues() {
                             {leftSeats.map((seatNum) => (
                               <div
                                 key={`L-${seatNum}`}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelectedRowIndex(rIdx);
+                                }}
                                 className={`relative flex items-center justify-center transition-transform hover:scale-110 ${
-                                  isSelected ? 'drop-shadow-[0_0_6px_rgba(255,255,255,0.8)] scale-105' : ''
-                                } ${isRecliner ? 'w-7 h-9 sm:w-8 sm:h-10' : 'w-6 h-6 sm:w-7 sm:h-7'}`}
+                                  isRecliner ? 'w-7 h-9 sm:w-8 sm:h-10' : 'w-6 h-6 sm:w-7 sm:h-7'
+                                }`}
                                 title={`${rConfig.label}${seatNum} (${cat.name})`}
                               >
                                 {isRecliner ? (
                                   <ReclinerSeatSvg
                                     col={seatNum}
                                     isRotated={true}
-                                    categoryColor={isSelected ? '#ffffff' : cat.color}
+                                    categoryColor={cat.color}
                                     isSelected={false}
                                   />
                                 ) : (
                                   <NormalSeatSvg
                                     col={seatNum}
                                     isRotated={true}
-                                    categoryColor={isSelected ? '#ffffff' : cat.color}
+                                    categoryColor={cat.color}
                                     isSelected={false}
                                   />
                                 )}
@@ -838,23 +838,27 @@ export default function AdminVenues() {
                             {rightSeats.map((seatNum) => (
                               <div
                                 key={`R-${seatNum}`}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelectedRowIndex(rIdx);
+                                }}
                                 className={`relative flex items-center justify-center transition-transform hover:scale-110 ${
-                                  isSelected ? 'drop-shadow-[0_0_6px_rgba(255,255,255,0.8)] scale-105' : ''
-                                } ${isRecliner ? 'w-7 h-9 sm:w-8 sm:h-10' : 'w-6 h-6 sm:w-7 sm:h-7'}`}
+                                  isRecliner ? 'w-7 h-9 sm:w-8 sm:h-10' : 'w-6 h-6 sm:w-7 sm:h-7'
+                                }`}
                                 title={`${rConfig.label}${seatNum} (${cat.name})`}
                               >
                                 {isRecliner ? (
                                   <ReclinerSeatSvg
                                     col={seatNum}
                                     isRotated={true}
-                                    categoryColor={isSelected ? '#ffffff' : cat.color}
+                                    categoryColor={cat.color}
                                     isSelected={false}
                                   />
                                 ) : (
                                   <NormalSeatSvg
                                     col={seatNum}
                                     isRotated={true}
-                                    categoryColor={isSelected ? '#ffffff' : cat.color}
+                                    categoryColor={cat.color}
                                     isSelected={false}
                                   />
                                 )}

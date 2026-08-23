@@ -112,7 +112,21 @@ if (process.env.NODE_ENV !== 'test') {
                 await existing.save();
               }
             }
-            console.log('\u2705 Demo accounts verified & active');
+            // Recurring 5-minute cleanup for expired OTPs & tokens
+            setInterval(async () => {
+              try {
+                const { Op } = require('sequelize');
+                const [clearedCount] = await User.update(
+                  { otpCode: null, otpExpiresAt: null },
+                  { where: { otpExpiresAt: { [Op.lt]: new Date() } } }
+                );
+                if (clearedCount > 0) {
+                  console.log(`🧹 Cleaned up ${clearedCount} expired OTPs from database`);
+                }
+              } catch (cleanupErr) {
+                console.warn('Expired OTP cleanup notice:', cleanupErr.message);
+              }
+            }, 5 * 60 * 1000);
           } catch (userErr) {
             console.warn('Demo accounts check notice:', userErr.message);
           }

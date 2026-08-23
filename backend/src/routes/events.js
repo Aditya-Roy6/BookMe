@@ -707,7 +707,6 @@ router.get('/:id', async (req, res, next) => {
           model: Showtime,
           as: 'showtimes',
           include: [{ model: Venue, as: 'venue' }],
-          order: [['dateTime', 'ASC']],
         },
       ],
     });

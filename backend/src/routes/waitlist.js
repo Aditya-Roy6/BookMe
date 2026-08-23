@@ -56,7 +56,7 @@ router.get('/my-entries', authenticate, async (req, res, next) => {
         },
         { model: SeatCategory, as: 'category' },
       ],
-      order: [['created_at', 'DESC']],
+      order: [['createdAt', 'DESC']],
     });
     res.json({ waitlistEntries: entries });
   } catch (error) {

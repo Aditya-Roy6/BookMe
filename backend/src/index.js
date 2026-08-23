@@ -44,6 +44,18 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// Email verification & diagnostic endpoint
+app.get('/api/email/verify', async (req, res) => {
+  try {
+    const { getTransporter } = require('./config/email');
+    const transporter = await getTransporter();
+    await transporter.verify();
+    res.json({ status: 'ok', message: 'SMTP server connection verified successfully!' });
+  } catch (err) {
+    res.status(500).json({ status: 'error', error: err.message, code: err.code });
+  }
+});
+
 // SSE Live Stream Endpoint
 app.get('/api/showtimes/:id/stream', handleSSEConnection);
 

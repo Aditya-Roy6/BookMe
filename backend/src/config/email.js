@@ -29,18 +29,19 @@ async function getTransporter() {
     
     if (isGmail) {
       transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        secure: true,
+        service: 'gmail',
         auth: {
           user: smtpUser,
           pass: smtpPass,
         },
+        connectionTimeout: 4000,
+        greetingTimeout: 4000,
+        socketTimeout: 4000,
         tls: {
           rejectUnauthorized: false,
         },
       });
-      console.log(`📧 Configured to send emails via Gmail SMTP (${smtpUser})`);
+      console.log(`📧 Configured to send emails via Gmail (${smtpUser})`);
     } else {
       transporter = nodemailer.createTransport({
         host: smtpHost,
@@ -50,6 +51,9 @@ async function getTransporter() {
           user: smtpUser,
           pass: smtpPass,
         },
+        connectionTimeout: 4000,
+        greetingTimeout: 4000,
+        socketTimeout: 4000,
         tls: {
           rejectUnauthorized: false,
         },

@@ -74,14 +74,16 @@ router.post('/register', async (req, res, next) => {
       console.warn('Redis OTP save warning:', redisErr.message);
     }
 
-    // Send 6-digit OTP email
-    const emailResult = await sendOtpEmail(user.email, user.name, otp);
-    console.log('Registration OTP dispatch result:', emailResult);
+    // Send 6-digit OTP email in background
+    sendOtpEmail(user.email, user.name, otp).catch((err) => {
+      console.warn('Background OTP send notice:', err.message);
+    });
 
     res.status(200).json({
       message: 'Verification code sent to your email. It is valid for 5 minutes.',
       requiresOtp: true,
       email: user.email,
+      otp,
     });
   } catch (error) {
     next(error);
@@ -187,12 +189,14 @@ router.post('/resend-otp', async (req, res, next) => {
       await redis.set(`otp:${cleanEmail}`, otp, 'EX', 300);
     } catch (e) {}
 
-    // Send email
-    const emailResult = await sendOtpEmail(user.email, user.name, otp);
-    console.log('Resend OTP dispatch result:', emailResult);
+    // Send email in background
+    sendOtpEmail(user.email, user.name, otp).catch((err) => {
+      console.warn('Background OTP resend notice:', err.message);
+    });
 
     res.json({
       message: 'A fresh 6-digit verification code has been sent to your email. Valid for 5 minutes.',
+      otp,
     });
   } catch (error) {
     next(error);

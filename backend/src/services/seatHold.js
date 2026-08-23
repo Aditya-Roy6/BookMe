@@ -220,15 +220,38 @@ async function getShowtimeSeatMap(showtimeId, currentUserId = null) {
   });
   const statusMap = new Map(dbStatuses.map(s => [s.seatId, s]));
 
-  // Inspect Redis holds & sync expired
+  // Inspect Redis holds in 1 single batched network roundtrip
+  const { calculateDynamicSeatPrice } = require('./dynamicPricing');
+  const bookedCount = dbStatuses.filter(s => s.status === 'booked').length;
   const enrichedSeats = [];
   const expiredSeatIdsToClean = [];
 
-  for (const seat of seats) {
+  let redisData = [];
+  try {
+    const pipeline = redis.pipeline();
+    for (const seat of seats) {
+      const key = `hold:${showtimeId}:${seat.id}`;
+      pipeline.get(key);
+      pipeline.ttl(key);
+    }
+    const rawResults = await pipeline.exec();
+    if (rawResults && Array.isArray(rawResults)) {
+      for (let i = 0; i < seats.length; i++) {
+        const heldUser = rawResults[i * 2] ? rawResults[i * 2][1] : null;
+        const ttl = rawResults[i * 2 + 1] ? rawResults[i * 2 + 1][1] : 0;
+        redisData.push({ heldUser, ttl });
+      }
+    }
+  } catch (redisErr) {
+    console.warn('Redis pipeline fallback notice:', redisErr.message);
+  }
+
+  for (let idx = 0; idx < seats.length; idx++) {
+    const seat = seats[idx];
     const dbStatus = statusMap.get(seat.id);
-    const key = `hold:${showtimeId}:${seat.id}`;
-    const redisHeldUser = await redis.get(key);
-    const ttl = await redis.ttl(key);
+    const rHold = redisData[idx] || { heldUser: null, ttl: 0 };
+    const redisHeldUser = rHold.heldUser;
+    const ttl = rHold.ttl;
 
     let status = 'available';
     let heldBy = null;
@@ -251,8 +274,6 @@ async function getShowtimeSeatMap(showtimeId, currentUserId = null) {
     const basePrice = pricing[seat.categoryId] ? Number(pricing[seat.categoryId]) : 250;
     
     // Calculate dynamic pricing based on venue fill rate & seat row desirability
-    const bookedCount = dbStatuses.filter(s => s.status === 'booked').length;
-    const { calculateDynamicSeatPrice } = require('./dynamicPricing');
     const dynamicPriceInfo = calculateDynamicSeatPrice({
       basePrice,
       totalSeats: seats.length,

@@ -339,7 +339,7 @@ export default function EventDiscovery() {
             <div className="flex items-center gap-6">
               <div
                 onClick={() => currentFeatured.trailerUrl && setActiveTrailerUrl(currentFeatured.trailerUrl)}
-                className="relative w-48 sm:w-60 aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl group/poster cursor-pointer border border-white/20 hover:border-[#1ed760] transition-all flex-shrink-0"
+                className="relative w-48 sm:w-60 aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl group/poster cursor-pointer border border-white/15 transition-all flex-shrink-0"
               >
                 <img
                   src={currentFeatured.imageUrl}
@@ -350,8 +350,8 @@ export default function EventDiscovery() {
                   className="w-full h-full object-cover group-hover/poster:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-black/30 group-hover/poster:bg-black/10 transition-colors flex items-center justify-center">
-                  <div className="w-14 h-14 rounded-full bg-black/70 backdrop-blur-md border border-white/40 flex items-center justify-center text-white group-hover/poster:scale-110 group-hover/poster:bg-[#1ed760] group-hover/poster:text-black group-hover/poster:border-transparent transition-all shadow-2xl">
-                    <PlayRoundedIcon className="w-6 h-6 fill-current ml-0.5" />
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#1ed760] flex items-center justify-center text-black group-hover/poster:scale-110 transition-transform duration-300 shadow-2xl">
+                    <PlayRoundedIcon className="w-7 h-7 fill-black text-black ml-0.5" />
                   </div>
                 </div>
               </div>

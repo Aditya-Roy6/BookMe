@@ -351,15 +351,59 @@ html.light-mode .hero-showcase-carousel p.text-\[\#a3a3a3\] {
 }
 
 /* ─── NAVBAR LIGHT MODE CONTRAST & VISIBILITY ─── */
-html.light-mode nav .text-\[\#b3b3b3\] {
+html.light-mode nav {
+  background-color: rgba(255, 255, 255, 0.88) !important;
+  border-bottom-color: rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
+}
+
+html.light-mode nav .font-display,
+html.light-mode nav .font-display span {
+  color: #0f172a !important;
+}
+
+html.light-mode nav .font-display span.text-\[\#1ed760\] {
+  color: #16a34a !important;
+}
+
+html.light-mode nav input {
+  background-color: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+html.light-mode nav input::placeholder {
   color: #64748b !important;
 }
 
+html.light-mode nav input:focus {
+  background-color: #ffffff !important;
+  border-color: #0f172a !important;
+}
+
+html.light-mode nav a.text-\[\#b3b3b3\],
+html.light-mode nav .text-\[\#b3b3b3\] {
+  color: #475569 !important;
+}
+
+html.light-mode nav a.text-\[\#b3b3b3\]:hover,
 html.light-mode nav .text-\[\#b3b3b3\]:hover {
   color: #0f172a !important;
 }
 
 html.light-mode nav .bg-\[\#282828\] {
-  background-color: #e2e8f0 !important;
+  background-color: #0f172a !important;
+  color: #ffffff !important;
+}
+
+html.light-mode nav .btn-high-contrast {
+  background-color: #0f172a !important;
+  color: #ffffff !important;
+}
+
+html.light-mode nav button[title="Toggle Theme"] {
+  background-color: #f1f5f9 !important;
+  border-color: #e2e8f0 !important;
   color: #0f172a !important;
 }
+

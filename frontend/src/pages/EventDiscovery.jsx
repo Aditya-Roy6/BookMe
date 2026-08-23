@@ -502,7 +502,7 @@ export default function EventDiscovery() {
                 className="group bg-[#181818] hover:bg-[#1e1e1e] border border-[#282828] hover:border-[#383838] rounded-2xl overflow-hidden transition-all duration-300 flex flex-col justify-between hover:scale-[1.02] shadow-lg"
               >
                 <div>
-                  <div className="relative aspect-[16/10] overflow-hidden bg-[#121212] rounded-t-2xl transform-gpu isolate">
+                  <div className="relative aspect-[16/10] overflow-hidden bg-[#181818] rounded-t-2xl transform-gpu isolate">
                     <img
                       src={event.backdropUrl || event.imageUrl}
                       alt={event.title}
@@ -511,9 +511,9 @@ export default function EventDiscovery() {
                       }}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 will-change-transform backface-hidden"
                     />
-                    <div className="absolute -bottom-0.5 inset-x-0 h-16 bg-gradient-to-t from-[#181818] to-transparent pointer-events-none" />
+                    <div className="absolute -bottom-1 inset-x-0 h-20 bg-gradient-to-t from-[#181818] group-hover:from-[#1e1e1e] to-transparent pointer-events-none transition-colors duration-300" />
                     
-                    <div className="absolute top-3 left-3 flex items-center gap-1.5">
+                    <div className="absolute top-3 left-3 flex items-center gap-1.5 z-10">
                       <span className="px-2 py-0.5 bg-black/75 backdrop-blur-md rounded-md text-[10px] font-mono text-white font-bold border border-white/10">
                         {event.ageRating || event.rating || 'UA 13+'}
                       </span>
@@ -526,7 +526,7 @@ export default function EventDiscovery() {
                     </div>
                   </div>
 
-                  <div className="p-4 space-y-2">
+                  <div className="p-4 space-y-2 relative -mt-3 z-10">
                     <h3 className="text-base font-bold text-white transition-colors line-clamp-1">
                       {event.title}
                     </h3>
@@ -651,29 +651,29 @@ export default function EventDiscovery() {
                     onClick={() => handleBookMovie(movie)}
                     className="group relative rounded-2xl overflow-hidden bg-[#181818] border border-[#282828] hover:border-[#383838] transition-all flex flex-col justify-between cursor-pointer hover:scale-[1.03] shadow-lg"
                   >
-                    <div className="relative aspect-[2/3] overflow-hidden bg-[#121212] rounded-t-2xl transform-gpu isolate">
+                    <div className="relative aspect-[2/3] overflow-hidden bg-[#181818] rounded-t-2xl transform-gpu isolate">
                       <img
                         src={movie.posterUrl || 'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=400&q=80'}
                         alt={movie.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 will-change-transform backface-hidden"
                       />
-                      <div className="absolute -bottom-0.5 inset-x-0 h-16 bg-gradient-to-t from-[#181818] to-transparent pointer-events-none" />
+                      <div className="absolute -bottom-1 inset-x-0 h-16 bg-gradient-to-t from-[#181818] group-hover:from-[#1e1e1e] to-transparent pointer-events-none transition-colors duration-300" />
                       
-                      <div className="absolute top-2 left-2 flex items-center gap-1">
+                      <div className="absolute top-2 left-2 flex items-center gap-1 z-10">
                         <span className="px-1.5 py-0.5 bg-black/70 backdrop-blur-md rounded text-[9px] font-bold text-amber-400 flex items-center gap-0.5 border border-white/10">
                           <StarRoundedIcon className="w-2.5 h-2.5 fill-amber-400" />
                           <span>{movie.voteAverage || '8.0'}</span>
                         </span>
                       </div>
 
-                      <div className="absolute top-2 right-2">
+                      <div className="absolute top-2 right-2 z-10">
                         <span className="px-2 py-0.5 bg-[#1ed760] text-black font-black rounded-full text-[9px] uppercase tracking-wider shadow-md">
                           AVAILABLE
                         </span>
                       </div>
                     </div>
 
-                    <div className="p-3 space-y-1">
+                    <div className="p-3 space-y-1 relative -mt-2 z-10">
                       <h4 className="text-xs font-bold text-white transition-colors line-clamp-1 group-hover:text-[#1ed760]">
                         {movie.title}
                       </h4>
@@ -718,28 +718,28 @@ export default function EventDiscovery() {
                     onClick={() => handleBookLiveShow(show)}
                     className="group relative rounded-2xl overflow-hidden bg-[#181818] border border-[#282828] hover:border-[#383838] transition-all flex flex-col justify-between cursor-pointer hover:scale-[1.02] shadow-lg"
                   >
-                    <div className="relative aspect-[16/10] overflow-hidden bg-[#121212] rounded-t-2xl transform-gpu isolate">
+                    <div className="relative aspect-[16/10] overflow-hidden bg-[#181818] rounded-t-2xl transform-gpu isolate">
                       <img
                         src={show.imageUrl || show.backdropUrl || 'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=600&q=80'}
                         alt={show.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 will-change-transform backface-hidden"
                       />
-                      <div className="absolute -bottom-0.5 inset-x-0 h-16 bg-gradient-to-t from-[#181818] to-transparent pointer-events-none" />
+                      <div className="absolute -bottom-1 inset-x-0 h-16 bg-gradient-to-t from-[#181818] group-hover:from-[#1e1e1e] to-transparent pointer-events-none transition-colors duration-300" />
                       
-                      <div className="absolute top-2 left-2">
+                      <div className="absolute top-2 left-2 z-10">
                         <span className="px-2.5 py-1 bg-black/70 backdrop-blur-md rounded-full text-[9px] font-black text-[#1ed760] uppercase tracking-wider">
                           {show.genre || 'LIVE TOUR'}
                         </span>
                       </div>
 
-                      <div className="absolute top-2 right-2">
+                      <div className="absolute top-2 right-2 z-10">
                         <span className="px-2.5 py-1 bg-[#1ed760] text-black font-black rounded-full text-[9px] uppercase tracking-wider shadow-md">
                           BOOKABLE IN AUDITORIUM
                         </span>
                       </div>
                     </div>
 
-                    <div className="p-3.5 space-y-1.5">
+                    <div className="p-3.5 space-y-1.5 relative -mt-3 z-10">
                       <h4 className="text-sm font-bold text-white transition-colors line-clamp-1 group-hover:text-[#1ed760]">
                         {show.title}
                       </h4>

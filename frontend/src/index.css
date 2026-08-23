@@ -230,6 +230,37 @@ html.light-mode .hover\:text-white:hover { color: #1c1c1e !important; }
 html.light-mode .focus\:bg-\[\#282828\]:focus { background-color: #ffffff !important; }
 html.light-mode .focus\:border-white:focus { border-color: #1c1c1e !important; }
 
+/* Ensure Spotify Green hovers & group-hovers take absolute precedence in Light Mode */
+html.light-mode .group:hover .group-hover\:bg-\[\#1ed760\],
+html.light-mode .group-hover\:bg-\[\#1ed760\]:hover,
+html.light-mode .hover\:bg-\[\#1ed760\]:hover {
+  background-color: #1ed760 !important;
+  color: #000000 !important;
+  border-color: #1ed760 !important;
+}
+
+html.light-mode .group:hover .group-hover\:bg-\[\#1ed760\] *,
+html.light-mode .group-hover\:bg-\[\#1ed760\]:hover *,
+html.light-mode .hover\:bg-\[\#1ed760\]:hover * {
+  color: #000000 !important;
+  stroke: #000000 !important;
+}
+
+html.light-mode .group:hover .group-hover\:text-black,
+html.light-mode .hover\:text-black:hover {
+  color: #000000 !important;
+}
+
+html.light-mode .group:hover .group-hover\:border-\[\#1ed760\],
+html.light-mode .hover\:border-\[\#1ed760\]:hover {
+  border-color: #1ed760 !important;
+}
+
+html.light-mode .group:hover .group-hover\:text-\[\#1ed760\],
+html.light-mode .hover\:text-\[\#1ed760\]:hover {
+  color: #16a34a !important;
+}
+
 /* Remove ALL Shadows Globally (Dark & Light Mode) for clean, flat Spotify aesthetic */
 .shadow-2xl,
 .shadow-xl,

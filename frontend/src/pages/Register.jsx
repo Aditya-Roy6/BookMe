@@ -34,6 +34,7 @@ export default function Register() {
   const [timeLeft, setTimeLeft] = useState(300); // 5 minutes = 300 seconds
   const [resending, setResending] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(0);
+  const [demoOtp, setDemoOtp] = useState('');
 
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
@@ -81,6 +82,9 @@ export default function Register() {
 
     try {
       const res = await register(name, email, password, role);
+      if (res && res.otp) {
+        setDemoOtp(res.otp);
+      }
       setStep(2);
       setTimeLeft(300); // 5 minutes
       setResendCooldown(30); // 30s cooldown before resend
@@ -176,7 +180,10 @@ export default function Register() {
     setError('');
 
     try {
-      await resendOtp(email);
+      const res = await resendOtp(email);
+      if (res && res.otp) {
+        setDemoOtp(res.otp);
+      }
       setOtpValues(['', '', '', '', '', '']);
       setTimeLeft(300); // Reset to 5 mins
       setResendCooldown(45);
@@ -376,7 +383,22 @@ export default function Register() {
               </div>
             )}
 
-            <form onSubmit={handleVerifyOtp} className="space-y-6">
+            <form onSubmit={handleVerifyOtp} className="space-y-5">
+              {demoOtp && (
+                <div className="flex items-center justify-center">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const digits = String(demoOtp).split('').slice(0, 6);
+                      setOtpValues(digits);
+                    }}
+                    className="text-xs bg-[#1ed760]/15 hover:bg-[#1ed760]/25 text-[#1ed760] font-bold py-1.5 px-3 rounded-full border border-[#1ed760]/40 flex items-center gap-1.5 transition-all cursor-pointer"
+                  >
+                    <span>⚡ Quick Fill Code: <strong className="underline tracking-widest">{demoOtp}</strong></span>
+                  </button>
+                </div>
+              )}
+
               {/* 6-Digit OTP Boxes */}
               <div className="flex items-center justify-center gap-2 sm:gap-3" onPaste={handleOtpPaste}>
                 {otpValues.map((val, idx) => (

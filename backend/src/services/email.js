@@ -320,34 +320,66 @@ async function sendOtpEmail(email, name, otp) {
     const transporter = await getTransporter();
     const sender = process.env.EMAIL_FROM || 'BooKMe <aditya.roy9395525@gmail.com>';
 
+    const digitBoxesHtml = String(otp)
+      .split('')
+      .map(
+        (digit) =>
+          `<span style="display: inline-block; width: 44px; height: 54px; line-height: 54px; text-align: center; background-color: #0c0c0c; border: 2px solid #1ed760; border-radius: 10px; font-size: 28px; font-weight: 900; color: #1ed760; margin: 0 4px; box-shadow: 0 4px 14px rgba(30, 215, 96, 0.25); font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;">${digit}</span>`
+      )
+      .join('');
+
     const html = `
-      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 540px; margin: 0 auto; padding: 28px; background-color: #121212; color: #ffffff; border-radius: 16px; border: 1px solid #282828;">
-        <div style="text-align: center; margin-bottom: 24px;">
-          <h1 style="color: #ffffff; margin: 0 0 6px 0; font-size: 26px; font-weight: 900; letter-spacing: -0.5px;">BooK<span style="color: #1ed760;">Me</span></h1>
-          <span style="display: inline-block; background-color: #1ed76020; color: #1ed760; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; padding: 4px 12px; border-radius: 20px; border: 1px solid #1ed76040;">Email Verification</span>
-        </div>
-
-        <p style="font-size: 16px; color: #f5f5f5; margin-bottom: 12px;">Hello <strong>${name || 'there'}</strong>,</p>
-        <p style="color: #b3b3b3; font-size: 14px; line-height: 1.6; margin-bottom: 24px;">
-          Thank you for signing up for BooKMe. Use the 6-digit verification code below to complete your registration:
-        </p>
-        
-        <div style="background-color: #181818; padding: 24px; border-radius: 12px; margin: 24px 0; text-align: center; border: 1px solid #333338;">
-          <p style="margin: 0 0 8px 0; font-size: 11px; color: #7c7c7c; text-transform: uppercase; letter-spacing: 2px; font-weight: 700;">Your Verification OTP</p>
-          <div style="font-family: monospace, Courier, monospace; font-size: 38px; font-weight: 900; color: #1ed760; letter-spacing: 8px; margin: 8px 0;">
-            ${otp}
+      <div style="background-color: #080808; padding: 40px 15px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; text-align: center;">
+        <div style="max-width: 520px; margin: 0 auto; background-color: #141416; border: 1px solid #282828; border-radius: 20px; padding: 36px 28px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); text-align: center;">
+          
+          <!-- Logo & Header -->
+          <div style="margin-bottom: 24px;">
+            <div style="display: inline-block; width: 48px; height: 48px; line-height: 48px; border-radius: 50%; background: linear-gradient(135deg, #1ed760, #169c46); color: #000000; font-size: 24px; margin-bottom: 12px;">
+              🎟️
+            </div>
+            <h1 style="margin: 0 0 6px 0; font-size: 28px; font-weight: 900; letter-spacing: -0.5px; color: #ffffff;">
+              BooK<span style="color: #1ed760;">Me</span>
+            </h1>
+            <div style="display: inline-block; background-color: rgba(30, 215, 96, 0.12); color: #1ed760; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; padding: 5px 14px; border-radius: 20px; border: 1px solid rgba(30, 215, 96, 0.3);">
+              ★ 2-STEP ACCOUNT VERIFICATION ★
+            </div>
           </div>
-          <div style="display: inline-block; margin-top: 10px; background-color: #ff3b3015; border: 1px solid #ff3b3030; color: #ff6b6b; font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 20px;">
-            ⏱️ Valid for 5 minutes only
-          </div>
-        </div>
 
-        <p style="color: #7c7c7c; font-size: 13px; line-height: 1.5; text-align: center; margin-top: 24px;">
-          If you didn't request this verification code, you can safely ignore this email.
-        </p>
-        
-        <div style="margin-top: 32px; padding-top: 20px; border-top: 1px solid #222222; text-align: center; font-size: 11px; color: #555555;">
-          © ${new Date().getFullYear()} BooKMe Ticket Booking System • Secured by 2FA
+          <!-- Greeting & Copy -->
+          <p style="font-size: 16px; color: #f0f0f0; margin: 0 0 10px 0; text-align: left;">
+            Hello <strong>${name || 'there'}</strong> 👋,
+          </p>
+          <p style="color: #a0a0a0; font-size: 14px; line-height: 1.6; margin: 0 0 28px 0; text-align: left;">
+            Welcome to <strong>BooKMe</strong>! Enter the 6-digit verification code below in your browser to verify your email address and activate your account.
+          </p>
+
+          <!-- OTP Digits Container -->
+          <div style="background-color: #1a1a1e; border: 1px solid #2d2d34; border-radius: 16px; padding: 26px 16px; margin: 0 0 28px 0; text-align: center;">
+            <p style="margin: 0 0 16px 0; font-size: 11px; font-weight: 800; color: #888888; text-transform: uppercase; letter-spacing: 2px;">
+              Your 6-Digit Security Code
+            </p>
+            <div style="margin: 0 auto; white-space: nowrap;">
+              ${digitBoxesHtml}
+            </div>
+            <div style="margin-top: 18px;">
+              <span style="display: inline-block; background-color: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.25); color: #f87171; font-size: 11px; font-weight: 700; padding: 5px 14px; border-radius: 12px;">
+                ⏱️ Code expires in 5 minutes
+              </span>
+            </div>
+          </div>
+
+          <!-- Security Notice -->
+          <div style="background-color: rgba(255, 255, 255, 0.02); border: 1px dashed #333333; border-radius: 12px; padding: 14px; margin-bottom: 28px; text-align: left;">
+            <p style="margin: 0; font-size: 12px; color: #888888; line-height: 1.5;">
+              🔒 <strong>Security Tip:</strong> Never share this code with anyone. BooKMe representatives will never ask you for your verification code.
+            </p>
+          </div>
+
+          <!-- Footer -->
+          <div style="border-top: 1px solid #222226; padding-top: 20px; font-size: 11px; color: #555555; line-height: 1.6;">
+            © ${new Date().getFullYear()} BooKMe Ticket Booking Platform • All Rights Reserved.<br />
+            If you did not request this code, please safely disregard this email.
+          </div>
         </div>
       </div>
     `;
@@ -377,35 +409,65 @@ async function sendResetPasswordOtpEmail(email, name, otp) {
   try {
     const transporter = await getTransporter();
     const sender = process.env.EMAIL_FROM || 'BooKMe <aditya.roy9395525@gmail.com>';
+    const digitBoxesHtml = String(otp)
+      .split('')
+      .map(
+        (digit) =>
+          `<span style="display: inline-block; width: 44px; height: 54px; line-height: 54px; text-align: center; background-color: #0c0c0c; border: 2px solid #ffaa00; border-radius: 10px; font-size: 28px; font-weight: 900; color: #ffaa00; margin: 0 4px; box-shadow: 0 4px 14px rgba(255, 170, 0, 0.25); font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;">${digit}</span>`
+      )
+      .join('');
 
     const html = `
-      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 540px; margin: 0 auto; padding: 28px; background-color: #121212; color: #ffffff; border-radius: 16px; border: 1px solid #282828;">
-        <div style="text-align: center; margin-bottom: 24px;">
-          <h1 style="color: #ffffff; margin: 0 0 6px 0; font-size: 26px; font-weight: 900; letter-spacing: -0.5px;">BooK<span style="color: #1ed760;">Me</span></h1>
-          <span style="display: inline-block; background-color: #ffaa0020; color: #ffaa00; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; padding: 4px 12px; border-radius: 20px; border: 1px solid #ffaa0040;">Password Reset</span>
-        </div>
-
-        <p style="font-size: 16px; color: #f5f5f5; margin-bottom: 12px;">Hello <strong>${name || 'there'}</strong>,</p>
-        <p style="color: #b3b3b3; font-size: 14px; line-height: 1.6; margin-bottom: 24px;">
-          We received a request to reset your password for your BooKMe account. Use the 6-digit verification code below to proceed:
-        </p>
-        
-        <div style="background-color: #181818; padding: 24px; border-radius: 12px; margin: 24px 0; text-align: center; border: 1px solid #333338;">
-          <p style="margin: 0 0 8px 0; font-size: 11px; color: #7c7c7c; text-transform: uppercase; letter-spacing: 2px; font-weight: 700;">Your Reset OTP</p>
-          <div style="font-family: monospace, Courier, monospace; font-size: 38px; font-weight: 900; color: #1ed760; letter-spacing: 8px; margin: 8px 0;">
-            ${otp}
+      <div style="background-color: #080808; padding: 40px 15px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; text-align: center;">
+        <div style="max-width: 520px; margin: 0 auto; background-color: #141416; border: 1px solid #282828; border-radius: 20px; padding: 36px 28px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); text-align: center;">
+          
+          <!-- Logo & Header -->
+          <div style="margin-bottom: 24px;">
+            <div style="display: inline-block; width: 48px; height: 48px; line-height: 48px; border-radius: 50%; background: linear-gradient(135deg, #ffaa00, #d97706); color: #000000; font-size: 24px; margin-bottom: 12px;">
+              🔑
+            </div>
+            <h1 style="margin: 0 0 6px 0; font-size: 28px; font-weight: 900; letter-spacing: -0.5px; color: #ffffff;">
+              BooK<span style="color: #1ed760;">Me</span>
+            </h1>
+            <div style="display: inline-block; background-color: rgba(255, 170, 0, 0.12); color: #ffaa00; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; padding: 5px 14px; border-radius: 20px; border: 1px solid rgba(255, 170, 0, 0.3);">
+              ★ PASSWORD RESET CODE ★
+            </div>
           </div>
-          <div style="display: inline-block; margin-top: 10px; background-color: #ff3b3015; border: 1px solid #ff3b3030; color: #ff6b6b; font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 20px;">
-            ⏱️ Valid for 5 minutes only
-          </div>
-        </div>
 
-        <p style="color: #7c7c7c; font-size: 13px; line-height: 1.5; text-align: center; margin-top: 24px;">
-          If you didn't request a password reset, you can safely ignore this email.
-        </p>
-        
-        <div style="margin-top: 32px; padding-top: 20px; border-top: 1px solid #222222; text-align: center; font-size: 11px; color: #555555;">
-          © ${new Date().getFullYear()} BooKMe Ticket Booking System • Secured by 2FA
+          <!-- Greeting & Copy -->
+          <p style="font-size: 16px; color: #f0f0f0; margin: 0 0 10px 0; text-align: left;">
+            Hello <strong>${name || 'there'}</strong> 👋,
+          </p>
+          <p style="color: #a0a0a0; font-size: 14px; line-height: 1.6; margin: 0 0 28px 0; text-align: left;">
+            We received a request to reset your password for your <strong>BooKMe</strong> account. Enter the 6-digit verification code below to set a new password.
+          </p>
+
+          <!-- OTP Digits Container -->
+          <div style="background-color: #1a1a1e; border: 1px solid #2d2d34; border-radius: 16px; padding: 26px 16px; margin: 0 0 28px 0; text-align: center;">
+            <p style="margin: 0 0 16px 0; font-size: 11px; font-weight: 800; color: #888888; text-transform: uppercase; letter-spacing: 2px;">
+              Your Password Reset Code
+            </p>
+            <div style="margin: 0 auto; white-space: nowrap;">
+              ${digitBoxesHtml}
+            </div>
+            <div style="margin-top: 18px;">
+              <span style="display: inline-block; background-color: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.25); color: #f87171; font-size: 11px; font-weight: 700; padding: 5px 14px; border-radius: 12px;">
+                ⏱️ Code expires in 5 minutes
+              </span>
+            </div>
+          </div>
+
+          <!-- Security Notice -->
+          <div style="background-color: rgba(255, 255, 255, 0.02); border: 1px dashed #333333; border-radius: 12px; padding: 14px; margin-bottom: 28px; text-align: left;">
+            <p style="margin: 0; font-size: 12px; color: #888888; line-height: 1.5;">
+              🔒 <strong>Security Warning:</strong> If you did not request this password reset, your account is still secure. No changes will be made without this code.
+            </p>
+          </div>
+
+          <!-- Footer -->
+          <div style="border-top: 1px solid #222226; padding-top: 20px; font-size: 11px; color: #555555; line-height: 1.6;">
+            © ${new Date().getFullYear()} BooKMe Ticket Booking Platform • All Rights Reserved.
+          </div>
         </div>
       </div>
     `;
@@ -413,13 +475,14 @@ async function sendResetPasswordOtpEmail(email, name, otp) {
     const info = await transporter.sendMail({
       from: sender,
       to: email,
-      subject: `🔐 Your BooKMe Password Reset Code is ${otp} (Valid for 5 mins)`,
+      subject: `🔑 BooKMe Password Reset Code: ${otp} (Valid for 5 mins)`,
       html,
     });
 
+    console.log(`📩 Reset password OTP sent to ${email} (Message ID: ${info.messageId})`);
     return { success: true, messageId: info.messageId };
   } catch (error) {
-    console.error('Failed to send reset password OTP email:', error);
+    console.error('Failed to send reset password OTP:', error);
     return { success: false, error: error.message };
   }
 }

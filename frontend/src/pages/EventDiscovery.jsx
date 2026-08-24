@@ -43,6 +43,24 @@ import {
   FilmReelRoundedIcon,
 } from '../components/CustomRoundedIcons';
 
+function formatEmbedTrailerUrl(url, title = '') {
+  if (!url) {
+    if (title) {
+      return `https://www.youtube-nocookie.com/embed?listType=search&list=${encodeURIComponent(title + ' Official Trailer')}&autoplay=1`;
+    }
+    return null;
+  }
+  let cleanUrl = url;
+  if (cleanUrl.includes('youtu.be/')) {
+    const id = cleanUrl.split('youtu.be/')[1]?.split('?')[0];
+    cleanUrl = `https://www.youtube-nocookie.com/embed/${id}`;
+  } else if (cleanUrl.includes('watch?v=')) {
+    const id = cleanUrl.split('watch?v=')[1]?.split('&')[0];
+    cleanUrl = `https://www.youtube-nocookie.com/embed/${id}`;
+  }
+  return cleanUrl.includes('autoplay=1') ? cleanUrl : `${cleanUrl}${cleanUrl.includes('?') ? '&' : '?'}autoplay=1`;
+}
+
 export default function EventDiscovery() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -324,22 +342,20 @@ export default function EventDiscovery() {
                   <span>Book Tickets</span>
                 </Link>
 
-                {currentFeatured.trailerUrl && (
-                  <button
-                    onClick={() => setActiveTrailerUrl(currentFeatured.trailerUrl)}
-                    className="px-6 py-3.5 bg-white/10 hover:bg-white/20 text-white font-bold uppercase tracking-[1.4px] rounded-xl text-xs flex items-center gap-2 backdrop-blur-md border border-white/10 transition-all hover:scale-105 cursor-pointer"
-                  >
-                    <PlayRoundedIcon className="w-3.5 h-3.5 fill-white text-white" />
-                    <span>Watch Trailer</span>
-                  </button>
-                )}
+                <button
+                  onClick={() => setActiveTrailerUrl(formatEmbedTrailerUrl(currentFeatured.trailerUrl, currentFeatured.title))}
+                  className="px-6 py-3.5 bg-white/10 hover:bg-white/20 text-white font-bold uppercase tracking-[1.4px] rounded-xl text-xs flex items-center gap-2 backdrop-blur-md border border-white/10 transition-all hover:scale-105 cursor-pointer"
+                >
+                  <PlayRoundedIcon className="w-3.5 h-3.5 fill-white text-white" />
+                  <span>Watch Trailer</span>
+                </button>
               </div>
             </div>
 
             {/* Right Featured Poster with Play Button & Slide Numbers */}
             <div className="flex items-center gap-6">
               <div
-                onClick={() => currentFeatured.trailerUrl && setActiveTrailerUrl(currentFeatured.trailerUrl)}
+                onClick={() => setActiveTrailerUrl(formatEmbedTrailerUrl(currentFeatured.trailerUrl, currentFeatured.title))}
                 className="relative w-48 sm:w-60 aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl group/poster cursor-pointer border border-white/15 transition-all flex-shrink-0"
               >
                 <img
@@ -521,6 +537,19 @@ export default function EventDiscovery() {
                         </span>
                       )}
                     </div>
+
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setActiveTrailerUrl(formatEmbedTrailerUrl(event.trailerUrl, event.title));
+                      }}
+                      className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-black/75 hover:bg-[#1ed760] text-white hover:text-black flex items-center justify-center transition-all shadow-md border border-white/10 hover:scale-110 cursor-pointer"
+                      title="Watch Trailer"
+                    >
+                      <PlayRoundedIcon className="w-3.5 h-3.5 fill-current ml-0.5" />
+                    </button>
                   </div>
 
                   <div className="p-4 space-y-2 relative -mt-3 z-10">
@@ -929,7 +958,7 @@ export default function EventDiscovery() {
 
               {activeTrailerUrl && (
                 <iframe
-                  src={activeTrailerUrl.replace('watch?v=', 'embed/') + '?autoplay=1'}
+                  src={activeTrailerUrl}
                   title="Movie Trailer"
                   className="w-full h-full border-none"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

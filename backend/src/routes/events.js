@@ -353,7 +353,7 @@ router.post('/tmdb/sync-and-book', async (req, res, next) => {
         type: 'movie',
         imageUrl: enriched.imageUrl || movieData.posterUrl,
         backdropUrl: enriched.backdropUrl || movieData.backdropUrl,
-        trailerUrl: enriched.trailerUrl || 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+        trailerUrl: enriched.trailerUrl || `https://www.youtube-nocookie.com/embed?listType=search&list=${encodeURIComponent((enriched.title || movieData.title) + ' Official Trailer')}&autoplay=1`,
         director: enriched.director || 'Christopher Nolan',
         duration: enriched.duration || '2h 28m',
         genre: enriched.genre || 'Action • Adventure • Sci-Fi',

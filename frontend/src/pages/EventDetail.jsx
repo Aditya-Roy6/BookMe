@@ -245,18 +245,16 @@ export default function EventDetail() {
               }}
               className="w-full h-full object-cover"
             />
-            {event.trailerUrl && (
-              <button
-                onClick={() => setTrailerModalOpen(true)}
-                className="absolute inset-0 bg-black/40 hover:bg-black/20 transition-colors flex items-center justify-center group-hover:scale-105 cursor-pointer"
-                title="Play Trailer"
-                aria-label="Play Trailer"
-              >
-                <div className="w-14 h-14 rounded-full bg-[#1ed760] text-black flex items-center justify-center group-hover:scale-110 transition-transform shadow-2xl shadow-[#1ed760]/40">
-                  <PlayRoundedIcon className="w-6 h-6 fill-black ml-1" />
-                </div>
-              </button>
-            )}
+            <button
+              onClick={() => setTrailerModalOpen(true)}
+              className="absolute inset-0 bg-black/40 hover:bg-black/20 transition-colors flex items-center justify-center group-hover:scale-105 cursor-pointer"
+              title="Play Trailer"
+              aria-label="Play Trailer"
+            >
+              <div className="w-14 h-14 rounded-full bg-[#1ed760] text-black flex items-center justify-center group-hover:scale-110 transition-transform shadow-2xl shadow-[#1ed760]/40">
+                <PlayRoundedIcon className="w-6 h-6 fill-black ml-1" />
+              </div>
+            </button>
           </div>
 
           {/* Right Column: Title at Top, Languages & Info at Bottom (Matching Photo Height) */}
@@ -716,15 +714,27 @@ export default function EventDetail() {
                 <X className="w-5 h-5" />
               </button>
 
-              {event.trailerUrl && (
-                <iframe
-                  src={event.trailerUrl.replace('watch?v=', 'embed/') + '?autoplay=1'}
-                  title="Movie Trailer"
-                  className="w-full h-full border-none"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              )}
+              <iframe
+                src={(() => {
+                  const url = event.trailerUrl;
+                  if (!url) {
+                    return `https://www.youtube-nocookie.com/embed?listType=search&list=${encodeURIComponent((event.title || 'Movie') + ' Official Trailer')}&autoplay=1`;
+                  }
+                  let cleanUrl = url;
+                  if (cleanUrl.includes('youtu.be/')) {
+                    const id = cleanUrl.split('youtu.be/')[1]?.split('?')[0];
+                    cleanUrl = `https://www.youtube-nocookie.com/embed/${id}`;
+                  } else if (cleanUrl.includes('watch?v=')) {
+                    const id = cleanUrl.split('watch?v=')[1]?.split('&')[0];
+                    cleanUrl = `https://www.youtube-nocookie.com/embed/${id}`;
+                  }
+                  return cleanUrl.includes('autoplay=1') ? cleanUrl : `${cleanUrl}${cleanUrl.includes('?') ? '&' : '?'}autoplay=1`;
+                })()}
+                title="Movie Trailer"
+                className="w-full h-full border-none"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
             </div>
           )}
         </ModalContent>

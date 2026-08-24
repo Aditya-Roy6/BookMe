@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, AlertTriangle } from 'lucide-react';
 
-export default function TTLTimer({ initialSeconds, expiresAt, onExpire }) {
+export default function TTLTimer({ initialSeconds = 600, expiresAt, onExpire }) {
   const calculateRemaining = () => {
     if (expiresAt) {
-      const diff = Math.floor((new Date(expiresAt).getTime() - Date.now()) / 1000);
-      return Math.max(0, diff);
+      const targetTime = new Date(expiresAt).getTime();
+      if (!isNaN(targetTime)) {
+        const diff = Math.floor((targetTime - Date.now()) / 1000);
+        return Math.max(0, diff);
+      }
     }
-    return Math.max(0, initialSeconds || 0);
+    return Math.max(0, initialSeconds || 600);
   };
 
   const [remaining, setRemaining] = useState(calculateRemaining);
@@ -18,7 +21,9 @@ export default function TTLTimer({ initialSeconds, expiresAt, onExpire }) {
 
   useEffect(() => {
     if (remaining <= 0) {
-      if (onExpire) onExpire();
+      if (expiresAt && onExpire) {
+        onExpire();
+      }
       return;
     }
 
@@ -34,7 +39,7 @@ export default function TTLTimer({ initialSeconds, expiresAt, onExpire }) {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [remaining, onExpire]);
+  }, [remaining, onExpire, expiresAt]);
 
   const minutes = Math.floor(remaining / 60);
   const seconds = remaining % 60;

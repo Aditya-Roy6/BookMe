@@ -13,6 +13,24 @@ const { Op } = require('sequelize');
 const router = express.Router();
 
 /**
+ * GET /api/bookings/public/qr/:bookingRef
+ * Public: Serve PNG QR Code image for email clients and external scanners
+ */
+router.get('/public/qr/:bookingRef', async (req, res, next) => {
+  try {
+    const { bookingRef } = req.params;
+    const cleanRef = bookingRef.replace(/\.png$/i, '');
+    const { generateQRCodeBuffer } = require('../services/qrcode');
+    const pngBuffer = await generateQRCodeBuffer(cleanRef);
+    res.setHeader('Content-Type', 'image/png');
+    res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    res.send(pngBuffer);
+  } catch (error) {
+    next(error);
+  }
+});
+
+/**
  * POST /api/bookings/razorpay/create-order
  * Customer: Create a Razorpay payment order for held seats
  */

@@ -86,13 +86,15 @@ export default function Checkout() {
     async function loadData() {
       try {
         const res = await api.get(`/showtimes/${showtimeId}/seats`);
-        setShowtime(res.data.showtime);
+        if (res.data?.showtime) {
+          setShowtime(res.data.showtime);
+        }
 
-        const mySeats = res.data.seats.filter((s) => s.isHeldByMe);
-        if (mySeats.length === 0 && (!passedSeats || passedSeats.length === 0)) {
-          setError('No held seats found for this session. Your hold may have expired.');
-        } else if (mySeats.length > 0) {
+        const mySeats = res.data.seats?.filter((s) => s.isHeldByMe) || [];
+        if (mySeats.length > 0) {
           setHeldSeats(mySeats);
+        } else if (!passedSeats || passedSeats.length === 0) {
+          setError('No held seats found for this session. Your hold may have expired.');
         }
       } catch (err) {
         if (!passedSeats || passedSeats.length === 0) {
@@ -434,7 +436,7 @@ export default function Checkout() {
 
         {heldSeats.length > 0 && (
           <TTLTimer
-            expiresAt={heldSeats[0].holdExpiresAt}
+            expiresAt={heldSeats[0]?.holdExpiresAt || new Date(Date.now() + 600 * 1000).toISOString()}
             onExpire={() => {
               setError('Hold expired. Please select your seats again.');
               setHeldSeats([]);

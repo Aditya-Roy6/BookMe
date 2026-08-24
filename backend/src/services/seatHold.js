@@ -265,8 +265,21 @@ async function getShowtimeSeatMap(showtimeId, currentUserId = null) {
       heldBy = redisHeldUser;
       ttlRemaining = ttl;
       isHeldByMe = currentUserId ? redisHeldUser === currentUserId : false;
+    } else if (
+      dbStatus &&
+      dbStatus.status === 'held' &&
+      dbStatus.holdExpiresAt &&
+      new Date(dbStatus.holdExpiresAt) > new Date()
+    ) {
+      status = 'held';
+      heldBy = dbStatus.heldBy;
+      ttlRemaining = Math.max(
+        0,
+        Math.floor((new Date(dbStatus.holdExpiresAt).getTime() - Date.now()) / 1000)
+      );
+      isHeldByMe = currentUserId ? dbStatus.heldBy === currentUserId : false;
     } else if (dbStatus && dbStatus.status === 'held') {
-      // Redis key expired or missing, mark for DB auto-heal
+      // Hold is truly expired in both Redis and DB
       expiredSeatIdsToClean.push(seat.id);
       status = 'available';
     }

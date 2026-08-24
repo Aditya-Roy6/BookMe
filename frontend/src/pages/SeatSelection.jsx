@@ -1004,6 +1004,7 @@ export default function SeatSelection() {
           categoryName: cat?.name || 'Standard',
           price: showtime?.pricing?.[s?.categoryId] || 350,
           isHeldByMe: true,
+          holdExpiresAt: res.data?.expiresAt || new Date(Date.now() + 600 * 1000).toISOString(),
         };
       });
 

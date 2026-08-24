@@ -270,7 +270,9 @@ async function sendBookingConfirmation(user, booking, showtime, items, qrDataUrl
             SCAN AT AUDITORIUM ENTRANCE
           </p>
           <div style="margin: 0 auto; display: inline-block; padding: 10px; background: #ffffff; border: 1px solid #e0e0e0; border-radius: 16px; box-shadow: 0 4px 14px rgba(0,0,0,0.06);">
-            <img src="https://bookme-backend-edh7.onrender.com/api/bookings/public/qr/${booking.bookingRef}.png" alt="Booking QR Pass" width="200" height="200" style="display: block; width: 200px; height: 200px; border-radius: 12px; margin: 0 auto;" />
+            <a href="${FRONTEND_URL}/my-bookings?ref=${booking.bookingRef}" style="text-decoration: none; display: block;">
+              <img src="https://bookme-backend-edh7.onrender.com/api/bookings/public/qr/${booking.bookingRef}.png" alt="Booking QR Pass" width="200" height="200" style="display: block; width: 200px; height: 200px; border-radius: 12px; margin: 0 auto;" />
+            </a>
           </div>
 
           <!-- Reference Code -->
@@ -294,22 +296,11 @@ async function sendBookingConfirmation(user, booking, showtime, items, qrDataUrl
           <div style="margin: 0 -20px; height: 14px; background: repeating-linear-gradient(90deg, #ffffff 0, #ffffff 12px, #0c0c0c 12px, #0c0c0c 24px); border-top: 1px dashed #cccccc;"></div>
         </div>
 
-        <!-- Action Buttons: Download PNG & View Ticket Online -->
+        <!-- Action Button: View & Download Ticket on Frontend App -->
         <div style="margin-top: 24px; text-align: center;">
-          <table align="center" style="margin: 0 auto; border-collapse: separate; border-spacing: 10px 0;">
-            <tr>
-              <td align="center">
-                <a href="https://bookme-backend-edh7.onrender.com/api/bookings/public/qr/${booking.bookingRef}.png?download=true" style="display: inline-block; background-color: #1ed760; color: #000000; font-weight: 900; font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; padding: 13px 20px; border-radius: 50px; text-decoration: none; box-shadow: 0 4px 15px rgba(30, 215, 96, 0.4);">
-                  📥 Download Ticket (PNG)
-                </a>
-              </td>
-              <td align="center">
-                <a href="${FRONTEND_URL}/my-bookings?ref=${booking.bookingRef}" style="display: inline-block; background-color: #222222; color: #ffffff; font-weight: 800; font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; padding: 13px 20px; border-radius: 50px; text-decoration: none; border: 1px solid #383838; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);">
-                  🎟️ View Ticket Online
-                </a>
-              </td>
-            </tr>
-          </table>
+          <a href="${FRONTEND_URL}/my-bookings?ref=${booking.bookingRef}" style="display: inline-block; background-color: #1ed760; color: #000000; font-weight: 900; font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; padding: 14px 28px; border-radius: 50px; text-decoration: none; box-shadow: 0 4px 15px rgba(30, 215, 96, 0.4);">
+            🎟️ View & Download Official Ticket Pass
+          </a>
         </div>
       </div>
     `;

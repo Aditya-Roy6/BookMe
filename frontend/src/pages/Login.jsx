@@ -25,8 +25,11 @@ export default function Login() {
 
     try {
       await login(email, password);
-      toast.success('Welcome back to BooKMe!');
-      navigate('/', { replace: true });
+      const target =
+        typeof redirectPath === 'object' && redirectPath.pathname
+          ? `${redirectPath.pathname}${redirectPath.search || ''}`
+          : redirectPath;
+      navigate(target, { replace: true });
     } catch (err) {
       const data = err.response?.data;
       const errMsg = data?.error || 'Invalid email or password. Please try again.';

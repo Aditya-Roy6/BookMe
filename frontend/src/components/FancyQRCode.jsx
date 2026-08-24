@@ -88,7 +88,7 @@ export default function FancyQRCode({
 
   return (
     <div
-      className={`inline-flex items-center justify-center p-2 rounded-2xl bg-white shadow-sm select-none ${className}`}
+      className={`fancy-qr-pass-container inline-flex items-center justify-center p-2 rounded-2xl bg-white shadow-sm select-none ${className}`}
       style={{ width: size, height: size }}
     >
       <svg

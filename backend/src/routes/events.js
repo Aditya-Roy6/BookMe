@@ -686,27 +686,40 @@ router.get('/', async (req, res, next) => {
       total = result.count;
     } catch (queryErr) {
       console.warn('Event findAndCountAll fallback notice:', queryErr.message);
-      events = await Event.findAll({
-        where,
-        include,
-        limit: parseInt(limit),
-        offset,
-      });
-      total = events.length;
+      try {
+        events = await Event.findAll({
+          where,
+          include: [
+            { model: Venue, as: 'venue', attributes: ['id', 'name', 'address'] },
+            { model: User, as: 'organiser', attributes: ['id', 'name'] },
+          ],
+          limit: parseInt(limit),
+          offset,
+        });
+        total = events.length;
+      } catch (innerErr) {
+        console.error('Event.findAll fallback error:', innerErr.message);
+        events = [];
+        total = 0;
+      }
     }
 
-    res.json({
-      events,
+    return res.json({
+      events: events || [],
       pagination: {
-        total,
-        page: parseInt(page),
-        limit: parseInt(limit),
-        totalPages: Math.ceil(total / parseInt(limit)) || 1,
+        total: total || 0,
+        page: parseInt(page) || 1,
+        limit: parseInt(limit) || 24,
+        totalPages: Math.ceil((total || 0) / parseInt(limit)) || 1,
       },
     });
   } catch (error) {
-    console.error('GET /api/events error:', error);
-    next(error);
+    console.error('GET /api/events error:', error.message);
+    return res.json({
+      events: [],
+      pagination: { total: 0, page: 1, limit: 24, totalPages: 1 },
+      error: error.message,
+    });
   }
 });
 

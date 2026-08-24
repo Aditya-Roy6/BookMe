@@ -670,43 +670,14 @@ router.get('/', async (req, res, next) => {
 
     const offset = (parseInt(page) - 1) * parseInt(limit);
 
-    let events = [];
-    let total = 0;
-
-    let debugErr = null;
-
-    try {
-      const result = await Event.findAndCountAll({
-        where,
-        include,
-        order,
-        limit: parseInt(limit),
-        offset,
-        distinct: true,
-      });
-      events = result.rows;
-      total = result.count;
-    } catch (queryErr) {
-      debugErr = queryErr.message;
-      console.warn('Event findAndCountAll fallback notice:', queryErr.message);
-      try {
-        events = await Event.findAll({
-          where,
-          include: [
-            { model: Venue, as: 'venue', attributes: ['id', 'name', 'address'] },
-            { model: User, as: 'organiser', attributes: ['id', 'name'] },
-          ],
-          limit: parseInt(limit),
-          offset,
-        });
-        total = events.length;
-      } catch (innerErr) {
-        debugErr += ' | ' + innerErr.message;
-        console.error('Event.findAll fallback error:', innerErr.message);
-        events = [];
-        total = 0;
-      }
-    }
+    const total = await Event.count({ where });
+    const events = await Event.findAll({
+      where,
+      include,
+      order,
+      limit: parseInt(limit) || 24,
+      offset,
+    });
 
     return res.json({
       events: events || [],
@@ -714,9 +685,8 @@ router.get('/', async (req, res, next) => {
         total: total || 0,
         page: parseInt(page) || 1,
         limit: parseInt(limit) || 24,
-        totalPages: Math.ceil((total || 0) / parseInt(limit)) || 1,
+        totalPages: Math.ceil((total || 0) / (parseInt(limit) || 24)) || 1,
       },
-      ...(debugErr ? { debugErr } : {}),
     });
   } catch (error) {
     console.error('GET /api/events error:', error.message);

@@ -25,19 +25,27 @@ router.get('/public/qr/:bookingRef', async (req, res, next) => {
     let imageUrl = '';
     try {
       const booking = await Booking.findOne({
-        where: { bookingRef: cleanRef },
+        where: {
+          [Op.or]: [
+            { bookingRef: cleanRef },
+            { bookingRef: cleanRef.toUpperCase() },
+            { bookingRef: cleanRef.toLowerCase() },
+          ],
+        },
         include: [
           {
             model: Showtime,
             as: 'showtime',
-            include: [{ model: Event, as: 'event', attributes: ['imageUrl'] }],
+            include: [{ model: Event, as: 'event', attributes: ['imageUrl', 'backdropUrl'] }],
           },
         ],
       });
-      if (booking?.showtime?.event?.imageUrl) {
-        imageUrl = booking.showtime.event.imageUrl;
+      if (booking?.showtime?.event?.imageUrl || booking?.showtime?.event?.backdropUrl) {
+        imageUrl = booking.showtime.event.imageUrl || booking.showtime.event.backdropUrl;
       }
-    } catch (e) {}
+    } catch (e) {
+      console.warn('Booking image lookup notice:', e.message);
+    }
 
     const { generateQRCodeBuffer } = require('../services/qrcode');
     const pngBuffer = await generateQRCodeBuffer(cleanRef, { imageUrl, size: 500 });

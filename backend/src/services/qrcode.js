@@ -16,24 +16,38 @@ async function fetchImageAsBase64(url) {
   return new Promise((resolve) => {
     try {
       const client = url.startsWith('https') ? https : http;
-      const req = client.get(url, { timeout: 1500 }, (res) => {
-        if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
-          return fetchImageAsBase64(res.headers.location).then(resolve);
+      const req = client.get(
+        url,
+        {
+          headers: {
+            'User-Agent':
+              'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            Accept: 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
+          },
+          timeout: 3500,
+        },
+        (res) => {
+          if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+            const redirectUrl = res.headers.location.startsWith('http')
+              ? res.headers.location
+              : new URL(res.headers.location, url).toString();
+            return fetchImageAsBase64(redirectUrl).then(resolve);
+          }
+          if (res.statusCode !== 200) {
+            return resolve('');
+          }
+          const chunks = [];
+          res.on('data', (c) => chunks.push(c));
+          res.on('end', () => {
+            const buf = Buffer.concat(chunks);
+            const mime = res.headers['content-type'] || 'image/jpeg';
+            const dataUri = `data:${mime};base64,${buf.toString('base64')}`;
+            if (imageBase64Cache.size > 100) imageBase64Cache.clear();
+            imageBase64Cache.set(url, dataUri);
+            resolve(dataUri);
+          });
         }
-        if (res.statusCode !== 200) {
-          return resolve('');
-        }
-        const chunks = [];
-        res.on('data', (c) => chunks.push(c));
-        res.on('end', () => {
-          const buf = Buffer.concat(chunks);
-          const mime = res.headers['content-type'] || 'image/jpeg';
-          const dataUri = `data:${mime};base64,${buf.toString('base64')}`;
-          if (imageBase64Cache.size > 100) imageBase64Cache.clear();
-          imageBase64Cache.set(url, dataUri);
-          resolve(dataUri);
-        });
-      });
+      );
       req.on('error', () => resolve(''));
       req.on('timeout', () => {
         req.destroy();
@@ -132,7 +146,7 @@ function generateFancyQRCodeSvg(value = 'LMTX-PASS', options = {}) {
   const uniqueId = `qr_${Date.now().toString(36)}_${Math.random().toString(36).substring(2, 6)}`;
 
   const imageElement = imageUrl
-    ? `<image href="${imageUrl}" x="${centerPx - logoRadiusPx}" y="${centerPx - logoRadiusPx}" width="${logoRadiusPx * 2}" height="${logoRadiusPx * 2}" clip-path="url(#qr-clip-${uniqueId})" preserveAspectRatio="xMidYMid slice" />`
+    ? `<image href="${imageUrl}" xlink:href="${imageUrl}" x="${centerPx - logoRadiusPx}" y="${centerPx - logoRadiusPx}" width="${logoRadiusPx * 2}" height="${logoRadiusPx * 2}" clip-path="url(#qr-clip-${uniqueId})" preserveAspectRatio="xMidYMid slice" />`
     : `
       <g clip-path="url(#qr-clip-${uniqueId})">
         <circle cx="${centerPx}" cy="${centerPx}" r="${logoRadiusPx}" fill="#1ed760" />
@@ -140,7 +154,7 @@ function generateFancyQRCodeSvg(value = 'LMTX-PASS', options = {}) {
       </g>
     `;
 
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${svgSize} ${svgSize}" width="${size}" height="${size}" style="shape-rendering: geometricPrecision; background: ${bgColor}; border-radius: 16px;">
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 ${svgSize} ${svgSize}" width="${size}" height="${size}" style="shape-rendering: geometricPrecision; background: ${bgColor}; border-radius: 16px;">
     <rect width="${svgSize}" height="${svgSize}" fill="${bgColor}" rx="${cellSize * 1.5}" />
     ${dotsSvg}
     ${findersSvg}

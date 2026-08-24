@@ -673,6 +673,8 @@ router.get('/', async (req, res, next) => {
     let events = [];
     let total = 0;
 
+    let debugErr = null;
+
     try {
       const result = await Event.findAndCountAll({
         where,
@@ -685,6 +687,7 @@ router.get('/', async (req, res, next) => {
       events = result.rows;
       total = result.count;
     } catch (queryErr) {
+      debugErr = queryErr.message;
       console.warn('Event findAndCountAll fallback notice:', queryErr.message);
       try {
         events = await Event.findAll({
@@ -698,6 +701,7 @@ router.get('/', async (req, res, next) => {
         });
         total = events.length;
       } catch (innerErr) {
+        debugErr += ' | ' + innerErr.message;
         console.error('Event.findAll fallback error:', innerErr.message);
         events = [];
         total = 0;
@@ -712,6 +716,7 @@ router.get('/', async (req, res, next) => {
         limit: parseInt(limit) || 24,
         totalPages: Math.ceil((total || 0) / parseInt(limit)) || 1,
       },
+      ...(debugErr ? { debugErr } : {}),
     });
   } catch (error) {
     console.error('GET /api/events error:', error.message);

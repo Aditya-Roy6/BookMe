@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
   Modal,
   ModalContent,
@@ -81,9 +81,24 @@ export default function BookingHistory() {
     }
   };
 
+  const location = useLocation();
+
   useEffect(() => {
     fetchBookings();
   }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const targetRef = params.get('ref') || params.get('view') || params.get('bookingRef');
+    if (targetRef && bookings.length > 0) {
+      const found = bookings.find(
+        (b) => b.bookingRef === targetRef || b.id === targetRef
+      );
+      if (found) {
+        setSelectedTicket(found);
+      }
+    }
+  }, [location.search, bookings]);
 
   const handleConfirmCancel = async () => {
     if (!cancelModalBooking) return;

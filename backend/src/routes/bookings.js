@@ -14,15 +14,40 @@ const router = express.Router();
 
 /**
  * GET /api/bookings/public/qr/:bookingRef
- * Public: Serve PNG QR Code image for email clients and external scanners
+ * Public: Serve Custom Fancy PNG QR Code image with center movie avatar
  */
 router.get('/public/qr/:bookingRef', async (req, res, next) => {
   try {
     const { bookingRef } = req.params;
     const cleanRef = bookingRef.replace(/\.png$/i, '');
+    const isDownload = req.query.download === 'true' || req.query.dl === '1';
+
+    let imageUrl = '';
+    try {
+      const booking = await Booking.findOne({
+        where: { bookingRef: cleanRef },
+        include: [
+          {
+            model: Showtime,
+            as: 'showtime',
+            include: [{ model: Event, as: 'event', attributes: ['imageUrl'] }],
+          },
+        ],
+      });
+      if (booking?.showtime?.event?.imageUrl) {
+        imageUrl = booking.showtime.event.imageUrl;
+      }
+    } catch (e) {}
+
     const { generateQRCodeBuffer } = require('../services/qrcode');
-    const pngBuffer = await generateQRCodeBuffer(cleanRef);
+    const pngBuffer = await generateQRCodeBuffer(cleanRef, { imageUrl, size: 500 });
+
     res.setHeader('Content-Type', 'image/png');
+    if (isDownload) {
+      res.setHeader('Content-Disposition', `attachment; filename="ticket-pass-${cleanRef}.png"`);
+    } else {
+      res.setHeader('Content-Disposition', `inline; filename="ticket-pass-${cleanRef}.png"`);
+    }
     res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
     res.send(pngBuffer);
   } catch (error) {

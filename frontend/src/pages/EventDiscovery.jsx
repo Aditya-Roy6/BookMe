@@ -40,6 +40,7 @@ import {
   PlayRoundedIcon,
   FilterRoundedIcon,
   SearchRoundedIcon,
+  FilmReelRoundedIcon,
 } from '../components/CustomRoundedIcons';
 
 export default function EventDiscovery() {

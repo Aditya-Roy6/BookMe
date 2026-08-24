@@ -1,5 +1,5 @@
-const TMDB_ACCESS_TOKEN = process.env.TMDB_ACCESS_TOKEN;
-const TMDB_API_KEY = process.env.TMDB_API_KEY;
+const TMDB_ACCESS_TOKEN = process.env.TMDB_ACCESS_TOKEN || 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwNmI5MDQ1MjYzOTM1YWM1NjUwZDIzODQyYzJmMzc0NiIsIm5iZiI6MTc3OTA5NzMwMy4xMTAwMDAxLCJzdWIiOiI2YTBhZGVkN2U5YzUyOWIwYjA0ZTYyNjEiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.iE8O5o5gGBQ0ZuN4OltlxOLBOnW2c0pPmB-uuwfc1fs';
+const TMDB_API_KEY = process.env.TMDB_API_KEY || '06b9045263935ac5650d23842c2f3746';
 const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
 const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p';
 

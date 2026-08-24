@@ -1048,39 +1048,11 @@ export default function BookingHistory() {
                   </p>
                 </div>
               </ModalBody>
-              <ModalFooter className="border-t border-[#282828] flex items-center justify-between gap-3">
-                <button
-                  type="button"
-                  onClick={() => {
-                    const svgEl = document.querySelector('.fancy-qr-pass-container svg');
-                    if (svgEl) {
-                      const svgData = new XMLSerializer().serializeToString(svgEl);
-                      const canvas = document.createElement('canvas');
-                      const ctx = canvas.getContext('2d');
-                      const img = new Image();
-                      canvas.width = 600;
-                      canvas.height = 600;
-                      img.onload = () => {
-                        ctx.fillStyle = '#ffffff';
-                        ctx.fillRect(0, 0, 600, 600);
-                        ctx.drawImage(img, 0, 0, 600, 600);
-                        const a = document.createElement('a');
-                        a.download = `ticket-pass-${selectedTicket?.bookingRef || 'qr'}.png`;
-                        a.href = canvas.toDataURL('image/png');
-                        a.click();
-                      };
-                      img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
-                    }
-                  }}
-                  className="flex-1 py-3 bg-[#222222] hover:bg-[#2c2c2c] text-white font-bold text-xs uppercase tracking-[1.2px] rounded-full border border-white/10 flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md"
-                >
-                  <Download className="w-4 h-4 text-[#1ed760]" />
-                  <span>Download Pass (PNG)</span>
-                </button>
+              <ModalFooter className="border-t border-[#282828]">
                 <button
                   type="button"
                   onClick={onClose}
-                  className="flex-1 py-3 bg-[#1ed760] hover:bg-[#1fdf64] text-black font-black text-xs uppercase tracking-[1.2px] rounded-full hover:scale-105 transition-transform cursor-pointer"
+                  className="w-full py-3 bg-[#1ed760] hover:bg-[#1fdf64] text-black font-bold text-xs uppercase tracking-[1.4px] rounded-full hover:scale-105 transition-transform cursor-pointer"
                 >
                   Close Pass
                 </button>

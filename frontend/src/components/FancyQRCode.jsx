@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import QRCode from 'qrcode';
 
 /**
@@ -18,6 +18,10 @@ export default function FancyQRCode({
   className = '',
 }) {
   const [imgError, setImgError] = useState(false);
+
+  useEffect(() => {
+    setImgError(false);
+  }, [imageUrl]);
 
   // 1. Generate QR module matrix with High Error Correction (30% recovery)
   let qrMatrix = null;
@@ -155,7 +159,7 @@ export default function FancyQRCode({
         style={{
           width: `${logoPercentage}%`,
           height: `${logoPercentage}%`,
-          border: `2px solid ${ringColor}`,
+          border: `2.5px solid ${ringColor}`,
           backgroundColor: '#ffffff',
         }}
       >
@@ -163,8 +167,8 @@ export default function FancyQRCode({
           <img
             src={imageUrl}
             alt="Event Poster"
-            className="w-full h-full object-cover rounded-full"
-            crossOrigin="anonymous"
+            className="w-full h-full object-cover rounded-full pointer-events-none"
+            loading="eager"
             onError={() => setImgError(true)}
           />
         ) : (

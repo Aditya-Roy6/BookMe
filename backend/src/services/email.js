@@ -270,7 +270,7 @@ async function sendBookingConfirmation(user, booking, showtime, items, qrDataUrl
             SCAN AT AUDITORIUM ENTRANCE
           </p>
           <div style="margin: 0 auto; display: inline-block; padding: 10px; background: #ffffff; border: 1px solid #e0e0e0; border-radius: 16px; box-shadow: 0 4px 14px rgba(0,0,0,0.06);">
-            <img src="cid:booking-qrcode" alt="Booking QR Pass" width="200" height="200" style="display: block; width: 200px; height: 200px; border-radius: 12px; margin: 0 auto;" />
+            <img src="data:image/png;base64,${qrBuffer.toString('base64')}" alt="Booking QR Pass" width="200" height="200" style="display: block; width: 200px; height: 200px; border-radius: 12px; margin: 0 auto;" />
           </div>
 
           <!-- Reference Code -->

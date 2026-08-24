@@ -991,10 +991,29 @@ export default function SeatSelection() {
       });
 
       setActiveHold(res.data);
-      await fetchSeatMap();
+
+      const chosenSeats = selectedSeatIds.map((id) => {
+        const s = seats.find((seat) => seat.id === id);
+        const cat = categories.find((c) => c.id === s?.categoryId);
+        return {
+          id,
+          label: s?.label || '',
+          row: s?.row,
+          col: s?.col,
+          categoryId: s?.categoryId,
+          categoryName: cat?.name || 'Standard',
+          price: showtime?.pricing?.[s?.categoryId] || 350,
+          isHeldByMe: true,
+        };
+      });
 
       navigate(`/checkout/${showtimeId}`, {
-        state: { seatIds: selectedSeatIds, totalPrice },
+        state: {
+          seatIds: selectedSeatIds,
+          seats: chosenSeats,
+          showtime,
+          totalPrice,
+        },
       });
     } catch (err) {
       toast.error(err.response?.data?.error || 'Failed to hold seats. A seat may have just been claimed.', 'Hold Failed');

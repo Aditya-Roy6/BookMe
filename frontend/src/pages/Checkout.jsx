@@ -27,10 +27,13 @@ export default function Checkout() {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const [loading, setLoading] = useState(true);
+  const passedSeats = location.state?.seats || [];
+  const passedShowtime = location.state?.showtime || null;
+
+  const [loading, setLoading] = useState(!passedSeats.length || !passedShowtime);
   const [submitting, setSubmitting] = useState(false);
-  const [showtime, setShowtime] = useState(null);
-  const [heldSeats, setHeldSeats] = useState([]);
+  const [showtime, setShowtime] = useState(passedShowtime);
+  const [heldSeats, setHeldSeats] = useState(passedSeats);
   const [confirmedBooking, setConfirmedBooking] = useState(null);
   const [error, setError] = useState('');
 
@@ -55,7 +58,7 @@ export default function Checkout() {
 
   // Resolve Venue State (defaults to Maharashtra for Mumbai, etc.)
   const venueStateCode = React.useMemo(() => {
-    const venueText = (showtime?.venueName || '').toLowerCase();
+    const venueText = (showtime?.venueName || showtime?.event?.venue?.name || '').toLowerCase();
     if (venueText.includes('chennai') || venueText.includes('vr chennai')) return 'TN';
     if (venueText.includes('hyderabad') || venueText.includes('prasads')) return 'TS';
     if (venueText.includes('logix') || venueText.includes('noida') || venueText.includes('delhi')) return 'DL';
@@ -86,12 +89,15 @@ export default function Checkout() {
         setShowtime(res.data.showtime);
 
         const mySeats = res.data.seats.filter((s) => s.isHeldByMe);
-        if (mySeats.length === 0) {
+        if (mySeats.length === 0 && (!passedSeats || passedSeats.length === 0)) {
           setError('No held seats found for this session. Your hold may have expired.');
+        } else if (mySeats.length > 0) {
+          setHeldSeats(mySeats);
         }
-        setHeldSeats(mySeats);
       } catch (err) {
-        setError(err.response?.data?.error || 'Failed to load checkout details.');
+        if (!passedSeats || passedSeats.length === 0) {
+          setError(err.response?.data?.error || 'Failed to load checkout details.');
+        }
       } finally {
         setLoading(false);
       }

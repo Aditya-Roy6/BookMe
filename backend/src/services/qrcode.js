@@ -3,19 +3,21 @@ const { Resvg } = require('@resvg/resvg-js');
 const https = require('https');
 const http = require('http');
 
+const imageBase64Cache = new Map();
+
 /**
  * Fetch remote image as base64 data URI for offline SVG/PNG embedding
  */
 async function fetchImageAsBase64(url) {
   if (!url || typeof url !== 'string') return '';
   if (url.startsWith('data:')) return url;
+  if (imageBase64Cache.has(url)) return imageBase64Cache.get(url);
 
   return new Promise((resolve) => {
     try {
       const client = url.startsWith('https') ? https : http;
-      const req = client.get(url, { timeout: 4000 }, (res) => {
+      const req = client.get(url, { timeout: 1500 }, (res) => {
         if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
-          // Handle redirect
           return fetchImageAsBase64(res.headers.location).then(resolve);
         }
         if (res.statusCode !== 200) {
@@ -26,7 +28,10 @@ async function fetchImageAsBase64(url) {
         res.on('end', () => {
           const buf = Buffer.concat(chunks);
           const mime = res.headers['content-type'] || 'image/jpeg';
-          resolve(`data:${mime};base64,${buf.toString('base64')}`);
+          const dataUri = `data:${mime};base64,${buf.toString('base64')}`;
+          if (imageBase64Cache.size > 100) imageBase64Cache.clear();
+          imageBase64Cache.set(url, dataUri);
+          resolve(dataUri);
         });
       });
       req.on('error', () => resolve(''));

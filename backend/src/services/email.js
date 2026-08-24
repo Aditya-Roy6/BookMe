@@ -1,7 +1,127 @@
+const https = require('https');
 const { getTransporter } = require('../config/email');
 
-const SENDER = process.env.EMAIL_FROM || 'BooKMe <noreply@bookme.com>';
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
+const SENDER = process.env.EMAIL_FROM || 'BooKMe <aditya.roy9395525@gmail.com>';
+const FRONTEND_URL = process.env.FRONTEND_URL || 'https://bookme-jet.vercel.app';
+
+/**
+ * Send email via Resend HTTPS REST API (Port 443 - 100% works on cloud hosts like Render)
+ */
+async function sendViaResend(apiKey, { from, to, subject, html, attachments }) {
+  return new Promise((resolve, reject) => {
+    const payload = JSON.stringify({
+      from: from || process.env.EMAIL_FROM || 'BooKMe <onboarding@resend.dev>',
+      to: Array.isArray(to) ? to : [to],
+      subject,
+      html,
+      attachments: attachments
+        ? attachments.map((a) => ({
+            filename: a.filename,
+            content: a.content ? (Buffer.isBuffer(a.content) ? a.content.toString('base64') : a.content) : undefined,
+          }))
+        : undefined,
+    });
+
+    const req = https.request(
+      {
+        hostname: 'api.resend.com',
+        path: '/emails',
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(payload),
+        },
+      },
+      (res) => {
+        let data = '';
+        res.on('data', (chunk) => (data += chunk));
+        res.on('end', () => {
+          try {
+            const json = JSON.parse(data);
+            if (res.statusCode >= 200 && res.statusCode < 300) {
+              resolve({ success: true, messageId: json.id });
+            } else {
+              reject(new Error(json.message || data));
+            }
+          } catch (e) {
+            resolve({ success: true, raw: data });
+          }
+        });
+      }
+    );
+
+    req.on('error', reject);
+    req.write(payload);
+    req.end();
+  });
+}
+
+/**
+ * Send email via Brevo HTTPS REST API (Port 443)
+ */
+async function sendViaBrevo(apiKey, { from, to, subject, html }) {
+  return new Promise((resolve, reject) => {
+    const payload = JSON.stringify({
+      sender: { name: 'BooKMe', email: process.env.EMAIL_FROM || 'aditya.roy9395525@gmail.com' },
+      to: [{ email: to }],
+      subject,
+      htmlContent: html,
+    });
+
+    const req = https.request(
+      {
+        hostname: 'api.brevo.com',
+        path: '/v3/smtp/email',
+        method: 'POST',
+        headers: {
+          'api-key': apiKey,
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(payload),
+        },
+      },
+      (res) => {
+        let data = '';
+        res.on('data', (chunk) => (data += chunk));
+        res.on('end', () => {
+          if (res.statusCode >= 200 && res.statusCode < 300) {
+            resolve({ success: true });
+          } else {
+            reject(new Error(data));
+          }
+        });
+      }
+    );
+
+    req.on('error', reject);
+    req.write(payload);
+    req.end();
+  });
+}
+
+/**
+ * Unified email dispatch supporting HTTPS APIs (Resend, Brevo) and SMTP
+ */
+async function dispatchEmail({ to, subject, html, attachments, from }) {
+  const sender = from || SENDER;
+
+  if (process.env.RESEND_API_KEY) {
+    return sendViaResend(process.env.RESEND_API_KEY, { from: sender, to, subject, html, attachments });
+  }
+
+  if (process.env.BREVO_API_KEY) {
+    return sendViaBrevo(process.env.BREVO_API_KEY, { from: sender, to, subject, html });
+  }
+
+  const transporter = await getTransporter();
+  return transporter.sendMail({
+    from: sender,
+    to,
+    subject,
+    html,
+    attachments,
+  });
+}
 
 /**
  * Send booking confirmation email with embedded QR code
@@ -166,7 +286,7 @@ async function sendBookingConfirmation(user, booking, showtime, items, qrDataUrl
       </div>
     `;
 
-    const info = await transporter.sendMail({
+    const info = await dispatchEmail({
       from: SENDER,
       to: user.email,
       subject: `🎟️ Booking Confirmed: ${eventTitle} (${booking.bookingRef})`,
@@ -193,7 +313,6 @@ async function sendBookingConfirmation(user, booking, showtime, items, qrDataUrl
  */
 async function sendWaitlistOfferEmail(user, showtime, offerToken, expiresAt) {
   try {
-    const transporter = await getTransporter();
     const eventTitle = showtime?.event?.title || 'Event';
     const claimUrl = `${FRONTEND_URL}/waitlist/claim/${offerToken}`;
     const expiryFormatted = new Date(expiresAt).toLocaleTimeString();
@@ -222,7 +341,7 @@ async function sendWaitlistOfferEmail(user, showtime, offerToken, expiresAt) {
       </div>
     `;
 
-    const info = await transporter.sendMail({
+    const info = await dispatchEmail({
       from: SENDER,
       to: user.email,
       subject: `⚡ Action Required: Seat Available for ${eventTitle} (Time-Limited Offer)`,
@@ -241,7 +360,6 @@ async function sendWaitlistOfferEmail(user, showtime, offerToken, expiresAt) {
  */
 async function sendCancellationNotice(user, booking, showtime) {
   try {
-    const transporter = await getTransporter();
     const eventTitle = showtime?.event?.title || 'Event';
 
     const html = `
@@ -257,7 +375,7 @@ async function sendCancellationNotice(user, booking, showtime) {
       </div>
     `;
 
-    const info = await transporter.sendMail({
+    const info = await dispatchEmail({
       from: SENDER,
       to: user.email,
       subject: `❌ Booking Cancelled: ${eventTitle} (${booking.bookingRef})`,
@@ -276,8 +394,6 @@ async function sendCancellationNotice(user, booking, showtime) {
  */
 async function sendWelcomeEmail(user) {
   try {
-    const transporter = await getTransporter();
-
     const html = `
       <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #121212; color: #ffffff; border-radius: 12px; border: 1px solid #222;">
         <h1 style="color: #ffffff; margin-bottom: 8px; font-weight: 900; letter-spacing: -0.5px;">BooK<span style="color: #1ed760;">Me</span></h1>
@@ -296,7 +412,7 @@ async function sendWelcomeEmail(user) {
       </div>
     `;
 
-    const info = await transporter.sendMail({
+    const info = await dispatchEmail({
       from: SENDER,
       to: user.email,
       subject: 'Welcome to BooKMe! 🎉',
@@ -304,9 +420,6 @@ async function sendWelcomeEmail(user) {
     });
 
     console.log(`📩 Welcome email sent to ${user.email} (Message ID: ${info.messageId})`);
-    if (info.messageId && transporter.options.host === 'smtp.ethereal.email') {
-      console.log(`🔗 Preview URL: ${require('nodemailer').getTestMessageUrl(info)}`);
-    }
   } catch (error) {
     console.error('Failed to send welcome email:', error);
   }
@@ -317,7 +430,6 @@ async function sendWelcomeEmail(user) {
  */
 async function sendOtpEmail(email, name, otp) {
   try {
-    const transporter = await getTransporter();
     const sender = process.env.EMAIL_FROM || 'BooKMe <aditya.roy9395525@gmail.com>';
 
     const digitBoxesHtml = String(otp)
@@ -384,7 +496,7 @@ async function sendOtpEmail(email, name, otp) {
       </div>
     `;
 
-    const info = await transporter.sendMail({
+    const info = await dispatchEmail({
       from: sender,
       to: email,
       subject: `🔐 Your BooKMe Verification Code is ${otp} (Valid for 5 mins)`,
@@ -392,9 +504,6 @@ async function sendOtpEmail(email, name, otp) {
     });
 
     console.log(`📩 OTP email sent to ${email} (Message ID: ${info.messageId})`);
-    if (info.messageId && transporter.options?.host === 'smtp.ethereal.email') {
-      console.log(`🔗 Preview URL: ${require('nodemailer').getTestMessageUrl(info)}`);
-    }
     return { success: true, messageId: info.messageId };
   } catch (error) {
     console.error('Failed to send OTP email:', error);
@@ -407,7 +516,6 @@ async function sendOtpEmail(email, name, otp) {
  */
 async function sendResetPasswordOtpEmail(email, name, otp) {
   try {
-    const transporter = await getTransporter();
     const sender = process.env.EMAIL_FROM || 'BooKMe <aditya.roy9395525@gmail.com>';
     const digitBoxesHtml = String(otp)
       .split('')
@@ -460,7 +568,7 @@ async function sendResetPasswordOtpEmail(email, name, otp) {
           <!-- Security Notice -->
           <div style="background-color: rgba(255, 255, 255, 0.02); border: 1px dashed #333333; border-radius: 12px; padding: 14px; margin-bottom: 28px; text-align: left;">
             <p style="margin: 0; font-size: 12px; color: #888888; line-height: 1.5;">
-              🔒 <strong>Security Warning:</strong> If you did not request this password reset, your account is still secure. No changes will be made without this code.
+              🔒 <strong>Security Tip:</strong> If you did not request a password reset, you can safely ignore this email. Your password will remain unchanged.
             </p>
           </div>
 
@@ -472,22 +580,23 @@ async function sendResetPasswordOtpEmail(email, name, otp) {
       </div>
     `;
 
-    const info = await transporter.sendMail({
+    const info = await dispatchEmail({
       from: sender,
       to: email,
       subject: `🔑 BooKMe Password Reset Code: ${otp} (Valid for 5 mins)`,
       html,
     });
 
-    console.log(`📩 Reset password OTP sent to ${email} (Message ID: ${info.messageId})`);
+    console.log(`📩 Reset OTP email sent to ${email} (Message ID: ${info.messageId})`);
     return { success: true, messageId: info.messageId };
   } catch (error) {
-    console.error('Failed to send reset password OTP:', error);
+    console.error('Failed to send reset password OTP email:', error);
     return { success: false, error: error.message };
   }
 }
 
 module.exports = {
+  dispatchEmail,
   sendBookingConfirmation,
   sendWaitlistOfferEmail,
   sendCancellationNotice,

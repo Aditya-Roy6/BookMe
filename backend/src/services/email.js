@@ -2,7 +2,10 @@ const https = require('https');
 const { getTransporter } = require('../config/email');
 
 const SENDER = process.env.EMAIL_FROM || 'BooKMe <aditya.roy9395525@gmail.com>';
-const FRONTEND_URL = process.env.FRONTEND_URL || 'https://bookme-jet.vercel.app';
+const FRONTEND_URL =
+  process.env.FRONTEND_URL && !process.env.FRONTEND_URL.includes('localhost')
+    ? process.env.FRONTEND_URL
+    : 'https://bookme-jet.vercel.app';
 
 /**
  * Send email via Resend HTTPS REST API (Port 443 - 100% works on cloud hosts like Render)

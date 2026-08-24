@@ -1,4 +1,4 @@
-import React, { useId } from 'react';
+import React, { useState } from 'react';
 import QRCode from 'qrcode';
 
 /**
@@ -17,7 +17,7 @@ export default function FancyQRCode({
   bgColor = '#ffffff',
   className = '',
 }) {
-  const uniqueId = useId().replace(/:/g, '');
+  const [imgError, setImgError] = useState(false);
 
   // 1. Generate QR module matrix with High Error Correction (30% recovery)
   let qrMatrix = null;
@@ -86,14 +86,16 @@ export default function FancyQRCode({
     { r: moduleCount - 7, c: 0 },
   ];
 
+  const logoPercentage = ((logoRadiusPx * 2) / svgSize) * 100;
+
   return (
     <div
-      className={`fancy-qr-pass-container inline-flex items-center justify-center p-2 rounded-2xl bg-white shadow-sm select-none ${className}`}
+      className={`fancy-qr-pass-container relative inline-flex items-center justify-center p-2 rounded-2xl bg-white shadow-sm select-none ${className}`}
       style={{ width: size, height: size }}
     >
       <svg
         viewBox={`0 0 ${svgSize} ${svgSize}`}
-        className="w-full h-full"
+        className="w-full h-full block"
         style={{ shapeRendering: 'geometricPrecision' }}
       >
         {/* Background */}
@@ -136,53 +138,41 @@ export default function FancyQRCode({
           );
         })}
 
-        {/* Center Circular Logo / Movie Photo */}
-        <g>
-          <defs>
-            <clipPath id={`qr-logo-clip-${uniqueId}`}>
-              <circle cx={centerPx} cy={centerPx} r={logoRadiusPx} />
-            </clipPath>
-          </defs>
-
-          {/* White Outer Halo Ring */}
-          <circle
-            cx={centerPx}
-            cy={centerPx}
-            r={logoRadiusPx + 3}
-            fill="#ffffff"
-            stroke={ringColor}
-            strokeWidth={2.5}
-          />
-
-          {/* Movie Photo Image */}
-          {imageUrl ? (
-            <image
-              href={imageUrl}
-              x={centerPx - logoRadiusPx}
-              y={centerPx - logoRadiusPx}
-              width={logoRadiusPx * 2}
-              height={logoRadiusPx * 2}
-              clipPath={`url(#qr-logo-clip-${uniqueId})`}
-              preserveAspectRatio="xMidYMid slice"
-            />
-          ) : (
-            <g clipPath={`url(#qr-logo-clip-${uniqueId})`}>
-              <circle cx={centerPx} cy={centerPx} r={logoRadiusPx} fill="#1ed760" />
-              <text
-                x={centerPx}
-                y={centerPx + 4}
-                textAnchor="middle"
-                fontSize={logoRadiusPx * 0.75}
-                fontWeight="900"
-                fill="#000000"
-                fontFamily="sans-serif"
-              >
-                🎟️
-              </text>
-            </g>
-          )}
-        </g>
+        {/* Center Circular White Plate */}
+        <circle
+          cx={centerPx}
+          cy={centerPx}
+          r={logoRadiusPx + 2}
+          fill="#ffffff"
+          stroke={ringColor}
+          strokeWidth="2.5"
+        />
       </svg>
+
+      {/* Bulletproof Centered Movie/Event Artwork Badge */}
+      <div
+        className="absolute rounded-full overflow-hidden flex items-center justify-center shadow-sm"
+        style={{
+          width: `${logoPercentage}%`,
+          height: `${logoPercentage}%`,
+          border: `2px solid ${ringColor}`,
+          backgroundColor: '#ffffff',
+        }}
+      >
+        {imageUrl && !imgError ? (
+          <img
+            src={imageUrl}
+            alt="Event Poster"
+            className="w-full h-full object-cover rounded-full"
+            crossOrigin="anonymous"
+            onError={() => setImgError(true)}
+          />
+        ) : (
+          <div className="w-full h-full bg-[#1ed760] flex items-center justify-center rounded-full text-black font-black text-sm">
+            🎟️
+          </div>
+        )}
+      </div>
     </div>
   );
 }

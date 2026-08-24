@@ -21,6 +21,15 @@
     caret-color: #1ed760 !important;
     transition: background-color 5000s ease-in-out 0s;
   }
+
+  /* Prevent iOS / Mobile Safari automatic viewport zoom-in on input focus */
+  @media screen and (max-width: 768px) {
+    input,
+    select,
+    textarea {
+      font-size: 16px !important;
+    }
+  }
 }
 
 /* LuminaTix Surface & Shadow Utilities */

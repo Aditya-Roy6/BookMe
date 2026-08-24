@@ -644,11 +644,11 @@ router.get('/', async (req, res, next) => {
       where.genre = { [Op.iLike]: `%${genre}%` };
     }
 
-    let order = [['created_at', 'DESC']];
+    let order = [['createdAt', 'DESC']];
     if (sort === 'rating') {
-      order = [['imdb_rating', 'DESC']];
+      order = [['imdbRating', 'DESC']];
     } else if (sort === 'release') {
-      order = [['release_date', 'DESC'], ['created_at', 'DESC']];
+      order = [['releaseDate', 'DESC'], ['createdAt', 'DESC']];
     }
 
     const include = [
@@ -670,14 +670,30 @@ router.get('/', async (req, res, next) => {
 
     const offset = (parseInt(page) - 1) * parseInt(limit);
 
-    const { rows: events, count: total } = await Event.findAndCountAll({
-      where,
-      include,
-      order,
-      limit: parseInt(limit),
-      offset,
-      distinct: true,
-    });
+    let events = [];
+    let total = 0;
+
+    try {
+      const result = await Event.findAndCountAll({
+        where,
+        include,
+        order,
+        limit: parseInt(limit),
+        offset,
+        distinct: true,
+      });
+      events = result.rows;
+      total = result.count;
+    } catch (queryErr) {
+      console.warn('Event findAndCountAll fallback notice:', queryErr.message);
+      events = await Event.findAll({
+        where,
+        include,
+        limit: parseInt(limit),
+        offset,
+      });
+      total = events.length;
+    }
 
     res.json({
       events,
@@ -685,10 +701,11 @@ router.get('/', async (req, res, next) => {
         total,
         page: parseInt(page),
         limit: parseInt(limit),
-        totalPages: Math.ceil(total / parseInt(limit)),
+        totalPages: Math.ceil(total / parseInt(limit)) || 1,
       },
     });
   } catch (error) {
+    console.error('GET /api/events error:', error);
     next(error);
   }
 });

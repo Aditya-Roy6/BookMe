@@ -689,11 +689,12 @@ router.get('/', async (req, res, next) => {
       },
     });
   } catch (error) {
-    console.error('GET /api/events error:', error.message);
+    const errorDetails = error.message || error.original?.message || error.parent?.message || String(error);
+    console.error('GET /api/events error:', errorDetails);
     return res.json({
       events: [],
       pagination: { total: 0, page: 1, limit: 24, totalPages: 1 },
-      error: error.message,
+      error: errorDetails,
     });
   }
 });

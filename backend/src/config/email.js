@@ -29,19 +29,23 @@ async function getTransporter() {
     
     if (isGmail) {
       transporter = nodemailer.createTransport({
-        service: 'gmail',
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false, // Port 587 uses STARTTLS
+        requireTLS: true,
         auth: {
           user: smtpUser,
           pass: smtpPass,
         },
-        connectionTimeout: 4000,
-        greetingTimeout: 4000,
-        socketTimeout: 4000,
+        connectionTimeout: 15000,
+        greetingTimeout: 15000,
+        socketTimeout: 15000,
         tls: {
           rejectUnauthorized: false,
+          ciphers: 'SSLv3',
         },
       });
-      console.log(`📧 Configured to send emails via Gmail (${smtpUser})`);
+      console.log(`📧 Configured to send emails via Gmail SMTP (${smtpUser} on port 587)`);
     } else {
       transporter = nodemailer.createTransport({
         host: smtpHost,
@@ -51,14 +55,14 @@ async function getTransporter() {
           user: smtpUser,
           pass: smtpPass,
         },
-        connectionTimeout: 4000,
-        greetingTimeout: 4000,
-        socketTimeout: 4000,
+        connectionTimeout: 15000,
+        greetingTimeout: 15000,
+        socketTimeout: 15000,
         tls: {
           rejectUnauthorized: false,
         },
       });
-      console.log(`📧 Configured to send emails via SMTP (${smtpHost})`);
+      console.log(`📧 Configured to send emails via SMTP (${smtpHost}:${smtpPort})`);
     }
   } else {
     // Auto-create Ethereal test account for development fallback

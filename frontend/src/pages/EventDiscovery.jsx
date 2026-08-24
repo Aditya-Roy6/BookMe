@@ -405,16 +405,16 @@ export default function EventDiscovery() {
       )}
 
       {/* ─── 2. CATEGORY FILTER PILLS, DATEPICKER & FILTERS MODAL BUTTON ─── */}
-      <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-2">
         {/* Left: Clean Category Pills */}
-        <div className="flex flex-wrap gap-2">
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 flex-nowrap w-full sm:w-auto -mx-1 px-1">
           {categories.map((cat) => {
             const isSelected = selectedType === cat.value;
             return (
               <button
                 key={cat.value}
                 onClick={() => setSelectedType(cat.value)}
-                className={`px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                className={`px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all cursor-pointer flex-shrink-0 ${
                   isSelected
                     ? 'bg-white text-black scale-100 shadow-md font-black'
                     : 'bg-[#1f1f1f] text-[#b3b3b3] hover:text-white hover:bg-[#282828] border border-white/5'

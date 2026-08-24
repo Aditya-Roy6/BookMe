@@ -56,6 +56,18 @@ app.get('/api/email/verify', async (req, res) => {
   }
 });
 
+// Email test dispatch endpoint
+app.get('/api/email/test', async (req, res) => {
+  const targetEmail = req.query.to || 'adiroyboy2@gmail.com';
+  try {
+    const { sendOtpEmail } = require('./services/email');
+    const result = await sendOtpEmail(targetEmail, 'Test User', '123456');
+    res.json({ status: 'ok', targetEmail, result });
+  } catch (err) {
+    res.status(500).json({ status: 'error', error: err.message, code: err.code });
+  }
+});
+
 // SSE Live Stream Endpoint
 app.get('/api/showtimes/:id/stream', handleSSEConnection);
 

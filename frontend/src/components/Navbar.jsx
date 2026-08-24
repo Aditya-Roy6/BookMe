@@ -15,6 +15,8 @@ import {
   ShieldCheck,
   Compass,
   Search,
+  Menu,
+  X,
 } from 'lucide-react';
 import { TicketRoundedIcon, SearchRoundedIcon } from './CustomRoundedIcons';
 
@@ -25,6 +27,7 @@ export default function Navbar() {
   const [navSearch, setNavSearch] = useState('');
   const [avatarUrl, setAvatarUrl] = useState(() => localStorage.getItem('luminatix_avatar') || '');
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const userMenuRef = React.useRef(null);
 
   React.useEffect(() => {
@@ -269,7 +272,7 @@ export default function Navbar() {
             </AnimatePresence>
           </div>
         ) : (
-          <div className="flex items-center gap-2 sm:gap-3 text-sm font-bold">
+          <div className="hidden sm:flex items-center gap-2 sm:gap-3 text-sm font-bold">
             <Link
               to="/login"
               className="text-[#b3b3b3] hover:text-white hover:scale-105 transition-all px-3 py-1.5"
@@ -284,7 +287,114 @@ export default function Navbar() {
             </Link>
           </div>
         )}
+
+        {/* Mobile Hamburger Menu Toggle */}
+        <button
+          type="button"
+          onClick={() => setMobileMenuOpen((prev) => !prev)}
+          className="lg:hidden w-8 h-8 rounded-full bg-[#181818] hover:bg-[#282828] border border-white/5 flex items-center justify-center text-white transition-colors cursor-pointer"
+          title="Toggle Navigation Menu"
+        >
+          {mobileMenuOpen ? <X className="w-4 h-4 text-[#1ed760]" /> : <Menu className="w-4 h-4 text-white" />}
+        </button>
       </div>
+
+      {/* Mobile Drawer Menu */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="lg:hidden absolute top-full left-0 right-0 bg-[#141414]/95 backdrop-blur-2xl border-b border-white/10 px-4 py-5 shadow-2xl z-40 overflow-hidden space-y-4"
+          >
+            {/* Mobile Search Input */}
+            <form onSubmit={(e) => { handleNavSearch(e); setMobileMenuOpen(false); }} className="relative w-full">
+              <Search className="w-4 h-4 text-[#7c7c7c] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <input
+                value={navSearch}
+                onChange={(e) => setNavSearch(e.target.value)}
+                placeholder="Search movies, concerts, theatres..."
+                className="w-full bg-[#1f1f1f] text-white text-xs py-2.5 pl-9 pr-3 rounded-full border border-white/10 focus:border-[#1ed760] focus:outline-none placeholder:text-[#7c7c7c]"
+              />
+            </form>
+
+            {/* Mobile Navigation Links */}
+            <div className="flex flex-col space-y-1 text-sm font-bold">
+              <Link
+                to="/"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-3 ${
+                  isActive('/') ? 'bg-[#282828] text-[#1ed760]' : 'text-[#b3b3b3] hover:text-white'
+                }`}
+              >
+                <TicketRoundedIcon className="w-4 h-4" />
+                <span>Discover</span>
+              </Link>
+
+              {isAuthenticated && (
+                <Link
+                  to="/my-bookings"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-3 ${
+                    isActive('/my-bookings') ? 'bg-[#282828] text-[#1ed760]' : 'text-[#b3b3b3] hover:text-white'
+                  }`}
+                >
+                  <Ticket className="w-4 h-4 text-[#1ed760]" />
+                  <span>My Tickets</span>
+                </Link>
+              )}
+
+              {user && (user.role === 'organiser' || user.role === 'admin') && (
+                <Link
+                  to="/organiser/dashboard"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-3 ${
+                    isActive('/organiser/dashboard') ? 'bg-[#282828] text-[#ffa42b]' : 'text-[#b3b3b3] hover:text-white'
+                  }`}
+                >
+                  <LayoutDashboard className="w-4 h-4 text-[#ffa42b]" />
+                  <span>Organiser Hub</span>
+                </Link>
+              )}
+
+              {user && user.role === 'admin' && (
+                <Link
+                  to="/admin/venues"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-3 ${
+                    isActive('/admin/venues') ? 'bg-[#282828] text-[#1ed760]' : 'text-[#b3b3b3] hover:text-white'
+                  }`}
+                >
+                  <ShieldCheck className="w-4 h-4 text-[#1ed760]" />
+                  <span>Venues Management</span>
+                </Link>
+              )}
+            </div>
+
+            {/* Mobile Auth Buttons if logged out */}
+            {!isAuthenticated && (
+              <div className="pt-2 flex flex-col gap-2 border-t border-white/10">
+                <Link
+                  to="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full text-center py-2.5 rounded-full border border-white/20 text-white font-bold text-xs uppercase tracking-wider"
+                >
+                  Log In
+                </Link>
+                <Link
+                  to="/register"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full text-center py-2.5 rounded-full bg-[#1ed760] text-black font-bold text-xs uppercase tracking-wider shadow-lg"
+                >
+                  Sign Up
+                </Link>
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 }

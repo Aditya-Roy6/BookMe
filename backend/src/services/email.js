@@ -60,13 +60,24 @@ async function sendViaResend(apiKey, { from, to, subject, html, attachments }) {
 /**
  * Send email via Brevo HTTPS REST API (Port 443)
  */
-async function sendViaBrevo(apiKey, { from, to, subject, html }) {
+async function sendViaBrevo(apiKey, { from, to, subject, html, attachments }) {
   return new Promise((resolve, reject) => {
+    const rawSender = from || process.env.EMAIL_FROM || 'aditya.roy9395525@gmail.com';
+    const cleanSenderEmail = rawSender.includes('<')
+      ? rawSender.match(/<([^>]+)>/)?.[1] || rawSender
+      : rawSender;
+
     const payload = JSON.stringify({
-      sender: { name: 'BooKMe', email: process.env.EMAIL_FROM || 'aditya.roy9395525@gmail.com' },
-      to: [{ email: to }],
+      sender: { name: 'BooKMe', email: cleanSenderEmail.trim() },
+      to: [{ email: Array.isArray(to) ? to[0] : to }],
       subject,
       htmlContent: html,
+      attachment: attachments
+        ? attachments.map((a) => ({
+            name: a.filename,
+            content: a.content ? (Buffer.isBuffer(a.content) ? a.content.toString('base64') : a.content) : undefined,
+          }))
+        : undefined,
     });
 
     const req = https.request(
@@ -85,8 +96,14 @@ async function sendViaBrevo(apiKey, { from, to, subject, html }) {
         res.on('data', (chunk) => (data += chunk));
         res.on('end', () => {
           if (res.statusCode >= 200 && res.statusCode < 300) {
-            resolve({ success: true });
+            try {
+              const parsed = JSON.parse(data);
+              resolve({ success: true, messageId: parsed.messageId });
+            } catch (e) {
+              resolve({ success: true });
+            }
           } else {
+            console.error('Brevo API Error:', data);
             reject(new Error(data));
           }
         });
@@ -110,7 +127,7 @@ async function dispatchEmail({ to, subject, html, attachments, from }) {
   }
 
   if (process.env.BREVO_API_KEY) {
-    return sendViaBrevo(process.env.BREVO_API_KEY, { from: sender, to, subject, html });
+    return sendViaBrevo(process.env.BREVO_API_KEY, { from: sender, to, subject, html, attachments });
   }
 
   const transporter = await getTransporter();

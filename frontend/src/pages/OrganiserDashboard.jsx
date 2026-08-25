@@ -962,72 +962,72 @@ export default function OrganiserDashboard() {
       </div>
     )}
 
-      {/* ─── WIDE CREATE EVENT MODAL ─── */}
+      {/* ─── WIDE HORIZONTAL CREATE EVENT MODAL ─── */}
       <Modal
         isOpen={createModalOpen}
         onOpenChange={setCreateModalOpen}
         backdrop="blur"
-        size="4xl"
-        className="bg-[#181818] border border-[#282828] text-white rounded-2xl shadow-2xl max-w-4xl !overflow-visible"
+        size="5xl"
+        className="bg-[#181818] border border-[#282828] text-white rounded-2xl shadow-2xl max-w-5xl w-[94vw] !overflow-visible my-auto"
       >
         <ModalContent className="!overflow-visible">
           {(onClose) => (
             <>
-              <ModalHeader className="border-b border-[#282828] flex items-center justify-between">
+              <ModalHeader className="border-b border-[#282828] py-4 px-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <h3 className="font-display text-xl font-black text-white">
+                  <h3 className="font-display text-lg font-black text-white">
                     Create New Event Listing
                   </h3>
                   <p className="text-xs text-[#b3b3b3]">
                     Assign theatre venue, showtime schedule, and category pricing
                   </p>
                 </div>
-              </ModalHeader>
 
-              <ModalBody className="py-6 space-y-4 text-xs font-sans !overflow-visible">
-                <form id="createEventForm" onSubmit={handleCreateEvent} className="space-y-5">
-                  {/* Mode Switcher: New Event vs Add Showtime to Existing */}
-                  <div className="flex items-center gap-2 bg-[#121212] p-1.5 rounded-2xl border border-white/5 w-fit">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setCreationMode('new');
-                        setSelectedExistingEventId('');
-                      }}
-                      className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                        creationMode === 'new'
-                          ? 'bg-[#1ed760] text-black font-black shadow-md'
-                          : 'text-[#b3b3b3] hover:text-white'
-                      }`}
-                    >
-                      New Production Listing
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setCreationMode('existing');
-                        if (eventsList.length > 0 && !selectedExistingEventId) {
-                          const firstEv = eventsList[0];
-                          setSelectedExistingEventId(firstEv.id);
-                          setTitle(firstEv.title);
-                          setImageUrl(firstEv.imageUrl || '');
-                          setType(firstEv.type || 'movie');
-                          setDescription(firstEv.description || '');
-                        }
-                      }}
-                      className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                        creationMode === 'existing'
-                          ? 'bg-[#1ed760] text-black font-black shadow-md'
-                          : 'text-[#b3b3b3] hover:text-white'
-                      }`}
-                    >
-                      Add Showtime to Existing Movie ({eventsList.length})
-                    </button>
-                  </div>
+                {/* Mode Switcher in Header for Horizontal Compactness */}
+                <div className="flex items-center gap-1.5 bg-[#121212] p-1 rounded-xl border border-white/5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCreationMode('new');
+                      setSelectedExistingEventId('');
+                    }}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                      creationMode === 'new'
+                        ? 'bg-[#1ed760] text-black font-black shadow-sm'
+                        : 'text-[#b3b3b3] hover:text-white'
+                    }`}
+                  >
+                    New Production
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCreationMode('existing');
+                      if (eventsList.length > 0 && !selectedExistingEventId) {
+                        const firstEv = eventsList[0];
+                        setSelectedExistingEventId(firstEv.id);
+                        setTitle(firstEv.title);
+                        setImageUrl(firstEv.imageUrl || '');
+                        setType(firstEv.type || 'movie');
+                        setDescription(firstEv.description || '');
+                      }
+                    }}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                      creationMode === 'existing'
+                        ? 'bg-[#1ed760] text-black font-black shadow-sm'
+                        : 'text-[#b3b3b3] hover:text-white'
+                    }`}
+                  >
+                    Add Showtime to Existing ({eventsList.length})
+                  </button>
+                </div>
+                            </ModalHeader>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <ModalBody className="py-4 px-6 text-xs font-sans !overflow-visible">
+                <form id="createEventForm" onSubmit={handleCreateEvent} className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     {/* Left Column: Event Metadata & Custom Selects */}
-                    <div className="space-y-4">
+                    <div className="space-y-3.5">
                       {creationMode === 'existing' ? (
                         <Select
                           label="Select Existing Production"

@@ -601,6 +601,38 @@ router.post('/:id/showtimes', authenticate, authorize('organiser', 'admin'), asy
 });
 
 /**
+ * PUT /api/events/showtimes/:id
+ * Organiser only: Update showtime timing, format, language, screen, or pricing
+ */
+router.put('/showtimes/:id', authenticate, authorize('organiser', 'admin'), async (req, res, next) => {
+  try {
+    const showtime = await Showtime.findByPk(req.params.id, {
+      include: [{ model: Event, as: 'event' }],
+    });
+    if (!showtime) {
+      return res.status(404).json({ error: 'Showtime not found' });
+    }
+
+    if (req.user.role !== 'admin' && showtime.event && showtime.event.organiserId !== req.user.id) {
+      return res.status(403).json({ error: 'You can only edit showtimes for your own events' });
+    }
+
+    const { dateTime, format, language, screen, pricing } = req.body;
+    if (dateTime) showtime.dateTime = new Date(dateTime);
+    if (format) showtime.format = format;
+    if (language) showtime.language = language;
+    if (screen) showtime.screen = screen;
+    if (pricing) showtime.pricing = pricing;
+
+    await showtime.save();
+
+    res.json({ message: 'Showtime updated successfully', showtime });
+  } catch (error) {
+    next(error);
+  }
+});
+
+/**
  * GET /api/events
  * Public: Browse and filter events
  * Query params: type, search, industry, genre, date, page, limit

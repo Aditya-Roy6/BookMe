@@ -1,6 +1,7 @@
 import React from 'react';
+import * as Lucide from 'lucide-react';
 
-export const Bell = ({ size = 24, className = '', color = 'currentColor', ...props }) => (
+export const Ticket = ({ size = 24, className = '', color = 'currentColor', ...props }) => (
   <svg 
     xmlns="http://www.w3.org/2000/svg" 
     viewBox="0 0 24 24" 
@@ -10,7 +11,7 @@ export const Bell = ({ size = 24, className = '', color = 'currentColor', ...pro
     fill={color === 'currentColor' ? 'none' : color}
     {...props}
   >
-    <path d="M8.35179 20.2418C9.19288 21.311 10.5142 22 12 22C13.4858 22 14.8071 21.311 15.6482 20.2418C13.2264 20.57 10.7736 20.57 8.35179 20.2418Z" fill="currentColor"/> <path d="M18.7491 9V9.7041C18.7491 10.5491 18.9903 11.3752 19.4422 12.0782L20.5496 13.8012C21.5612 15.3749 20.789 17.5139 19.0296 18.0116C14.4273 19.3134 9.57274 19.3134 4.97036 18.0116C3.21105 17.5139 2.43882 15.3749 3.45036 13.8012L4.5578 12.0782C5.00972 11.3752 5.25087 10.5491 5.25087 9.7041V9C5.25087 5.13401 8.27256 2 12 2C15.7274 2 18.7491 5.13401 18.7491 9Z" fill="currentColor"/>
+    <path fillRule="evenodd" clipRule="evenodd" d="M9.99502 4H14.005C17.7856 4 19.6759 4 20.8504 5.17157C21.6591 5.97823 21.911 7.12339 21.9894 8.98947C22.005 9.35954 22.0128 9.54458 21.9437 9.66803C21.8746 9.79147 21.5987 9.94554 21.0469 10.2537C20.4341 10.5959 20.0199 11.2497 20.0199 12C20.0199 12.7503 20.4341 13.4041 21.0469 13.7463C21.5987 14.0545 21.8746 14.2085 21.9437 14.332C22.0128 14.4554 22.005 14.6405 21.9894 15.0105C21.911 16.8766 21.6591 18.0218 20.8504 18.8284C19.6759 20 17.7856 20 14.005 20H9.99502C6.21438 20 4.32407 20 3.14958 18.8284C2.34091 18.0218 2.08903 16.8766 2.01058 15.0105C1.99502 14.6405 1.98724 14.4554 2.05634 14.332C2.12545 14.2085 2.40133 14.0545 2.95308 13.7463C3.56586 13.4041 3.98007 12.7503 3.98007 12C3.98007 11.2497 3.56586 10.5959 2.95308 10.2537C2.40133 9.94554 2.12545 9.79147 2.05634 9.66802C1.98724 9.54458 1.99502 9.35954 2.01058 8.98947C2.08903 7.12339 2.34091 5.97823 3.14958 5.17157C4.32407 4 6.21439 4 9.99502 4ZM15.5478 8.46967C15.8415 8.76256 15.8415 9.23744 15.5478 9.53033L9.53289 15.5303C9.23927 15.8232 8.76321 15.8232 8.46959 15.5303C8.17596 15.2374 8.17596 14.7626 8.46959 14.4697L14.4845 8.46967C14.7782 8.17678 15.2542 8.17678 15.5478 8.46967ZM14.5149 15.5C15.0686 15.5 15.5174 15.0523 15.5174 14.5C15.5174 13.9477 15.0686 13.5 14.5149 13.5C13.9613 13.5 13.5124 13.9477 13.5124 14.5C13.5124 15.0523 13.9613 15.5 14.5149 15.5ZM9.50248 10.5C10.0561 10.5 10.505 10.0523 10.505 9.5C10.505 8.94772 10.0561 8.5 9.50248 8.5C8.94882 8.5 8.49999 8.94772 8.49999 9.5C8.49999 10.0523 8.94882 10.5 9.50248 10.5Z" fill="currentColor"/>
   </svg>
 );
 
@@ -143,6 +144,20 @@ export const Moon = ({ size = 24, className = '', color = 'currentColor', ...pro
   </svg>
 );
 
+export const Sun = ({ size = 24, className = '', color = 'currentColor', ...props }) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    viewBox="0 0 24 24" 
+    width={size} 
+    height={size} 
+    className={className} 
+    fill={color === 'currentColor' ? 'none' : color}
+    {...props}
+  >
+    <path d="M18 12C18 15.3137 15.3137 18 12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12Z" fill="currentColor"/> <path fillRule="evenodd" clipRule="evenodd" d="M12 1.25C12.4142 1.25 12.75 1.58579 12.75 2V3C12.75 3.41421 12.4142 3.75 12 3.75C11.5858 3.75 11.25 3.41421 11.25 3V2C11.25 1.58579 11.5858 1.25 12 1.25ZM4.39861 4.39861C4.6915 4.10572 5.16638 4.10572 5.45927 4.39861L5.85211 4.79145C6.145 5.08434 6.145 5.55921 5.85211 5.85211C5.55921 6.145 5.08434 6.145 4.79145 5.85211L4.39861 5.45927C4.10572 5.16638 4.10572 4.6915 4.39861 4.39861ZM19.6011 4.39887C19.894 4.69176 19.894 5.16664 19.6011 5.45953L19.2083 5.85237C18.9154 6.14526 18.4405 6.14526 18.1476 5.85237C17.8547 5.55947 17.8547 5.0846 18.1476 4.79171L18.5405 4.39887C18.8334 4.10598 19.3082 4.10598 19.6011 4.39887ZM1.25 12C1.25 11.5858 1.58579 11.25 2 11.25H3C3.41421 11.25 3.75 11.5858 3.75 12C3.75 12.4142 3.41421 12.75 3 12.75H2C1.58579 12.75 1.25 12.4142 1.25 12ZM20.25 12C20.25 11.5858 20.5858 11.25 21 11.25H22C22.4142 11.25 22.75 11.5858 22.75 12C22.75 12.4142 22.4142 12.75 22 12.75H21C20.5858 12.75 20.25 12.4142 20.25 12ZM18.1476 18.1476C18.4405 17.8547 18.9154 17.8547 19.2083 18.1476L19.6011 18.5405C19.894 18.8334 19.894 19.3082 19.6011 19.6011C19.3082 19.894 18.8334 19.894 18.5405 19.6011L18.1476 19.2083C17.8547 18.9154 17.8547 18.4405 18.1476 18.1476ZM5.85211 18.1479C6.145 18.4408 6.145 18.9157 5.85211 19.2086L5.45927 19.6014C5.16638 19.8943 4.6915 19.8943 4.39861 19.6014C4.10572 19.3085 4.10572 18.8336 4.39861 18.5407L4.79145 18.1479C5.08434 17.855 5.55921 17.855 5.85211 18.1479ZM12 20.25C12.4142 20.25 12.75 20.5858 12.75 21V22C12.75 22.4142 12.4142 22.75 12 22.75C11.5858 22.75 11.25 22.4142 11.25 22V21C11.25 20.5858 11.5858 20.25 12 20.25Z" fill="currentColor"/>
+  </svg>
+);
+
 export const Film = ({ size = 24, className = '', color = 'currentColor', ...props }) => (
   <svg 
     xmlns="http://www.w3.org/2000/svg" 
@@ -239,34 +254,6 @@ export const Volume2 = ({ size = 24, className = '', color = 'currentColor', ...
   >
     <path d="M12.1657 2.14424C12.8728 2.50021 13 3.27314 13 3.7446V20.2561C13 20.7286 12.8717 21.4998 12.1656 21.8554C11.416 22.2331 10.7175 21.8081 10.3623 21.4891L4.95001 16.6248H3.00001C1.89544 16.6248 1.00001 15.7293 1.00001 14.6248L1 9.43717C1 8.3326 1.89543 7.43717 3 7.43717H4.94661L10.3623 2.51158C10.7163 2.19354 11.4151 1.76635 12.1657 2.14424Z" fill="currentColor"/>
 <path d="M16.1185 7.73078L16.3581 7.80239C18.1251 8.33068 19.25 10.1014 19.25 12C19.25 13.8987 18.1251 15.6693 16.3581 16.1976L16.1185 16.2692C15.5894 16.4274 15.0322 16.1267 14.874 15.5976L14.7308 15.1185C14.5726 14.5894 14.8733 14.0322 15.4024 13.874L15.642 13.8024C16.1752 13.643 16.75 12.9881 16.75 12C16.75 11.012 16.1752 10.3571 15.642 10.1976L15.4024 10.126C14.8733 9.96782 14.5726 9.41062 14.7308 8.88148L14.874 8.40243C15.0322 7.87329 15.5894 7.57258 16.1185 7.73078Z" fill="currentColor"/>
-  </svg>
-);
-
-export const Sun = ({ size = 24, className = '', color = 'currentColor', ...props }) => (
-  <svg 
-    xmlns="http://www.w3.org/2000/svg" 
-    viewBox="0 0 24 24" 
-    width={size} 
-    height={size} 
-    className={className} 
-    fill={color === 'currentColor' ? 'none' : color}
-    {...props}
-  >
-    <path d="M18 12C18 15.3137 15.3137 18 12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12Z" fill="currentColor"/> <path fillRule="evenodd" clipRule="evenodd" d="M12 1.25C12.4142 1.25 12.75 1.58579 12.75 2V3C12.75 3.41421 12.4142 3.75 12 3.75C11.5858 3.75 11.25 3.41421 11.25 3V2C11.25 1.58579 11.5858 1.25 12 1.25ZM4.39861 4.39861C4.6915 4.10572 5.16638 4.10572 5.45927 4.39861L5.85211 4.79145C6.145 5.08434 6.145 5.55921 5.85211 5.85211C5.55921 6.145 5.08434 6.145 4.79145 5.85211L4.39861 5.45927C4.10572 5.16638 4.10572 4.6915 4.39861 4.39861ZM19.6011 4.39887C19.894 4.69176 19.894 5.16664 19.6011 5.45953L19.2083 5.85237C18.9154 6.14526 18.4405 6.14526 18.1476 5.85237C17.8547 5.55947 17.8547 5.0846 18.1476 4.79171L18.5405 4.39887C18.8334 4.10598 19.3082 4.10598 19.6011 4.39887ZM1.25 12C1.25 11.5858 1.58579 11.25 2 11.25H3C3.41421 11.25 3.75 11.5858 3.75 12C3.75 12.4142 3.41421 12.75 3 12.75H2C1.58579 12.75 1.25 12.4142 1.25 12ZM20.25 12C20.25 11.5858 20.5858 11.25 21 11.25H22C22.4142 11.25 22.75 11.5858 22.75 12C22.75 12.4142 22.4142 12.75 22 12.75H21C20.5858 12.75 20.25 12.4142 20.25 12ZM18.1476 18.1476C18.4405 17.8547 18.9154 17.8547 19.2083 18.1476L19.6011 18.5405C19.894 18.8334 19.894 19.3082 19.6011 19.6011C19.3082 19.894 18.8334 19.894 18.5405 19.6011L18.1476 19.2083C17.8547 18.9154 17.8547 18.4405 18.1476 18.1476ZM5.85211 18.1479C6.145 18.4408 6.145 18.9157 5.85211 19.2086L5.45927 19.6014C5.16638 19.8943 4.6915 19.8943 4.39861 19.6014C4.10572 19.3085 4.10572 18.8336 4.39861 18.5407L4.79145 18.1479C5.08434 17.855 5.55921 17.855 5.85211 18.1479ZM12 20.25C12.4142 20.25 12.75 20.5858 12.75 21V22C12.75 22.4142 12.4142 22.75 12 22.75C11.5858 22.75 11.25 22.4142 11.25 22V21C11.25 20.5858 11.5858 20.25 12 20.25Z" fill="currentColor"/>
-  </svg>
-);
-
-export const Ticket = ({ size = 24, className = '', color = 'currentColor', ...props }) => (
-  <svg 
-    xmlns="http://www.w3.org/2000/svg" 
-    viewBox="0 0 24 24" 
-    width={size} 
-    height={size} 
-    className={className} 
-    fill={color === 'currentColor' ? 'none' : color}
-    {...props}
-  >
-    <path fillRule="evenodd" clipRule="evenodd" d="M9.99502 4H14.005C17.7856 4 19.6759 4 20.8504 5.17157C21.6591 5.97823 21.911 7.12339 21.9894 8.98947C22.005 9.35954 22.0128 9.54458 21.9437 9.66803C21.8746 9.79147 21.5987 9.94554 21.0469 10.2537C20.4341 10.5959 20.0199 11.2497 20.0199 12C20.0199 12.7503 20.4341 13.4041 21.0469 13.7463C21.5987 14.0545 21.8746 14.2085 21.9437 14.332C22.0128 14.4554 22.005 14.6405 21.9894 15.0105C21.911 16.8766 21.6591 18.0218 20.8504 18.8284C19.6759 20 17.7856 20 14.005 20H9.99502C6.21438 20 4.32407 20 3.14958 18.8284C2.34091 18.0218 2.08903 16.8766 2.01058 15.0105C1.99502 14.6405 1.98724 14.4554 2.05634 14.332C2.12545 14.2085 2.40133 14.0545 2.95308 13.7463C3.56586 13.4041 3.98007 12.7503 3.98007 12C3.98007 11.2497 3.56586 10.5959 2.95308 10.2537C2.40133 9.94554 2.12545 9.79147 2.05634 9.66802C1.98724 9.54458 1.99502 9.35954 2.01058 8.98947C2.08903 7.12339 2.34091 5.97823 3.14958 5.17157C4.32407 4 6.21439 4 9.99502 4ZM15.5478 8.46967C15.8415 8.76256 15.8415 9.23744 15.5478 9.53033L9.53289 15.5303C9.23927 15.8232 8.76321 15.8232 8.46959 15.5303C8.17596 15.2374 8.17596 14.7626 8.46959 14.4697L14.4845 8.46967C14.7782 8.17678 15.2542 8.17678 15.5478 8.46967ZM14.5149 15.5C15.0686 15.5 15.5174 15.0523 15.5174 14.5C15.5174 13.9477 15.0686 13.5 14.5149 13.5C13.9613 13.5 13.5124 13.9477 13.5124 14.5C13.5124 15.0523 13.9613 15.5 14.5149 15.5ZM9.50248 10.5C10.0561 10.5 10.505 10.0523 10.505 9.5C10.505 8.94772 10.0561 8.5 9.50248 8.5C8.94882 8.5 8.49999 8.94772 8.49999 9.5C8.49999 10.0523 8.94882 10.5 9.50248 10.5Z" fill="currentColor"/>
   </svg>
 );
 
@@ -463,4 +450,306 @@ export const TheatreIcon = ({ size = 24, className = '', color = 'currentColor',
 </g>
   </svg>
 );
+
+export const Bell = ({ size = 24, className = '', color = 'currentColor', ...props }) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    viewBox="0 0 24 24" 
+    width={size} 
+    height={size} 
+    className={className} 
+    fill={color === 'currentColor' ? 'none' : color}
+    {...props}
+  >
+    <path d="M8.35179 20.2418C9.19288 21.311 10.5142 22 12 22C13.4858 22 14.8071 21.311 15.6482 20.2418C13.2264 20.57 10.7736 20.57 8.35179 20.2418Z" fill="currentColor"/> <path d="M18.7491 9V9.7041C18.7491 10.5491 18.9903 11.3752 19.4422 12.0782L20.5496 13.8012C21.5612 15.3749 20.789 17.5139 19.0296 18.0116C14.4273 19.3134 9.57274 19.3134 4.97036 18.0116C3.21105 17.5139 2.43882 15.3749 3.45036 13.8012L4.5578 12.0782C5.00972 11.3752 5.25087 10.5491 5.25087 9.7041V9C5.25087 5.13401 8.27256 2 12 2C15.7274 2 18.7491 5.13401 18.7491 9Z" fill="currentColor"/>
+  </svg>
+);
+
+export const Activity = Lucide['Activity'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const AlertCircle = Lucide['AlertCircle'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const AlertTriangle = Lucide['AlertTriangle'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const Armchair = Lucide['Armchair'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const ArrowLeft = Lucide['ArrowLeft'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const ArrowRight = Lucide['ArrowRight'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const ArrowUpRight = Lucide['ArrowUpRight'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const Building2 = Lucide['Building2'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const Camera = Lucide['Camera'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const Check = Lucide['Check'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const CheckCircle2 = Lucide['CheckCircle2'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const ChevronDown = Lucide['ChevronDown'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const ChevronLeft = Lucide['ChevronLeft'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const ChevronRight = Lucide['ChevronRight'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const ChevronUp = Lucide['ChevronUp'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const Compass = Lucide['Compass'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const Copy = Lucide['Copy'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const CornerUpLeft = Lucide['CornerUpLeft'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const CornerUpRight = Lucide['CornerUpRight'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const CreditCard = Lucide['CreditCard'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const Disc = Lucide['Disc'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const Download = Lucide['Download'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const Edit3 = Lucide['Edit3'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const ExternalLink = Lucide['ExternalLink'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const Eye = Lucide['Eye'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const EyeOff = Lucide['EyeOff'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const FileText = Lucide['FileText'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const Flag = Lucide['Flag'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const Globe = Lucide['Globe'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const Globe2 = Lucide['Globe2'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const Grid = Lucide['Grid'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const Hash = Lucide['Hash'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const HelpCircle = Lucide['HelpCircle'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const KeyRound = Lucide['KeyRound'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const Layers = Lucide['Layers'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const LayoutGrid = Lucide['LayoutGrid'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const Loader2 = Lucide['Loader2'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const Lock = Lucide['Lock'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const Mail = Lucide['Mail'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const Map = Lucide['Map'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const Maximize2 = Lucide['Maximize2'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const Menu = Lucide['Menu'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const MessageSquare = Lucide['MessageSquare'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const Mic = Lucide['Mic'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const Minus = Lucide['Minus'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const MousePointer = Lucide['MousePointer'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const Move = Lucide['Move'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const Music = Lucide['Music'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const Navigation = Lucide['Navigation'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const PenTool = Lucide['PenTool'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const Plus = Lucide['Plus'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const QrCode = Lucide['QrCode'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const RotateCw = Lucide['RotateCw'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const Slash = Lucide['Slash'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const Sliders = Lucide['Sliders'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const SlidersHorizontal = Lucide['SlidersHorizontal'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const Sparkles = Lucide['Sparkles'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const Square = Lucide['Square'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const Swords = Lucide['Swords'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const Trash2 = Lucide['Trash2'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const TrendingUp = Lucide['TrendingUp'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const Trophy = Lucide['Trophy'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const Tv = Lucide['Tv'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const Type = Lucide['Type'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const Upload = Lucide['Upload'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const User = Lucide['User'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const UserCheck = Lucide['UserCheck'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const Users = Lucide['Users'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const Wand2 = Lucide['Wand2'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const X = Lucide['X'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const ZoomIn = Lucide['ZoomIn'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
+
+export const ZoomOut = Lucide['ZoomOut'] || (({ size = 24, className = '', ...props }) => (
+  <span className={className} {...props} />
+));
 

@@ -9,14 +9,8 @@ import {
   AisleStairsGraphic,
   AuditoriumScreen3D,
 } from './SeatSelection';
-import {
-  ArrowLeft,
-  Calendar,
-  MapPin,
-  QrCode,
-  Loader2,
-  AlertCircle,
-} from 'lucide-react';
+import { ArrowLeft, QrCode, Loader2, AlertCircle } from 'lucide-react';
+import { Calendar, MapPin } from '../components/MappedIcons';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from '@heroui/react';
 
 export default function BookedSeatsView() {

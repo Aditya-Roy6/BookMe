@@ -2,23 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../api/client';
 import { useToast } from '../context/ToastContext';
-import {
-  Ticket,
-  Mail,
-  Lock,
-  AlertCircle,
-  ArrowRight,
-  Loader2,
-  CheckCircle2,
-  Eye,
-  EyeOff,
-  RotateCw,
-  ArrowLeft,
-  KeyRound,
-  Clock,
-  ShieldCheck,
-  Sparkles
-} from 'lucide-react';
+import { Mail, Lock, AlertCircle, ArrowRight, Loader2, CheckCircle2, Eye, EyeOff, RotateCw, ArrowLeft, KeyRound, ShieldCheck, Sparkles } from 'lucide-react';
+import { Ticket, Clock } from '../components/MappedIcons';
 
 export default function ResetPassword() {
   const [step, setStep] = useState(1); // 1: Email, 2: OTP & New Password

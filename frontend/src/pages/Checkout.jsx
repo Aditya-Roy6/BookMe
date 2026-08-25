@@ -6,20 +6,8 @@ import TTLTimer from '../components/TTLTimer';
 import { ReceiptPrinter } from '../components/ReceiptPrinter';
 import FancyQRCode from '../components/FancyQRCode';
 import Select from '../components/Select';
-import {
-  Ticket,
-  CheckCircle2,
-  Calendar,
-  MapPin,
-  CreditCard,
-  Lock,
-  ArrowRight,
-  Loader2,
-  AlertCircle,
-  ShieldCheck,
-  Armchair,
-  Sparkles,
-} from 'lucide-react';
+import { CheckCircle2, CreditCard, Lock, ArrowRight, Loader2, AlertCircle, ShieldCheck, Armchair, Sparkles } from 'lucide-react';
+import { Ticket, Calendar, MapPin } from '../components/MappedIcons';
 
 export default function Checkout() {
   const { id: showtimeId } = useParams();

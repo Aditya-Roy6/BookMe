@@ -10,47 +10,8 @@ import {
 import api from '../api/client';
 import ColorPicker from '../components/ColorPicker';
 import { useToast } from '../context/ToastContext';
-import {
-  ShieldCheck,
-  Plus,
-  Grid,
-  Loader2,
-  AlertCircle,
-  CheckCircle2,
-  MapPin,
-  Trash2,
-  Layers,
-  Sparkles,
-  Sliders,
-  Check,
-  Eye,
-  ArrowLeft,
-  Tv,
-  Disc,
-  Armchair,
-  Save,
-  Maximize2,
-  Info,
-  MousePointer,
-  Compass,
-  RotateCw,
-  Minus,
-  ZoomIn,
-  ZoomOut,
-  Type,
-  Square,
-  Slash,
-  PenTool,
-  CornerUpLeft,
-  CornerUpRight,
-  Move,
-  LayoutGrid,
-  Wand2,
-  Copy,
-  Hash,
-  X,
-  Volume2,
-} from 'lucide-react';
+import { ShieldCheck, Plus, Grid, Loader2, AlertCircle, CheckCircle2, Trash2, Layers, Sparkles, Sliders, Check, Eye, ArrowLeft, Tv, Disc, Armchair, Maximize2, MousePointer, Compass, RotateCw, Minus, ZoomIn, ZoomOut, Type, Square, Slash, PenTool, CornerUpLeft, CornerUpRight, Move, LayoutGrid, Wand2, Copy, Hash, X } from 'lucide-react';
+import { MapPin, Save, Info, Volume2 } from '../components/MappedIcons';
 import { NormalSeatSvg, ReclinerSeatSvg, AuditoriumScreen3D, AisleStairsGraphic } from './SeatSelection';
 import { VENUE_LAYOUT_PRESETS } from '../components/SportsVenueLayouts';
 import {

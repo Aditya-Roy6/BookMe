@@ -9,35 +9,8 @@ import {
 import api from '../api/client';
 import Select from '../components/Select';
 import DateTimePicker from '../components/DateTimePicker';
-import {
-  DollarSign,
-  Ticket,
-  Users,
-  Calendar,
-  Plus,
-  Loader2,
-  AlertCircle,
-  CheckCircle2,
-  Film,
-  Music,
-  MapPin,
-  Clock,
-  Sparkles,
-  TrendingUp,
-  X,
-  Volume2,
-  BarChart3,
-  PieChart,
-  Activity,
-  ArrowUpRight,
-  Percent,
-  Layers,
-  Search,
-  ChevronRight,
-  Filter,
-  Edit3,
-  Star,
-} from 'lucide-react';
+import { Users, Plus, Loader2, AlertCircle, CheckCircle2, Music, Sparkles, TrendingUp, X, Activity, ArrowUpRight, Layers, ChevronRight, Edit3 } from 'lucide-react';
+import { DollarSign, Ticket, Calendar, Film, MapPin, Clock, Volume2, BarChart3, PieChart, Percent, Search, Filter, Star } from '../components/MappedIcons';
 import { useToast } from '../context/ToastContext';
 import { StarRoundedIcon } from '../components/CustomRoundedIcons';
 

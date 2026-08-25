@@ -8,16 +8,8 @@ import {
   DropdownItem,
 } from '@heroui/react';
 import { useAuth } from '../context/AuthContext';
-import {
-  Ticket,
-  LogOut,
-  LayoutDashboard,
-  ShieldCheck,
-  Compass,
-  Search,
-  Menu,
-  X,
-} from 'lucide-react';
+import { ShieldCheck, Compass, Menu, X } from 'lucide-react';
+import { Ticket, LogOut, LayoutDashboard, Search } from './MappedIcons';
 import { TicketRoundedIcon, SearchRoundedIcon } from './CustomRoundedIcons';
 
 export default function Navbar() {

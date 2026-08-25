@@ -11,7 +11,8 @@ import {
 } from '@heroui/react';
 import api from '../api/client';
 import TTLTimer from '../components/TTLTimer';
-import { Ticket, Clock, CheckCircle2, AlertCircle, ArrowRight, Loader2, Calendar, MapPin, Sparkles } from 'lucide-react';
+import { CheckCircle2, AlertCircle, ArrowRight, Loader2, Sparkles } from 'lucide-react';
+import { Ticket, Clock, Calendar, MapPin } from '../components/MappedIcons';
 
 export default function WaitlistOfferClaim() {
   const { token } = useParams();

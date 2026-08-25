@@ -15,21 +15,9 @@ import api from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import TTLTimer from '../components/TTLTimer';
-import {
-  Ticket,
-  Calendar,
-  MapPin,
-  Clock,
-  AlertCircle,
-  CheckCircle2,
-  ArrowRight,
-  Loader2,
-  Volume2,
-  Sparkles,
-  ShieldCheck,
-  Play,
-  X,
-} from 'lucide-react';
+import { AlertCircle, CheckCircle2, ArrowRight, Loader2, Sparkles, ShieldCheck, X } from 'lucide-react';
+import { Play } from '../components/MappedIcons';
+import { Ticket, Calendar, MapPin, Clock, Volume2 } from '../components/MappedIcons';
 import { VenuePitchVisual, resolveLayoutType } from '../components/SportsVenueLayouts';
 
 // ─── Normal SVG Seat Icon (Using Exact public/normal seats.svg) ───

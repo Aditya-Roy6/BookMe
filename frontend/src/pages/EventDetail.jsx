@@ -7,30 +7,9 @@ import {
   Button,
 } from '@heroui/react';
 import api from '../api/client';
-import {
-  Ticket,
-  Calendar,
-  MapPin,
-  Clock,
-  ArrowRight,
-  Loader2,
-  Volume2,
-  Sparkles,
-  Play,
-  User,
-  Star,
-  ShieldCheck,
-  Compass,
-  Navigation,
-  Info,
-  X,
-  MessageSquare,
-  TrendingUp,
-  DollarSign,
-  Film,
-  ChevronDown,
-  Check,
-} from 'lucide-react';
+import { ArrowRight, Loader2, Sparkles, User, ShieldCheck, Compass, Navigation, X, MessageSquare, TrendingUp, ChevronDown, Check } from 'lucide-react';
+import { Play } from '../components/MappedIcons';
+import { Ticket, Calendar, MapPin, Clock, Volume2, Star, Info, DollarSign, Film } from '../components/MappedIcons';
 import {
   PlayRoundedIcon,
   StarRoundedIcon,

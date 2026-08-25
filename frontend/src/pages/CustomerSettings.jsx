@@ -3,27 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import api from '../api/client';
-import {
-  User,
-  Mail,
-  Shield,
-  Ticket,
-  Calendar,
-  MapPin,
-  QrCode,
-  Bell,
-  CheckCircle2,
-  Armchair,
-  Sparkles,
-  Sliders,
-  Save,
-  Volume2,
-  Clock,
-  Loader2,
-  Camera,
-  Check,
-  Upload,
-} from 'lucide-react';
+import { User, Mail, Shield, QrCode, CheckCircle2, Armchair, Sparkles, Sliders, Loader2, Camera, Check, Upload } from 'lucide-react';
+import { Ticket, Calendar, MapPin, Bell, Save, Volume2, Clock } from '../components/MappedIcons';
 
 export default function CustomerSettings() {
   const { user } = useAuth();

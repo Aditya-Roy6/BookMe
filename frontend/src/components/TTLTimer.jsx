@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, AlertTriangle } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
+import { Clock } from './MappedIcons';
 
 export default function TTLTimer({ initialSeconds = 600, expiresAt, onExpire }) {
   const calculateRemaining = () => {

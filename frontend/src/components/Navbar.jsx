@@ -17,7 +17,6 @@ import {
   Search,
   Menu,
   X,
-  Sun,
 } from 'lucide-react';
 import { TicketRoundedIcon, SearchRoundedIcon } from './CustomRoundedIcons';
 
@@ -150,7 +149,10 @@ export default function Navbar() {
           className="w-8 h-8 rounded-full bg-[#181818] hover:bg-[#282828] border border-white/5 flex items-center justify-center text-[#b3b3b3] hover:text-white transition-colors cursor-pointer preserve-color"
           title="Toggle Theme"
         >
-          <Sun className="w-4 h-4" />
+          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"></path>
+          </svg>
         </button>
 
         {/* Navbar Search Pill Form */}

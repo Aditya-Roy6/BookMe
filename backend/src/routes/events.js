@@ -1,8 +1,9 @@
 const express = require('express');
-const { Event, Showtime, Venue, SeatCategory, Seat, SeatStatus, User } = require('../models');
+const { Event, Showtime, Venue, SeatCategory, Seat, SeatStatus, User, Booking } = require('../models');
 const { authenticate, authorize } = require('../middleware/auth');
 const { searchMovies, getMovieDetails, discoverMovies, findAndEnrichMovie } = require('../services/tmdb');
 const { discoverShows, getShowDetails } = require('../services/ticketmaster');
+const { sendShowtimeRescheduledEmail } = require('../services/email');
 const { Op } = require('sequelize');
 
 const router = express.Router();
@@ -603,11 +604,18 @@ router.post('/:id/showtimes', authenticate, authorize('organiser', 'admin'), asy
 /**
  * PUT /api/events/showtimes/:id
  * Organiser only: Update showtime timing, format, language, screen, or pricing
+ * If timing changes, automatically emails an apology & schedule update to all confirmed ticket holders.
  */
 router.put('/showtimes/:id', authenticate, authorize('organiser', 'admin'), async (req, res, next) => {
   try {
     const showtime = await Showtime.findByPk(req.params.id, {
-      include: [{ model: Event, as: 'event' }],
+      include: [
+        {
+          model: Event,
+          as: 'event',
+          include: [{ model: Venue, as: 'venue' }],
+        },
+      ],
     });
     if (!showtime) {
       return res.status(404).json({ error: 'Showtime not found' });
@@ -617,8 +625,17 @@ router.put('/showtimes/:id', authenticate, authorize('organiser', 'admin'), asyn
       return res.status(403).json({ error: 'You can only edit showtimes for your own events' });
     }
 
+    const oldDateTime = showtime.dateTime;
     const { dateTime, format, language, screen, pricing } = req.body;
-    if (dateTime) showtime.dateTime = new Date(dateTime);
+    let timingChanged = false;
+
+    if (dateTime) {
+      const newDate = new Date(dateTime);
+      if (newDate.getTime() !== new Date(oldDateTime).getTime()) {
+        timingChanged = true;
+      }
+      showtime.dateTime = newDate;
+    }
     if (format) showtime.format = format;
     if (language) showtime.language = language;
     if (screen) showtime.screen = screen;
@@ -626,7 +643,60 @@ router.put('/showtimes/:id', authenticate, authorize('organiser', 'admin'), asyn
 
     await showtime.save();
 
-    res.json({ message: 'Showtime updated successfully', showtime });
+    // If timing was updated, notify all confirmed ticket purchasers with an apology & schedule update email
+    let notifiedCount = 0;
+    if (timingChanged) {
+      const bookings = await Booking.findAll({
+        where: {
+          showtimeId: showtime.id,
+          status: 'confirmed',
+        },
+        include: [
+          {
+            model: User,
+            as: 'customer',
+          },
+        ],
+      });
+
+      if (bookings.length > 0) {
+        const venueName = showtime.event?.venue?.name || '';
+        // Send emails asynchronously to all ticket holders
+        Promise.allSettled(
+          bookings.map((b) => {
+            if (b.customer?.email) {
+              return sendShowtimeRescheduledEmail(
+                b.customer,
+                b,
+                showtime.event,
+                oldDateTime,
+                showtime.dateTime,
+                showtime.format,
+                venueName
+              );
+            }
+            return Promise.resolve();
+          })
+        )
+          .then((results) => {
+            const sent = results.filter((r) => r.status === 'fulfilled' && r.value?.success).length;
+            console.log(`✉️ Sent ${sent}/${bookings.length} showtime reschedule apology notifications.`);
+          })
+          .catch((err) => {
+            console.error('Error sending reschedule emails:', err);
+          });
+
+        notifiedCount = bookings.length;
+      }
+    }
+
+    res.json({
+      message: timingChanged
+        ? `Showtime updated successfully! Dispatched schedule update & apology emails to ${notifiedCount} ticket holder(s).`
+        : 'Showtime updated successfully',
+      showtime,
+      notifiedCount,
+    });
   } catch (error) {
     next(error);
   }

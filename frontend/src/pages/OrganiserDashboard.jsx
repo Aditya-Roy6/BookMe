@@ -75,13 +75,17 @@ export default function OrganiserDashboard() {
     setEditSaving(true);
 
     try {
-      await api.put(`/events/showtimes/${editingShowtime.showtimeId || editingShowtime.id}`, {
+      const res = await api.put(`/events/showtimes/${editingShowtime.showtimeId || editingShowtime.id}`, {
         dateTime: editDateTime,
         format: editFormat,
         language: editLanguage,
       });
 
-      toast.success('Showtime timing and details updated successfully!');
+      if (res.data?.notifiedCount > 0) {
+        toast.success(`Showtime rescheduled! Apology emails sent to ${res.data.notifiedCount} ticket holder(s).`);
+      } else {
+        toast.success(res.data?.message || 'Showtime timing and details updated successfully!');
+      }
       setEditShowtimeModalOpen(false);
       await fetchData();
     } catch (err) {

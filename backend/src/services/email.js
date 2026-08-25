@@ -617,6 +617,126 @@ async function sendResetPasswordOtpEmail(email, name, otp) {
   }
 }
 
+/**
+ * Send showtime reschedule & apology email to ticket holders
+ */
+async function sendShowtimeRescheduledEmail(user, booking, event, oldShowtimeDate, newShowtimeDate, format, venueName) {
+  try {
+    const eventTitle = event?.title || 'Your Event';
+    const oldDateObj = oldShowtimeDate ? new Date(oldShowtimeDate) : null;
+    const newDateObj = newShowtimeDate ? new Date(newShowtimeDate) : new Date();
+
+    const formatDt = (d) => {
+      if (!d) return 'Previous Schedule';
+      return d.toLocaleDateString('en-US', {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+      });
+    };
+
+    const oldDateStr = formatDt(oldDateObj);
+    const newDateStr = formatDt(newDateObj);
+
+    const html = `
+      <div style="background-color: #0c0c0c; padding: 35px 15px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; text-align: center;">
+        <div style="background-color: #141416; color: #ffffff; max-width: 480px; margin: 0 auto; border-radius: 16px; border: 1px solid #282828; box-shadow: 0 12px 40px rgba(0,0,0,0.7); padding: 30px 24px; text-align: center;">
+          
+          <!-- Header Badge -->
+          <div style="display: inline-block; width: 48px; height: 48px; line-height: 48px; border-radius: 50%; background: rgba(234, 179, 8, 0.15); color: #eab308; font-size: 24px; margin-bottom: 12px;">
+            ⚠️
+          </div>
+          <h1 style="margin: 0 0 6px 0; font-size: 24px; font-weight: 900; letter-spacing: -0.5px; color: #ffffff;">
+            Schedule Update & Apology
+          </h1>
+          <p style="margin: 0 0 20px 0; font-size: 11px; font-weight: 800; color: #eab308; text-transform: uppercase; letter-spacing: 1.5px;">
+            ★ SHOWTIME RESCHEDULED NOTICE ★
+          </p>
+
+          <!-- Greeting -->
+          <p style="font-size: 15px; color: #e5e5e5; text-align: left; margin: 0 0 12px 0;">
+            Dear <strong>${user.name || 'Valued Guest'}</strong>,
+          </p>
+          <p style="color: #b3b3b3; font-size: 13px; line-height: 1.6; text-align: left; margin: 0 0 20px 0;">
+            We are writing to sincerely apologize and inform you that the organizer has adjusted the screening timing for your upcoming booking of <strong style="color: #ffffff;">${eventTitle}</strong>${venueName ? ` at <strong style="color: #ffffff;">${venueName}</strong>` : ''}.
+          </p>
+
+          <!-- Schedule Comparison Box -->
+          <div style="background-color: #1a1a1e; border: 1px solid #2d2d34; border-radius: 14px; padding: 20px; margin: 0 0 20px 0; text-align: left;">
+            <div style="margin-bottom: 14px;">
+              <span style="display: block; font-size: 10px; font-weight: 800; color: #ef4444; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px;">
+                Previous Timing (Original):
+              </span>
+              <span style="font-size: 13px; font-weight: 700; color: #888888; text-decoration: line-through; font-family: monospace;">
+                ${oldDateStr}
+              </span>
+            </div>
+
+            <div style="padding-top: 12px; border-top: 1px dashed #333338;">
+              <span style="display: block; font-size: 10px; font-weight: 800; color: #1ed760; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px;">
+                ✨ NEW UPDATED TIMING:
+              </span>
+              <span style="font-size: 15px; font-weight: 900; color: #ffffff; font-family: monospace;">
+                ${newDateStr}
+              </span>
+            </div>
+
+            ${format ? `
+            <div style="margin-top: 10px; font-size: 11px; color: #b3b3b3;">
+              Format: <strong style="color: #1ed760;">${format}</strong>
+            </div>
+            ` : ''}
+          </div>
+
+          <!-- Ticket Validity Notice -->
+          <div style="background-color: rgba(30, 215, 96, 0.08); border: 1px solid rgba(30, 215, 96, 0.25); border-radius: 12px; padding: 14px; margin-bottom: 24px; text-align: left;">
+            <p style="margin: 0 0 4px 0; font-size: 12px; font-weight: 800; color: #1ed760;">
+              🎟️ YOUR EXISTING TICKET & SEATS REMAIN 100% VALID
+            </p>
+            <p style="margin: 0; font-size: 11px; color: #b3b3b3; line-height: 1.5;">
+              Booking Reference: <strong style="color: #ffffff; font-family: monospace;">${booking.bookingRef}</strong>. You do NOT need to re-book. Your digital pass and QR code have been automatically updated to reflect the new time.
+            </p>
+          </div>
+
+          <!-- CTA Button -->
+          <div style="margin-bottom: 24px;">
+            <a href="${FRONTEND_URL}/my-bookings?ref=${booking.bookingRef}" style="display: inline-block; background-color: #1ed760; color: #000000; font-weight: 900; font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; padding: 13px 26px; border-radius: 50px; text-decoration: none; box-shadow: 0 4px 15px rgba(30, 215, 96, 0.3);">
+              View Updated Ticket Pass
+            </a>
+          </div>
+
+          <!-- Apology Note & Support -->
+          <p style="color: #888888; font-size: 11px; line-height: 1.5; margin: 0 0 16px 0;">
+            We deeply regret any inconvenience this schedule shift may cause to your plans. If you have any questions or require assistance, please visit your bookings dashboard.
+          </p>
+
+          <!-- Footer -->
+          <div style="border-top: 1px solid #222226; padding-top: 16px; font-size: 10px; color: #555555;">
+            © ${new Date().getFullYear()} BooKMe Ticket Booking Platform • All Rights Reserved
+          </div>
+        </div>
+      </div>
+    `;
+
+    const info = await dispatchEmail({
+      from: SENDER,
+      to: user.email,
+      subject: `⚠️ Timing Updated for ${eventTitle} (${booking.bookingRef}) - New Schedule`,
+      html,
+    });
+
+    console.log(`📩 Showtime reschedule email sent to ${user.email} (Message ID: ${info.messageId})`);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error('Failed to send showtime reschedule email:', error);
+    return { success: false, error: error.message };
+  }
+}
+
 module.exports = {
   dispatchEmail,
   sendBookingConfirmation,
@@ -625,4 +745,6 @@ module.exports = {
   sendWelcomeEmail,
   sendOtpEmail,
   sendResetPasswordOtpEmail,
+  sendShowtimeRescheduledEmail,
 };
+

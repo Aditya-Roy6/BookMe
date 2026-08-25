@@ -11,7 +11,7 @@ import api from '../api/client';
 import ColorPicker from '../components/ColorPicker';
 import { useToast } from '../context/ToastContext';
 import { ShieldCheck, Plus, Grid, Loader2, AlertCircle, CheckCircle2, Trash2, Layers, Sparkles, Sliders, Check, Eye, ArrowLeft, Tv, Disc, Armchair, Maximize2, MousePointer, Compass, RotateCw, Minus, ZoomIn, ZoomOut, Type, Square, Slash, PenTool, CornerUpLeft, CornerUpRight, Move, LayoutGrid, Wand2, Copy, Hash, X } from 'lucide-react';
-import { MapPin, Save, Info, Volume2 } from '../components/MappedIcons';
+import { MapPin, Save, Info, Volume2, CinemaIcon, StadiumIcon, TheatreIcon } from '../components/MappedIcons';
 import { NormalSeatSvg, ReclinerSeatSvg, AuditoriumScreen3D, AisleStairsGraphic } from './SeatSelection';
 import { VENUE_LAYOUT_PRESETS } from '../components/SportsVenueLayouts';
 import {
@@ -296,46 +296,50 @@ export default function AdminVenues() {
               <button
                 type="button"
                 onClick={() => applyTemplatePreset('cinema')}
-                className={`px-3.5 py-1.5 text-xs font-bold rounded-full transition-all cursor-pointer border ${
+                className={`px-3.5 py-1.5 text-xs font-bold rounded-full transition-all cursor-pointer border flex items-center gap-1.5 ${
                   venueType === 'cinema'
                     ? 'bg-[#1ed760] text-black border-[#1ed760] font-black'
                     : 'bg-[#18181f] text-[#b3b3b3] hover:text-white border-white/10 hover:bg-[#22222c]'
                 }`}
               >
-                🎬 Cinema & Dolby Theatre
+                <CinemaIcon className="w-3.5 h-3.5" />
+                <span>Cinema & Dolby Theatre</span>
               </button>
               <button
                 type="button"
                 onClick={() => applyTemplatePreset('stadium')}
-                className={`px-3.5 py-1.5 text-xs font-bold rounded-full transition-all cursor-pointer border ${
+                className={`px-3.5 py-1.5 text-xs font-bold rounded-full transition-all cursor-pointer border flex items-center gap-1.5 ${
                   venueType === 'stadium'
                     ? 'bg-[#1ed760] text-black border-[#1ed760] font-black'
                     : 'bg-[#18181f] text-[#b3b3b3] hover:text-white border-white/10 hover:bg-[#22222c]'
                 }`}
               >
-                🏟️ 360° Circular Arena
+                <StadiumIcon className="w-3.5 h-3.5" />
+                <span>360° Circular Arena</span>
               </button>
               <button
                 type="button"
                 onClick={() => applyTemplatePreset('square_stadium')}
-                className={`px-3.5 py-1.5 text-xs font-bold rounded-full transition-all cursor-pointer border ${
+                className={`px-3.5 py-1.5 text-xs font-bold rounded-full transition-all cursor-pointer border flex items-center gap-1.5 ${
                   venueType === 'square_stadium'
                     ? 'bg-[#1ed760] text-black border-[#1ed760] font-black'
                     : 'bg-[#18181f] text-[#b3b3b3] hover:text-white border-white/10 hover:bg-[#22222c]'
                 }`}
               >
-                🏟️ Rectangular Stadium
+                <StadiumIcon className="w-3.5 h-3.5" />
+                <span>Rectangular Stadium</span>
               </button>
               <button
                 type="button"
                 onClick={() => applyTemplatePreset('amphitheatre')}
-                className={`px-3.5 py-1.5 text-xs font-bold rounded-full transition-all cursor-pointer border ${
+                className={`px-3.5 py-1.5 text-xs font-bold rounded-full transition-all cursor-pointer border flex items-center gap-1.5 ${
                   venueType === 'amphitheatre'
                     ? 'bg-[#1ed760] text-black border-[#1ed760] font-black'
                     : 'bg-[#18181f] text-[#b3b3b3] hover:text-white border-white/10 hover:bg-[#22222c]'
                 }`}
               >
-                🎭 Concert Amphitheatre
+                <TheatreIcon className="w-3.5 h-3.5" />
+                <span>Concert Amphitheatre</span>
               </button>
             </div>
           </div>

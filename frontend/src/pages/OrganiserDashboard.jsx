@@ -391,8 +391,8 @@ export default function OrganiserDashboard() {
                   <TrendingUp className="w-3 h-3" /> Live Gross
                 </span>
               </div>
-              <div className="w-12 h-12 rounded-full bg-[#1ed760]/15 text-[#1ed760] flex items-center justify-center flex-shrink-0">
-                <DollarSign className="w-6 h-6" />
+              <div className="text-[#1ed760] flex items-center justify-center flex-shrink-0">
+                <DollarSign className="w-10 h-10" />
               </div>
             </div>
 
@@ -404,8 +404,8 @@ export default function OrganiserDashboard() {
                 <p className="text-3xl font-black text-white font-mono">{totalTickets} Passes</p>
                 <span className="text-[10px] text-[#b3b3b3]">Across 182+ transactions</span>
               </div>
-              <div className="w-12 h-12 rounded-full bg-[#1ed760]/15 text-[#1ed760] flex items-center justify-center flex-shrink-0">
-                <Ticket className="w-6 h-6" />
+              <div className="text-[#1ed760] flex items-center justify-center flex-shrink-0">
+                <Ticket className="w-10 h-10" />
               </div>
             </div>
 
@@ -417,8 +417,8 @@ export default function OrganiserDashboard() {
                 <p className="text-3xl font-black text-white font-mono">₹{avgTicketPrice}</p>
                 <span className="text-[10px] text-[#b3b3b3]">Weighted across all tiers</span>
               </div>
-              <div className="w-12 h-12 rounded-full bg-[#1ed760]/15 text-[#1ed760] flex items-center justify-center flex-shrink-0">
-                <Percent className="w-6 h-6" />
+              <div className="text-[#1ed760] flex items-center justify-center flex-shrink-0">
+                <Percent className="w-10 h-10" />
               </div>
             </div>
 
@@ -430,8 +430,8 @@ export default function OrganiserDashboard() {
                 <p className="text-3xl font-black text-white font-mono">{totalEvents}</p>
                 <span className="text-[10px] text-[#b3b3b3]">In current catalogue</span>
               </div>
-              <div className="w-12 h-12 rounded-full bg-[#1ed760]/15 text-[#1ed760] flex items-center justify-center flex-shrink-0">
-                <Film className="w-6 h-6" />
+              <div className="text-[#1ed760] flex items-center justify-center flex-shrink-0">
+                <Film className="w-10 h-10" />
               </div>
             </div>
           </div>

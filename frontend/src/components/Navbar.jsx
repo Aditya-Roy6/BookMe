@@ -1,15 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-} from '@heroui/react';
 import { useAuth } from '../context/AuthContext';
-import { ShieldCheck, Compass, Menu, X } from 'lucide-react';
-import { Ticket, LogOut, LayoutDashboard, Search } from './MappedIcons';
+import { Menu, X } from 'lucide-react';
+import { Ticket, LogOut, LayoutDashboard, Search, Settings, ShieldCheck, Sun, Moon } from './MappedIcons';
 import { TicketRoundedIcon, SearchRoundedIcon } from './CustomRoundedIcons';
 
 export default function Navbar() {
@@ -20,9 +14,10 @@ export default function Navbar() {
   const [avatarUrl, setAvatarUrl] = useState(() => localStorage.getItem('luminatix_avatar') || '');
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const userMenuRef = React.useRef(null);
+  const [isDark, setIsDark] = useState(() => !document.documentElement.classList.contains('light-mode'));
+  const userMenuRef = useRef(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const handleStorage = () => {
       setAvatarUrl(localStorage.getItem('luminatix_avatar') || '');
     };
@@ -125,11 +120,12 @@ export default function Navbar() {
         {/* Theme Toggle Button */}
         <button
           type="button"
-          onClick={(e) => {
+          onClick={() => {
             const toggleTheme = () => {
-              document.documentElement.classList.toggle('light-mode');
-              document.documentElement.classList.toggle('dark');
-              document.documentElement.classList.toggle('light');
+              const isLight = document.documentElement.classList.toggle('light-mode');
+              document.documentElement.classList.toggle('dark', !isLight);
+              document.documentElement.classList.toggle('light', isLight);
+              setIsDark(!isLight);
             };
             
             if (document.startViewTransition) {
@@ -141,10 +137,7 @@ export default function Navbar() {
           className="w-8 h-8 rounded-full bg-[#181818] hover:bg-[#282828] border border-white/5 flex items-center justify-center text-[#b3b3b3] hover:text-white transition-colors cursor-pointer preserve-color"
           title="Toggle Theme"
         >
-          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="5"></circle>
-            <path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"></path>
-          </svg>
+          {isDark ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
         </button>
 
         {/* Navbar Search Pill Form */}
@@ -216,7 +209,7 @@ export default function Navbar() {
                     }}
                     className="w-full text-left px-3 py-2 text-xs font-bold text-white hover:bg-white/10 rounded-xl transition-colors flex items-center gap-2.5 cursor-pointer"
                   >
-                    <Compass className="w-3.5 h-3.5 text-[#b3b3b3]" />
+                    <Settings className="w-3.5 h-3.5 text-[#b3b3b3]" />
                     <span>Settings</span>
                   </button>
 

@@ -10,7 +10,7 @@ import api from '../api/client';
 import Select from '../components/Select';
 import DateTimePicker from '../components/DateTimePicker';
 
-import { DollarSign, Ticket, Calendar, Film, MapPin, Clock, Volume2, BarChart3, PieChart, Percent, Search, Filter, Star, Users, Plus, Loader2, AlertCircle, CheckCircle2, Music, Sparkles, TrendingUp, X, Activity, ArrowUpRight, Layers, ChevronRight, Edit3 } from '../components/MappedIcons';
+import { DollarSign, Ticket, Calendar, Film, MapPin, Clock, Volume2, BarChart3, PieChart, Percent, Search, Filter, Star, Users, Plus, Loader2, AlertCircle, CheckCircle2, Music, Sparkles, TrendingUp, X, Activity, ArrowUpRight, Layers, ChevronRight, Edit3, Sliders, Eye } from '../components/MappedIcons';
 import { useToast } from '../context/ToastContext';
 import { StarRoundedIcon } from '../components/CustomRoundedIcons';
 
@@ -23,13 +23,16 @@ export default function OrganiserDashboard() {
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [creating, setCreating] = useState(false);
 
-  // Showtime edit state
+  // Showtime edit state with Dynamic Seat-View Pricing
   const [editShowtimeModalOpen, setEditShowtimeModalOpen] = useState(false);
   const [editingShowtime, setEditingShowtime] = useState(null);
   const [editEventTitle, setEditEventTitle] = useState('');
   const [editDateTime, setEditDateTime] = useState('');
   const [editFormat, setEditFormat] = useState('DOLBY ATMOS');
   const [editLanguage, setEditLanguage] = useState('ENGLISH');
+  const [editPricingMap, setEditPricingMap] = useState({});
+  const [editDynamicPricing, setEditDynamicPricing] = useState(true);
+  const [editVenue, setEditVenue] = useState(null);
   const [editSaving, setEditSaving] = useState(false);
 
   // Display options & Existing production linking
@@ -62,6 +65,22 @@ export default function OrganiserDashboard() {
     setEditDateTime(showtime.dateTime ? new Date(showtime.dateTime).toISOString() : '');
     setEditFormat(showtime.format || 'DOLBY ATMOS');
     setEditLanguage(showtime.language || 'ENGLISH');
+
+    const matchedVenue = venues.find(
+      (v) => v.id === showtime.venueId || v.id === event.venueId || v.name === showtime.venueName || v.name === event.venue?.name
+    ) || venues[0];
+    setEditVenue(matchedVenue);
+
+    const initialPricing = { ...(showtime.pricing || {}) };
+    if (matchedVenue?.categories) {
+      matchedVenue.categories.forEach((cat) => {
+        if (!initialPricing[cat.id]) {
+          initialPricing[cat.id] = cat.name.includes('VIP') ? 650 : cat.name.includes('Prime') ? 350 : 250;
+        }
+      });
+    }
+    setEditPricingMap(initialPricing);
+    setEditDynamicPricing(showtime.dynamicPricing !== false);
     setEditShowtimeModalOpen(true);
   };
 
@@ -79,17 +98,19 @@ export default function OrganiserDashboard() {
         dateTime: editDateTime,
         format: editFormat,
         language: editLanguage,
+        pricing: editPricingMap,
+        dynamicPricing: editDynamicPricing,
       });
 
       if (res.data?.notifiedCount > 0) {
         toast.success(`Showtime rescheduled! Apology emails sent to ${res.data.notifiedCount} ticket holder(s).`);
       } else {
-        toast.success(res.data?.message || 'Showtime timing and details updated successfully!');
+        toast.success(res.data?.message || 'Showtime timing, formats & dynamic seat-view pricing updated successfully!');
       }
       setEditShowtimeModalOpen(false);
       await fetchData();
     } catch (err) {
-      toast.error(err.response?.data?.error || 'Failed to update showtime timing.');
+      toast.error(err.response?.data?.error || 'Failed to update showtime timing and pricing.');
     } finally {
       setEditSaving(false);
     }
@@ -1261,96 +1282,254 @@ export default function OrganiserDashboard() {
         </ModalContent>
       </Modal>
 
-      {/* ─── EDIT SHOWTIME TIMING MODAL ─── */}
+            {/* ─── EDIT SHOWTIME TIMING & DYNAMIC PRICING MODAL ─── */}
       <Modal
         isOpen={editShowtimeModalOpen}
         onOpenChange={setEditShowtimeModalOpen}
         backdrop="blur"
-        size="2xl"
-        className="bg-[#181818] border border-[#282828] text-white rounded-2xl shadow-2xl max-w-2xl !overflow-visible"
+        size="3xl"
+        className="bg-[#181818] border border-[#282828] text-white rounded-2xl shadow-2xl max-w-3xl w-[94vw] !overflow-visible my-auto max-h-[90vh] overflow-y-auto"
       >
         <ModalContent className="!overflow-visible">
-          {(onClose) => (
-            <>
-              <ModalHeader className="border-b border-[#282828] flex items-center justify-between">
-                <div>
-                  <h3 className="font-display text-lg font-black text-white">
-                    Edit Session Timing & Format
-                  </h3>
-                  <p className="text-xs text-[#1ed760] font-bold mt-0.5">
-                    {editEventTitle} &bull; {editingShowtime?.venueName}
-                  </p>
-                </div>
-              </ModalHeader>
+          {(onClose) => {
+            const catPrices = Object.values(editPricingMap).map(Number).filter(Boolean);
+            const lowestBasePrice = catPrices.length > 0 ? Math.min(...catPrices) : 250;
+            const sweetSpotPrice = Math.round((lowestBasePrice * 1.20) / 10) * 10;
 
-              <ModalBody className="py-6 px-8 !overflow-visible">
-                <form id="editShowtimeForm" onSubmit={handleSaveEditShowtime} className="space-y-5">
-                  {/* Custom DateTime Picker */}
-                  <DateTimePicker
-                    label="Showtime Date & Starting Time"
-                    required
-                    value={editDateTime}
-                    onChange={setEditDateTime}
-                  />
-
-                  {/* Format & Audio Specs */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 relative z-30">
-                    <Select
-                      label="Projection / Audio Format"
-                      value={editFormat}
-                      onChange={setEditFormat}
-                      options={[
-                        { value: 'DOLBY ATMOS', label: 'DOLBY ATMOS' },
-                        { value: 'IMAX 70MM', label: 'IMAX 70MM' },
-                        { value: 'IMAX 3D', label: 'IMAX 3D' },
-                        { value: '3D 4K', label: '3D 4K LASER' },
-                        { value: '360° IN-THE-ROUND', label: '360° IN-THE-ROUND' },
-                        { value: 'STANDARD 2D', label: 'STANDARD 2D' },
-                      ]}
-                    />
-
-                    <Select
-                      label="Screening Language"
-                      value={editLanguage}
-                      onChange={setEditLanguage}
-                      options={[
-                        { value: 'ENGLISH', label: 'ENGLISH' },
-                        { value: 'HINDI', label: 'HINDI' },
-                        { value: 'TAMIL', label: 'TAMIL' },
-                        { value: 'TELUGU', label: 'TELUGU' },
-                        { value: 'DUAL AUDIO (EN/HI)', label: 'DUAL AUDIO (EN/HI)' },
-                      ]}
-                    />
+            return (
+              <>
+                <ModalHeader className="border-b border-[#282828] py-4 px-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div>
+                    <h3 className="font-display text-lg font-black text-white flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-[#1ed760]" />
+                      <span>Edit Session Timing, Format & Dynamic Pricing</span>
+                    </h3>
+                    <p className="text-xs text-[#1ed760] font-bold mt-0.5">
+                      {editEventTitle} &bull; {editingShowtime?.venueName || editVenue?.name}
+                    </p>
                   </div>
-                </form>
-              </ModalBody>
+                </ModalHeader>
 
-              <ModalFooter className="border-t border-[#282828] flex items-center justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="px-5 py-2.5 text-xs text-[#b3b3b3] hover:text-white font-bold cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  form="editShowtimeForm"
-                  disabled={editSaving}
-                  className="px-6 py-2.5 bg-[#1ed760] hover:bg-[#1fdf64] text-black font-black text-xs uppercase tracking-[1.4px] rounded-full hover:scale-105 transition-transform cursor-pointer shadow-2xl disabled:opacity-50 flex items-center gap-1.5"
-                >
-                  {editSaving ? (
-                    <>
-                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      <span>Saving Changes...</span>
-                    </>
-                  ) : (
-                    <span>Save Timing</span>
-                  )}
-                </button>
-              </ModalFooter>
-            </>
-          )}
+                <ModalBody className="py-6 px-6 sm:px-8 space-y-6 !overflow-visible">
+                  <form id="editShowtimeForm" onSubmit={handleSaveEditShowtime} className="space-y-6">
+                    {/* Top Group: DateTime, Format, Language */}
+                    <div className="space-y-4">
+                      <DateTimePicker
+                        label="Showtime Date & Starting Time"
+                        required
+                        value={editDateTime}
+                        onChange={setEditDateTime}
+                      />
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 relative z-30">
+                        <Select
+                          label="Projection / Audio Format"
+                          value={editFormat}
+                          onChange={setEditFormat}
+                          options={[
+                            { value: 'DOLBY ATMOS', label: 'DOLBY ATMOS' },
+                            { value: 'IMAX 70MM', label: 'IMAX 70MM' },
+                            { value: 'IMAX 3D', label: 'IMAX 3D' },
+                            { value: '3D 4K', label: '3D 4K LASER' },
+                            { value: '360° IN-THE-ROUND', label: '360° IN-THE-ROUND' },
+                            { value: 'STANDARD 2D', label: 'STANDARD 2D' },
+                          ]}
+                        />
+
+                        <Select
+                          label="Screening Language"
+                          value={editLanguage}
+                          onChange={setEditLanguage}
+                          options={[
+                            { value: 'ENGLISH', label: 'ENGLISH' },
+                            { value: 'HINDI', label: 'HINDI' },
+                            { value: 'TAMIL', label: 'TAMIL' },
+                            { value: 'TELUGU', label: 'TELUGU' },
+                            { value: 'DUAL AUDIO (EN/HI)', label: 'DUAL AUDIO (EN/HI)' },
+                          ]}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Dynamic Pricing & Category Base Rates Container */}
+                    <div className="bg-[#121212] p-5 rounded-2xl border border-white/10 space-y-5">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/5 pb-3.5">
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2">
+                            <Sparkles className="w-4 h-4 text-[#1ed760]" />
+                            <h4 className="text-sm font-black text-white uppercase tracking-wider">
+                              Dynamic Seat-View Pricing Engine
+                            </h4>
+                          </div>
+                          <p className="text-[11px] text-[#b3b3b3]">
+                            Seats facing the central screen & acoustic sweet-spot automatically compute higher prime sightline rates.
+                          </p>
+                        </div>
+
+                        {/* Toggle Checkbox */}
+                        <label className="flex items-center gap-2 bg-[#1a1a1a] hover:bg-[#242424] px-3.5 py-2 rounded-xl border border-white/10 cursor-pointer transition-colors flex-shrink-0 self-start sm:self-auto">
+                          <input
+                            type="checkbox"
+                            checked={editDynamicPricing}
+                            onChange={(e) => setEditDynamicPricing(e.target.checked)}
+                            className="w-4 h-4 rounded text-[#1ed760] focus:ring-[#1ed760] accent-[#1ed760] cursor-pointer"
+                          />
+                          <span className="text-xs font-bold text-white">Dynamic Center Boost</span>
+                        </label>
+                      </div>
+
+                      {/* Category Base Pricing Matrix */}
+                      <div className="space-y-2">
+                        <label className="block text-[11px] font-bold uppercase tracking-wider text-[#1ed760]">
+                          Category Base Rates (₹ INR)
+                        </label>
+                        {editVenue?.categories && editVenue.categories.length > 0 ? (
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            {editVenue.categories.map((cat) => (
+                              <div
+                                key={cat.id}
+                                className="flex items-center justify-between bg-[#181818] p-3 rounded-xl border border-white/5"
+                              >
+                                <div className="flex items-center gap-2.5 min-w-0">
+                                  <div
+                                    className="w-3 h-3 rounded-full shadow-sm flex-shrink-0"
+                                    style={{ backgroundColor: cat.color }}
+                                  />
+                                  <div className="min-w-0">
+                                    <span className="text-xs font-bold text-white block truncate">{cat.name}</span>
+                                    <span className="text-[10px] text-[#7c7c7c]">
+                                      Rows {cat.rowStart} - {cat.rowEnd}
+                                    </span>
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-1 flex-shrink-0 ml-2">
+                                  <span className="text-xs text-[#b3b3b3] font-bold">₹</span>
+                                  <input
+                                    type="number"
+                                    min="1"
+                                    required
+                                    placeholder="Price"
+                                    value={editPricingMap[cat.id] || ''}
+                                    onChange={(e) =>
+                                      setEditPricingMap({ ...editPricingMap, [cat.id]: Number(e.target.value) })
+                                    }
+                                    className="w-20 bg-[#121212] border border-[#383838] focus:border-[#1ed760] px-2.5 py-1.5 rounded-lg text-xs text-white font-mono text-right focus:outline-none"
+                                  />
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="p-3 bg-[#181818] rounded-xl text-xs text-[#7c7c7c]">
+                            Loading venue seat tier definitions...
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Auto-Calculated Dynamic Seat-View Heatmap & Breakdown */}
+                      {editDynamicPricing ? (
+                        <div className="pt-3 border-t border-white/5 space-y-3">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[11px] font-bold uppercase tracking-wider text-[#b3b3b3] flex items-center gap-1.5">
+                              <Activity className="w-3.5 h-3.5 text-[#1ed760]" />
+                              <span>Live Dynamic View Yield Preview</span>
+                            </span>
+                            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#1ed760]/20 text-[#1ed760] font-bold border border-[#1ed760]/30">
+                              +20% Center Sweet-Spot
+                            </span>
+                          </div>
+
+                          {/* Calculated Stat Pills */}
+                          <div className="grid grid-cols-3 gap-2 text-center">
+                            <div className="bg-[#181818] p-2.5 rounded-xl border border-white/5">
+                              <span className="text-[10px] text-[#7c7c7c] block font-bold uppercase">Side / Corner Seats</span>
+                              <span className="text-sm font-mono font-black text-white">₹{lowestBasePrice}</span>
+                              <span className="text-[9px] text-[#7c7c7c] block">Base Rate (1.0x)</span>
+                            </div>
+                            <div className="bg-[#181818] p-2.5 rounded-xl border border-white/5">
+                              <span className="text-[10px] text-[#b3b3b3] block font-bold uppercase">Mid-Hall Rows</span>
+                              <span className="text-sm font-mono font-black text-[#38bdf8]">
+                                ₹{Math.round((lowestBasePrice * 1.10) / 10) * 10}
+                              </span>
+                              <span className="text-[9px] text-[#38bdf8] block">+10% Sightline</span>
+                            </div>
+                            <div className="bg-[#181818] p-2.5 rounded-xl border border-[#1ed760]/30 shadow-[0_0_12px_rgba(30,215,96,0.15)]">
+                              <span className="text-[10px] text-[#1ed760] block font-bold uppercase">Center Sweet-Spot</span>
+                              <span className="text-sm font-mono font-black text-[#1ed760]">₹{sweetSpotPrice}</span>
+                              <span className="text-[9px] text-[#1ed760] block">+20% Prime Center</span>
+                            </div>
+                          </div>
+
+                          {/* Mini Visual Seat Grid Preview */}
+                          <div className="p-3 bg-[#181818] rounded-xl border border-white/5 space-y-2">
+                            <div className="w-full text-center py-0.5 rounded bg-white/5 border border-white/10 text-[9px] font-mono text-[#7c7c7c] tracking-widest uppercase">
+                              ━━━━━ THEATRE 4K LASER SCREEN ━━━━━
+                            </div>
+                            <div className="flex justify-center gap-1 sm:gap-1.5 py-1">
+                              {[
+                                { label: 'Edge L', price: lowestBasePrice, isCenter: false },
+                                { label: 'Mid L', price: Math.round((lowestBasePrice * 1.1) / 10) * 10, isCenter: false },
+                                { label: 'Center', price: sweetSpotPrice, isCenter: true },
+                                { label: 'Center', price: sweetSpotPrice, isCenter: true },
+                                { label: 'Mid R', price: Math.round((lowestBasePrice * 1.1) / 10) * 10, isCenter: false },
+                                { label: 'Edge R', price: lowestBasePrice, isCenter: false },
+                              ].map((s, idx) => (
+                                <div
+                                  key={idx}
+                                  className={`flex flex-col items-center justify-center px-2 py-1.5 rounded-lg text-center transition-all ${
+                                    s.isCenter
+                                      ? 'bg-[#1ed760] text-black font-black shadow-[0_0_10px_rgba(30,215,96,0.4)] scale-105'
+                                      : 'bg-[#222222] text-[#b3b3b3]'
+                                  }`}
+                                >
+                                  <span className="text-[8px] sm:text-[9px] uppercase leading-tight font-bold">{s.label}</span>
+                                  <span className="text-[10px] sm:text-[11px] font-mono font-black">₹{s.price}</span>
+                                </div>
+                              ))}
+                            </div>
+                            <div className="flex items-center justify-between text-[10px] text-[#7c7c7c] px-1">
+                              <span>⬅ Standard Wing Seats (₹{lowestBasePrice})</span>
+                              <span className="text-[#1ed760] font-bold">Center Sound & IMAX Sweet-Spot (₹{sweetSpotPrice})</span>
+                              <span>Standard Wing Seats (₹{lowestBasePrice}) ➡</span>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="p-3 bg-[#181818] rounded-xl border border-white/5 text-center text-xs text-[#7c7c7c]">
+                          Dynamic view sweet-spot pricing is disabled. All seats within a tier will share the same flat base rate.
+                        </div>
+                      )}
+                    </div>
+                  </form>
+                </ModalBody>
+
+                <ModalFooter className="border-t border-[#282828] flex items-center justify-end gap-3 py-4 px-6">
+                  <button
+                    type="button"
+                    onClick={onClose}
+                    className="px-5 py-2.5 text-xs text-[#b3b3b3] hover:text-white font-bold cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    form="editShowtimeForm"
+                    disabled={editSaving}
+                    className="px-6 py-2.5 bg-[#1ed760] hover:bg-[#1fdf64] text-black font-black text-xs uppercase tracking-[1.4px] rounded-full hover:scale-105 transition-transform cursor-pointer shadow-2xl disabled:opacity-50 flex items-center gap-1.5"
+                  >
+                    {editSaving ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        <span>Saving Changes...</span>
+                      </>
+                    ) : (
+                      <span>Save Timing & Pricing</span>
+                    )}
+                  </button>
+                </ModalFooter>
+              </>
+            );
+          }}
         </ModalContent>
       </Modal>
     </div>

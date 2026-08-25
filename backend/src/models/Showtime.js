@@ -38,6 +38,10 @@ const Showtime = sequelize.define('Showtime', {
     defaultValue: {},
     comment: 'Map of categoryId -> price, e.g. { "cat-uuid-1": 500, "cat-uuid-2": 300 }',
   },
+  dynamicPricing: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true,
+  },
 }, {
   underscored: true,
   timestamps: true,

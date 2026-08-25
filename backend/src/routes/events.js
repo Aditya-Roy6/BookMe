@@ -626,7 +626,7 @@ router.put('/showtimes/:id', authenticate, authorize('organiser', 'admin'), asyn
     }
 
     const oldDateTime = showtime.dateTime;
-    const { dateTime, format, language, screen, pricing } = req.body;
+    const { dateTime, format, language, screen, pricing, dynamicPricing } = req.body;
     let timingChanged = false;
 
     if (dateTime) {
@@ -640,6 +640,7 @@ router.put('/showtimes/:id', authenticate, authorize('organiser', 'admin'), asyn
     if (language) showtime.language = language;
     if (screen) showtime.screen = screen;
     if (pricing) showtime.pricing = pricing;
+    if (dynamicPricing !== undefined) showtime.dynamicPricing = dynamicPricing;
 
     await showtime.save();
 

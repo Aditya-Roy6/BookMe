@@ -286,13 +286,15 @@ async function getShowtimeSeatMap(showtimeId, currentUserId = null) {
 
     const basePrice = pricing[seat.categoryId] ? Number(pricing[seat.categoryId]) : 250;
     
-    // Calculate dynamic pricing based on venue fill rate & seat row desirability
+    // Calculate dynamic pricing based on venue fill rate & seat central sweet-spot desirability
     const dynamicPriceInfo = calculateDynamicSeatPrice({
       basePrice,
       totalSeats: seats.length,
       bookedSeats: bookedCount,
       row: seat.row,
       totalRows: venue.totalRows || 10,
+      col: seat.col,
+      totalCols: venue.totalCols || 12,
       showtimeDate: showtime.dateTime,
       dynamicPricingEnabled: showtime.dynamicPricing !== false,
     });

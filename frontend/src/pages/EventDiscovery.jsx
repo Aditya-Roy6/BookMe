@@ -278,11 +278,11 @@ export default function EventDiscovery() {
           {/* Carousel Body with Smooth Fade-In on Slide Change */}
           <div
             key={`hero-slide-${currentFeatured.id}`}
-            className="relative z-10 w-full p-6 sm:p-12 flex flex-col md:flex-row items-center justify-between gap-8 animate-fadeIn"
+            className="relative z-10 w-full p-5 sm:p-8 md:p-12 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 md:gap-8 animate-fadeIn"
           >
             {/* Left Content Column */}
             <div className="max-w-xl space-y-3.5 text-left">
-              <h1 className="font-display text-3xl sm:text-5xl font-black text-white tracking-tight uppercase leading-tight drop-shadow-md">
+              <h1 className="font-display text-2xl sm:text-4xl md:text-5xl font-black text-white tracking-tight uppercase leading-tight drop-shadow-md">
                 {currentFeatured.title}
               </h1>
 
@@ -315,10 +315,10 @@ export default function EventDiscovery() {
                 {currentFeatured.description}
               </p>
 
-              <div className="flex items-center gap-4 pt-2">
+              <div className="flex flex-wrap items-center gap-3 pt-2 w-full sm:w-auto">
                 <Link
                   to={`/event/${currentFeatured.id}`}
-                  className="px-8 py-3.5 bg-[#1ed760] hover:bg-[#1fdf64] text-black font-black uppercase tracking-[1.5px] rounded-full shadow-xl hover:shadow-[#1ed760]/30 hover:scale-105 transition-all text-xs flex items-center gap-2 cursor-pointer"
+                  className="w-full sm:w-auto justify-center px-7 py-3.5 bg-[#1ed760] hover:bg-[#1fdf64] text-black font-black uppercase tracking-[1.5px] rounded-full shadow-xl hover:shadow-[#1ed760]/30 hover:scale-105 transition-all text-xs flex items-center gap-2 cursor-pointer"
                 >
                   <TicketRoundedIcon className="w-4 h-4 text-black fill-black" />
                   <span>Book Tickets</span>
@@ -326,7 +326,7 @@ export default function EventDiscovery() {
 
                 <button
                   onClick={() => setActiveTrailerUrl(formatEmbedTrailerUrl(currentFeatured.trailerUrl, currentFeatured.title))}
-                  className="px-6 py-3.5 bg-white/10 hover:bg-white/20 text-white font-bold uppercase tracking-[1.4px] rounded-xl text-xs flex items-center gap-2 backdrop-blur-md border border-white/10 transition-all hover:scale-105 cursor-pointer"
+                  className="w-full sm:w-auto justify-center px-6 py-3.5 bg-white/10 hover:bg-white/20 text-white font-bold uppercase tracking-[1.4px] rounded-xl text-xs flex items-center gap-2 backdrop-blur-md border border-white/10 transition-all hover:scale-105 cursor-pointer"
                 >
                   <PlayRoundedIcon className="w-3.5 h-3.5 fill-white text-white" />
                   <span>Watch Trailer</span>
@@ -335,7 +335,7 @@ export default function EventDiscovery() {
             </div>
 
             {/* Right Featured Poster with Play Button & Slide Numbers */}
-            <div className="flex items-center gap-6">
+            <div className="hidden md:flex items-center gap-6">
               <div
                 onClick={() => setActiveTrailerUrl(formatEmbedTrailerUrl(currentFeatured.trailerUrl, currentFeatured.title))}
                 className="relative w-48 sm:w-60 aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl group/poster cursor-pointer border border-white/15 transition-all flex-shrink-0"
@@ -452,7 +452,7 @@ export default function EventDiscovery() {
       </div>
 
       {/* Section Title */}
-      <div className="flex items-baseline justify-between pt-2">
+      <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 pt-2">
         <div>
           <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
             {searchQuery
@@ -465,7 +465,7 @@ export default function EventDiscovery() {
             Select an experience to choose your preferred seats & showtime
           </p>
         </div>
-        <span className="text-xs text-[#b3b3b3] font-semibold bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
+        <span className="text-xs text-[#b3b3b3] font-semibold bg-white/5 px-3 py-1.5 rounded-full border border-white/5 w-fit">
           {events.length} experiences available
         </span>
       </div>

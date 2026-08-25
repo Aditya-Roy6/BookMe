@@ -36,6 +36,7 @@ export default function AdminVenues() {
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
   const [visualStudioOpen, setVisualStudioOpen] = useState(false);
+  const [mobileStudioTab, setMobileStudioTab] = useState('editor'); // 'editor' | 'canvas'
 
   // Form & Visual Studio State
   const [venueType, setVenueType] = useState('cinema'); // 'cinema' | 'stadium' | 'amphitheatre'
@@ -239,47 +240,74 @@ export default function AdminVenues() {
     const selectedRow = rowConfigs[selectedRowIndex] || rowConfigs[0];
 
     return (
-      <div className="fixed inset-0 z-50 bg-[#0c0c0e] text-white flex flex-col font-sans select-none overflow-hidden">
+      <div className="fixed inset-0 z-[60] bg-[#0c0c0e] text-white flex flex-col font-sans select-none overflow-hidden">
         {/* ─── STUDIO MASTER HEADER ─── */}
-        <div className="h-14 bg-[#121218] border-b border-white/10 px-4 sm:px-6 flex items-center justify-between flex-shrink-0 z-40">
-          <div className="flex items-center gap-3">
+        <div className="h-14 bg-[#121218] border-b border-white/10 px-3 sm:px-6 flex items-center justify-between flex-shrink-0 z-40 gap-2">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <button
               onClick={() => setVisualStudioOpen(false)}
-              className="p-2 rounded-xl bg-[#181820] hover:bg-[#252530] text-[#b3b3b3] hover:text-white transition-colors cursor-pointer border border-white/5"
+              className="p-2 rounded-xl bg-[#181820] hover:bg-[#252530] text-[#b3b3b3] hover:text-white transition-colors cursor-pointer border border-white/5 flex-shrink-0"
               title="Return to Directory"
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
-            <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded-full bg-[#1ed760]/20 text-[#1ed760] font-black text-[10px] uppercase tracking-wider border border-[#1ed760]/30">
-                Architect Studio
+            <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+              <span className="px-2 sm:px-2.5 py-0.5 rounded-full bg-[#1ed760]/20 text-[#1ed760] font-black text-[9px] sm:text-[10px] uppercase tracking-wider border border-[#1ed760]/30 flex-shrink-0">
+                Architect
               </span>
-              <h2 className="text-sm font-bold text-white tracking-tight">
+              <h2 className="text-xs sm:text-sm font-bold text-white tracking-tight truncate max-w-[100px] sm:max-w-xs">
                 {name || 'New Custom Architecture'}
               </h2>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <span className="text-xs font-mono text-[#b3b3b3] bg-[#181820] px-3 py-1.5 rounded-xl border border-white/5">
-              Total Seats: <strong className="text-[#1ed760] font-bold">{totalCalculatedSeats}</strong>
+          {/* Mobile Tab Switcher for Small Screens */}
+          <div className="flex lg:hidden items-center p-0.5 bg-[#181820] rounded-xl border border-white/10">
+            <button
+              type="button"
+              onClick={() => setMobileStudioTab('editor')}
+              className={`px-2.5 py-1 text-[10px] font-bold rounded-lg transition-all ${
+                mobileStudioTab === 'editor'
+                  ? 'bg-[#1ed760] text-black font-black'
+                  : 'text-[#b3b3b3] hover:text-white'
+              }`}
+            >
+              Tiers & Rows
+            </button>
+            <button
+              type="button"
+              onClick={() => setMobileStudioTab('canvas')}
+              className={`px-2.5 py-1 text-[10px] font-bold rounded-lg transition-all ${
+                mobileStudioTab === 'canvas'
+                  ? 'bg-[#1ed760] text-black font-black'
+                  : 'text-[#b3b3b3] hover:text-white'
+              }`}
+            >
+              Seat Map
+            </button>
+          </div>
+
+          <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+            <span className="hidden sm:inline-block text-xs font-mono text-[#b3b3b3] bg-[#181820] px-3 py-1.5 rounded-xl border border-white/5">
+              Seats: <strong className="text-[#1ed760] font-bold">{totalCalculatedSeats}</strong>
             </span>
 
             <button
               type="button"
               disabled={creating || rowConfigs.length === 0}
               onClick={handleDeployStudio}
-              className="px-5 py-2 bg-[#1ed760] hover:bg-[#1db954] text-black font-black text-xs uppercase tracking-wider rounded-xl shadow-lg hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+              className="px-3 sm:px-5 py-2 bg-[#1ed760] hover:bg-[#1db954] text-black font-black text-[10px] sm:text-xs uppercase tracking-wider rounded-xl shadow-lg hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
             >
               {creating ? (
                 <>
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  <span>Deploying...</span>
+                  <span className="hidden sm:inline">Deploying...</span>
                 </>
               ) : (
                 <>
                   <Save className="w-3.5 h-3.5" />
-                  <span>Deploy Floorplan</span>
+                  <span className="hidden sm:inline">Deploy Floorplan</span>
+                  <span className="sm:hidden">Deploy</span>
                 </>
               )}
             </button>
@@ -287,59 +315,58 @@ export default function AdminVenues() {
         </div>
 
         {/* ─── QUICK TEMPLATES ACTION BAR ─── */}
-        <div className="h-12 bg-[#101014] border-b border-white/5 px-4 sm:px-6 flex items-center justify-between text-xs text-[#b3b3b3] flex-shrink-0 z-30">
-          <div className="flex items-center gap-3">
-            <span className="font-bold text-[10px] uppercase tracking-wider text-[#1ed760] flex items-center gap-1.5">
-              <SparklesRoundedIcon className="w-3.5 h-3.5" /> Predefined Templates:
+        <div className="h-11 sm:h-12 bg-[#101014] border-b border-white/5 px-3 sm:px-6 flex items-center justify-between text-xs text-[#b3b3b3] flex-shrink-0 z-30 overflow-x-auto scrollbar-none">
+          <div className="flex items-center gap-2 sm:gap-3 flex-nowrap min-w-max">
+            <span className="font-bold text-[9px] sm:text-[10px] uppercase tracking-wider text-[#1ed760] flex items-center gap-1.5">
+              <SparklesRoundedIcon className="w-3.5 h-3.5" /> Presets:
             </span>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2">
               <button
                 type="button"
                 onClick={() => applyTemplatePreset('cinema')}
-                className={`px-3.5 py-1.5 text-xs font-bold rounded-full transition-all cursor-pointer border flex items-center gap-1.5 ${
+                className={`px-3 py-1 text-[11px] sm:text-xs font-bold rounded-full transition-all cursor-pointer border flex items-center gap-1.5 ${
                   venueType === 'cinema'
                     ? 'bg-[#1ed760] text-black border-[#1ed760] font-black'
                     : 'bg-[#18181f] text-[#b3b3b3] hover:text-white border-white/10 hover:bg-[#22222c]'
                 }`}
               >
                 <CinemaIcon className="w-3.5 h-3.5" />
-                <span>Cinema & Dolby Theatre</span>
+                <span>Cinema</span>
               </button>
               <button
                 type="button"
                 onClick={() => applyTemplatePreset('stadium')}
-                className={`px-3.5 py-1.5 text-xs font-bold rounded-full transition-all cursor-pointer border flex items-center gap-1.5 ${
+                className={`px-3 py-1 text-[11px] sm:text-xs font-bold rounded-full transition-all cursor-pointer border flex items-center gap-1.5 ${
                   venueType === 'stadium'
                     ? 'bg-[#1ed760] text-black border-[#1ed760] font-black'
                     : 'bg-[#18181f] text-[#b3b3b3] hover:text-white border-white/10 hover:bg-[#22222c]'
                 }`}
               >
                 <StadiumIcon className="w-3.5 h-3.5" />
-                <span>360° Circular Arena</span>
+                <span>360° Arena</span>
               </button>
               <button
                 type="button"
                 onClick={() => applyTemplatePreset('square_stadium')}
-                className={`px-3.5 py-1.5 text-xs font-bold rounded-full transition-all cursor-pointer border flex items-center gap-1.5 ${
+                className={`px-3 py-1 text-[11px] sm:text-xs font-bold rounded-full transition-all cursor-pointer border flex items-center gap-1.5 ${
                   venueType === 'square_stadium'
                     ? 'bg-[#1ed760] text-black border-[#1ed760] font-black'
                     : 'bg-[#18181f] text-[#b3b3b3] hover:text-white border-white/10 hover:bg-[#22222c]'
                 }`}
               >
                 <StadiumIcon className="w-3.5 h-3.5" />
-                <span>Rectangular Stadium</span>
+                <span>Stadium</span>
               </button>
               <button
                 type="button"
                 onClick={() => applyTemplatePreset('amphitheatre')}
-                className={`px-3.5 py-1.5 text-xs font-bold rounded-full transition-all cursor-pointer border flex items-center gap-1.5 ${
+                className={`px-3 py-1 text-[11px] sm:text-xs font-bold rounded-full transition-all cursor-pointer border flex items-center gap-1.5 ${
                   venueType === 'amphitheatre'
                     ? 'bg-[#1ed760] text-black border-[#1ed760] font-black'
                     : 'bg-[#18181f] text-[#b3b3b3] hover:text-white border-white/10 hover:bg-[#22222c]'
                 }`}
               >
                 <TheatreIcon className="w-3.5 h-3.5" />
-                <span>Concert Amphitheatre</span>
               </button>
             </div>
           </div>
@@ -639,7 +666,7 @@ export default function AdminVenues() {
                         </div>
 
                         {/* Increment / Decrement Stepper */}
-                        <div className="flex items-center gap-1 bg-[#14141e] border border-white/10 rounded-xl p-1">
+                        <div className="flex items-center gap-1 bg-[#14141e] border border-white/10 rounded-xl p-1 shadow-inner">
                           <button
                             type="button"
                             onClick={() => {
@@ -647,10 +674,10 @@ export default function AdminVenues() {
                               updated[selectedRowIndex].seatCount = Math.max(4, selectedRow.seatCount - 2);
                               setRowConfigs(updated);
                             }}
-                            className="w-6 h-6 rounded-lg bg-[#20202c] hover:bg-[#1ed760] hover:text-black text-white font-bold flex items-center justify-center transition-colors cursor-pointer text-xs"
+                            className="w-7 h-7 rounded-lg text-white/90 hover:text-[#1ed760] hover:scale-105 active:scale-95 transition-all flex items-center justify-center cursor-pointer p-0 bg-transparent"
                             title="Decrease Seats"
                           >
-                            <Minus className="w-3 h-3" />
+                            <Minus className="w-full h-full" />
                           </button>
                           <input
                             type="number"
@@ -671,10 +698,10 @@ export default function AdminVenues() {
                               updated[selectedRowIndex].seatCount = Math.min(100, selectedRow.seatCount + 2);
                               setRowConfigs(updated);
                             }}
-                            className="w-6 h-6 rounded-lg bg-[#20202c] hover:bg-[#1ed760] hover:text-black text-white font-bold flex items-center justify-center transition-colors cursor-pointer text-xs"
+                            className="w-7 h-7 rounded-lg text-white/90 hover:text-[#1ed760] hover:scale-105 active:scale-95 transition-all flex items-center justify-center cursor-pointer p-0 bg-transparent"
                             title="Increase Seats"
                           >
-                            <Plus className="w-3 h-3" />
+                            <Plus className="w-full h-full" />
                           </button>
                         </div>
                       </div>
@@ -721,7 +748,7 @@ export default function AdminVenues() {
           </div>
 
           {/* ─── RIGHT PANEL: AUTHENTIC THEATRE & ARENA SKELETON CANVAS (8 COLS) ─── */}
-          <div className="lg:col-span-8 bg-[#060608] flex flex-col justify-between overflow-hidden h-full relative">
+          <div className={`lg:col-span-8 bg-[#060608] flex flex-col justify-between overflow-hidden h-full relative ${mobileStudioTab === 'canvas' ? 'flex' : 'hidden lg:flex'}`}>
             <div className="w-full h-full overflow-auto flex flex-col items-center justify-start p-4 sm:p-8 scrollbar-none">
               {venueType === 'cinema' ? (
                 /* ─── 1. EXACT CINEMA AUDITORIUM CANVAS (MATCHING CUSTOMER VIEW) ─── */

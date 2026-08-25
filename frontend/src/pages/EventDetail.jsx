@@ -213,9 +213,9 @@ export default function EventDetail() {
         <div className="absolute inset-0 bg-gradient-to-r from-[#121212] via-transparent to-transparent" />
 
         {/* Hero Content Container - Aligned with Top & Bottom of Poster */}
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-8 py-6 sm:py-8 w-full flex flex-col md:flex-row items-start gap-8">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-8 py-6 sm:py-8 w-full flex flex-col md:flex-row items-center md:items-start gap-6 sm:gap-8">
           {/* Movie Poster Card with Watch Trailer Button */}
-          <div className="relative w-56 sm:w-64 aspect-[2/3] rounded-2xl overflow-hidden bg-[#1e1e1e] shrink-0 group shadow-2xl">
+          <div className="relative w-44 sm:w-56 md:w-64 aspect-[2/3] rounded-2xl overflow-hidden bg-[#1e1e1e] shrink-0 group shadow-2xl mx-auto md:mx-0">
             <img
               src={event.imageUrl}
               alt={event.title}
@@ -240,12 +240,12 @@ export default function EventDetail() {
           <div className="self-stretch flex-1 flex flex-col justify-between pt-1 pb-1 min-h-[340px] sm:min-h-[384px]">
             {/* Top Section: Title, Badges & Metadata */}
             <div className="space-y-3.5">
-              <h1 className="font-display text-3xl sm:text-5xl font-black text-white tracking-tight uppercase leading-tight">
+              <h1 className="font-display text-2xl sm:text-4xl md:text-5xl font-black text-white tracking-tight uppercase leading-tight text-center md:text-left">
                 {event.title}
               </h1>
 
               {/* Solid Badges with NO Outline Borders */}
-              <div className="flex flex-wrap items-center gap-2 text-xs font-bold">
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-1.5 sm:gap-2 text-xs font-bold">
                 <span className="px-3 py-1 bg-[#1ed760] text-black font-black uppercase tracking-wider rounded-full text-[10px]">
                   {event.type}
                 </span>
@@ -267,13 +267,13 @@ export default function EventDetail() {
               </div>
 
               {event.tagline && (
-                <p className="text-sm italic text-[#b3b3b3] font-medium">
+                <p className="text-sm italic text-[#b3b3b3] font-medium text-center md:text-left">
                   "{event.tagline}"
                 </p>
               )}
 
               {event.director && (
-                <p className="text-xs sm:text-sm text-[#b3b3b3]">
+                <p className="text-xs sm:text-sm text-[#b3b3b3] text-center md:text-left">
                   Directed by <span className="text-white font-bold">{event.director}</span>
                 </p>
               )}

@@ -74,13 +74,44 @@ export const Moon = ({ size = 24, className = '', color = 'currentColor', ...pro
   </svg>
 );
 
-export const Menu = Lucide['Menu'] || (({ size = 24, className = '', ...props }) => (
-  <span className={className} {...props} />
-));
+export const Menu = ({ size = 24, className = '', color = 'currentColor', ...props }) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    viewBox="0 0 24 24" 
+    width={size} 
+    height={size} 
+    className={className} 
+    fill={color === 'currentColor' ? 'none' : color}
+    {...props}
+  >
+    <path fillRule="evenodd" clipRule="evenodd" d="M3.46447 20.5355C4.92893 22 7.28595 22 12 22C16.714 22 19.0711 22 20.5355 20.5355C22 19.0711 22 16.714 22 12C22 7.28595 22 4.92893 20.5355 3.46447C19.0711 2 16.714 2 12 2C7.28595 2 4.92893 2 3.46447 3.46447C2 4.92893 2 7.28595 2 12C2 16.714 2 19.0711 3.46447 20.5355ZM18.75 16C18.75 16.4142 18.4142 16.75 18 16.75H6C5.58579 16.75 5.25 16.4142 5.25 16C5.25 15.5858 5.58579 15.25 6 15.25H18C18.4142 15.25 18.75 15.5858 18.75 16ZM18 12.75C18.4142 12.75 18.75 12.4142 18.75 12C18.75 11.5858 18.4142 11.25 18 11.25H6C5.58579 11.25 5.25 11.5858 5.25 12C5.25 12.4142 5.58579 12.75 6 12.75H18ZM18.75 8C18.75 8.41421 18.4142 8.75 18 8.75H6C5.58579 8.75 5.25 8.41421 5.25 8C5.25 7.58579 5.58579 7.25 6 7.25H18C18.4142 7.25 18.75 7.58579 18.75 8Z" fill="currentColor"/>
+  </svg>
+);
 
-export const X = Lucide['X'] || (({ size = 24, className = '', ...props }) => (
-  <span className={className} {...props} />
-));
+export const X = ({ size = 24, className = '', color = 'currentColor', ...props }) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    viewBox="0 0 25 25" 
+    width={size} 
+    height={size} 
+    className={className} 
+    fill={color === 'currentColor' ? 'currentColor' : color}
+    {...props}
+  >
+    <title>cross</title>
+    <desc>Created with Sketch Beta.</desc>
+    <defs>
+
+</defs>
+    <g id="Page-1" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd" sketch:type="MSPage">
+        <g id="Icon-Set-Filled" sketch:type="MSLayerGroup" transform="translate(-469.000000, -1041.000000)" fill="currentColor">
+            <path d="M487.148,1053.48 L492.813,1047.82 C494.376,1046.26 494.376,1043.72 492.813,1042.16 C491.248,1040.59 488.712,1040.59 487.148,1042.16 L481.484,1047.82 L475.82,1042.16 C474.257,1040.59 471.721,1040.59 470.156,1042.16 C468.593,1043.72 468.593,1046.26 470.156,1047.82 L475.82,1053.48 L470.156,1059.15 C468.593,1060.71 468.593,1063.25 470.156,1064.81 C471.721,1066.38 474.257,1066.38 475.82,1064.81 L481.484,1059.15 L487.148,1064.81 C488.712,1066.38 491.248,1066.38 492.813,1064.81 C494.376,1063.25 494.376,1060.71 492.813,1059.15 L487.148,1053.48" id="cross" sketch:type="MSShapeGroup">
+
+</path>
+        </g>
+    </g>
+  </svg>
+);
 
 export const Search = ({ size = 24, className = '', color = 'currentColor', ...props }) => (
   <svg 
@@ -253,9 +284,19 @@ export const Navigation = Lucide['Navigation'] || (({ size = 24, className = '',
   <span className={className} {...props} />
 ));
 
-export const MessageSquare = Lucide['MessageSquare'] || (({ size = 24, className = '', ...props }) => (
-  <span className={className} {...props} />
-));
+export const MessageSquare = ({ size = 24, className = '', color = 'currentColor', ...props }) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    viewBox="0 0 24 24" 
+    width={size} 
+    height={size} 
+    className={className} 
+    fill={color === 'currentColor' ? 'none' : color}
+    {...props}
+  >
+    <path d="M16 2H8C4 2 2 4 2 8V21C2 21.55 2.45 22 3 22H16C20 22 22 20 22 16V8C22 4 20 2 16 2ZM14 15.25H7C6.59 15.25 6.25 14.91 6.25 14.5C6.25 14.09 6.59 13.75 7 13.75H14C14.41 13.75 14.75 14.09 14.75 14.5C14.75 14.91 14.41 15.25 14 15.25ZM17 10.25H7C6.59 10.25 6.25 9.91 6.25 9.5C6.25 9.09 6.59 8.75 7 8.75H17C17.41 8.75 17.75 9.09 17.75 9.5C17.75 9.91 17.41 10.25 17 10.25Z" fill="currentColor"/>
+  </svg>
+);
 
 export const TrendingUp = ({ size = 24, className = '', color = 'currentColor', ...props }) => (
   <svg 

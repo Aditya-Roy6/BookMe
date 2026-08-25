@@ -23,8 +23,8 @@ export const ICON_MAP = {
   Settings: 'settings-svgrepo-com.svg',                // User dropdown "Settings" & Footer settings link
   Sun: 'sun-svgrepo-com.svg',                          // Theme toggle: Sun icon (shown when Dark Mode is active)
   Moon: 'moon-svgrepo-com.svg',                        // Theme toggle: Moon icon (shown when Light Mode is active)
-  Menu: null,                                          // Mobile navigation hamburger toggle
-  X: null,                                             // Modal close buttons, search clear, filter reset
+  Menu:'hamburger-menu-svgrepo-com.svg',                                          // Mobile navigation hamburger toggle
+  X: 'cross-svgrepo-com.svg',                                             // Modal close buttons, search clear, filter reset
 
   // ═══════════════════════════════════════════════════════════════════════
   // 🔍 SECTION 2: SEARCH, DISCOVERY & FILTERS (EventDiscovery.jsx, BookingHistory.jsx)
@@ -47,7 +47,7 @@ export const ICON_MAP = {
   Info: 'info-circle-svgrepo-com.svg',                 // Tooltips, booking terms & event synopsis details
   Compass: 'compass-square-svgrepo-com.svg',           // "Explore Nearby Venues" & navigation aid
   Navigation: null,                                    // Directions to theatre & map route launcher
-  MessageSquare: null,                                 // Audience reviews, comments & ratings section
+  MessageSquare: 'message-text-svgrepo-com.svg',                                 // Audience reviews, comments & ratings section
   TrendingUp: 'trending-up-svgrepo-com.svg',           // High demand badge, trending indicators & analytics growth
 
   // ═══════════════════════════════════════════════════════════════════════

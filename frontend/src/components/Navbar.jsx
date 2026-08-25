@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 
-import { Ticket, LogOut, LayoutDashboard, Search, Settings, ShieldCheck, Sun, Moon, Menu, X } from './MappedIcons';
+import { Ticket, LogOut, LayoutDashboard, Search, Settings, ShieldCheck, Sun, Moon, Menu, X, Sliders } from './MappedIcons';
 import { TicketRoundedIcon, SearchRoundedIcon } from './CustomRoundedIcons';
 
 export default function Navbar() {
@@ -245,6 +245,18 @@ export default function Navbar() {
                     type="button"
                     onClick={() => {
                       setUserMenuOpen(false);
+                      navigate('/change-icon');
+                    }}
+                    className="w-full text-left px-3 py-2 text-xs font-bold text-[#1ed760] hover:bg-[#1ed760]/10 rounded-xl transition-colors flex items-center gap-2.5 cursor-pointer"
+                  >
+                    <Sliders className="w-3.5 h-3.5 text-[#1ed760]" />
+                    <span>Visual Icon Studio</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setUserMenuOpen(false);
                       handleLogout();
                     }}
                     className="w-full text-left px-3 py-2 text-xs font-bold text-[#f3727f] hover:bg-[#281818] rounded-xl transition-colors flex items-center gap-2.5 border-t border-white/10 mt-1 cursor-pointer"
@@ -356,6 +368,17 @@ export default function Navbar() {
                   <span>Venues Management</span>
                 </Link>
               )}
+
+              <Link
+                to="/change-icon"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-3 ${
+                  isActive('/change-icon') ? 'bg-[#282828] text-[#1ed760]' : 'text-[#b3b3b3] hover:text-white'
+                }`}
+              >
+                <Sliders className="w-4 h-4 text-[#1ed760]" />
+                <span>Icon Studio</span>
+              </Link>
             </div>
 
             {/* Mobile Auth Buttons if logged out */}

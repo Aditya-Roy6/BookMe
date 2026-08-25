@@ -17,6 +17,7 @@ import WaitlistOfferClaim from './pages/WaitlistOfferClaim';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ResetPassword from './pages/ResetPassword';
+import IconManager from './pages/IconManager';
 
 function ProtectedRoute({ children, allowedRoles }) {
   const { user, loading, isAuthenticated } = useAuth();
@@ -54,6 +55,7 @@ export default function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/change-icon" element={<IconManager />} />
 
               {/* Customer Routes */}
               <Route

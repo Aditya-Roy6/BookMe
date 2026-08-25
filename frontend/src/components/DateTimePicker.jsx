@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { ChevronLeft, ChevronRight, Check, X, Sparkles } from 'lucide-react';
-import { Calendar as CalendarIcon, Clock } from './MappedIcons';
+
+import { Calendar as CalendarIcon, Clock, ChevronLeft, ChevronRight, Check, X, Sparkles } from './MappedIcons';
 
 const MONTH_NAMES = [
   'January',

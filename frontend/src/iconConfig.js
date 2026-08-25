@@ -1,118 +1,161 @@
 /**
  * ═══════════════════════════════════════════════════════════════════════════
- * LUMIX / BOOKME — CUSTOM ICON CONFIGURATION MAPPING
+ * BOOKME — 100% COMPLETE MASTER ICON CONFIGURATION MAPPING
  * ═══════════════════════════════════════════════════════════════════════════
  * 
  * Instructions:
  * 1. To map an icon to a custom SVG in `frontend/public/`, set its value
  *    to the filename (e.g., 'ticket-sale-svgrepo-com.svg').
  * 2. To use the default Lucide SVG icon, leave its value as `null` or `''`.
- * 3. Whenever you modify this file, tell the assistant to build it, or run:
- *    `node scripts/build_icons.js`
+ * 3. Whenever you modify this file, it will automatically recompile in dev mode,
+ *    or you can manually run: `node scripts/build_icons.js`
+ * 
+ * 100% of all icons used across the entire website are defined below!
  */
 
 export const ICON_MAP = {
-  // ─── CURRENTLY MAPPED CUSTOM SVGS ───
-  Ticket: 'ticket-sale-svgrepo-com.svg',
-  Calendar: 'calender-svgrepo-com.svg',
-  BarChart3: 'chart-bar-alt-square-svgrepo-com.svg',
-  Clock: 'clock-circle-svgrepo-com.svg',
-  LayoutDashboard: 'dashboard-svgrepo-com (1).svg',
-  DollarSign: 'dollar-circle-svgrepo-com.svg',
-  Filter: 'filter-svgrepo-com.svg',
-  Info: 'info-circle-svgrepo-com.svg',
-  LogOut: 'logout-svgrepo-com.svg',
-  Moon: 'moon-svgrepo-com.svg',
-  Sun: 'sun-svgrepo-com.svg',
-  Film: 'movie-film-roll-for-movie-svgrepo-com.svg',
-  Percent: 'percent-circle-svgrepo-com.svg',
-  PieChart: 'pie-chart-2-svgrepo-com.svg',
-  Save: 'save-svgrepo-com.svg',
-  Search: 'search-alt-2-svgrepo-com.svg',
-  Settings: 'settings-svgrepo-com.svg',
-  Volume2: 'speaker-wave-1-svgrepo-com.svg',
-  Flame: 'fire-svgrepo-com.svg',
-  Star: 'star-svgrepo-com.svg',
-  MapPin: 'location-svgrepo-com.svg',
-  Play: 'play-svgrepo-com.svg',
-  Shield: 'shield-minimalistic-svgrepo-com.svg',
-  ShieldCheck: 'shield-minimalistic-svgrepo-com.svg',
-  CinemaIcon: 'cinema-film-movies-add-svgrepo-com.svg',
-  StadiumIcon: 'stadium-svgrepo-com.svg',
-  TheatreIcon: 'drama-masks-svgrepo-com.svg',
-  Bell: 'bell-svgrepo-com.svg',
 
-  // ─── WEBSITE ICONS WITH DEFAULT FALLBACK (SET FILENAME TO OVERRIDE) ───
-  Activity: null,
-  AlertCircle: null,
-  AlertTriangle: null,
-  Armchair: null,
-  ArrowLeft: null,
-  ArrowRight: null,
-  ArrowUpRight: null,
-  Building2: null,
-  Camera: null,
-  Check: null,
-  CheckCircle2: null,
-  ChevronDown: null,
-  ChevronLeft: null,
-  ChevronRight: null,
-  ChevronUp: null,
-  Compass: null,
-  Copy: null,
-  CornerUpLeft: null,
-  CornerUpRight: null,
-  CreditCard: null,
-  Disc: null,
-  Download: null,
-  Edit3: null,
-  ExternalLink: null,
-  Eye: null,
-  EyeOff: null,
-  FileText: null,
-  Flag: null,
-  Globe: null,
-  Globe2: null,
-  Grid: null,
-  Hash: null,
-  HelpCircle: null,
-  KeyRound: null,
-  Layers: null,
-  LayoutGrid: null,
-  Loader2: null,
-  Lock: null,
-  Mail: null,
-  Map: null,
-  Maximize2: null,
-  Menu: null,
-  MessageSquare: null,
-  Mic: null,
-  Minus: null,
-  MousePointer: null,
-  Move: null,
-  Music: null,
-  Navigation: null,
-  PenTool: null,
-  Plus: null,
-  QrCode: null,
-  RotateCw: null,
-  Slash: null,
-  Sliders: null,
-  SlidersHorizontal: null,
-  Sparkles: null,
-  Square: null,
-  Swords: null,
-  Trash2: null,
-  TrendingUp: null,
-  Trophy: null,
-  Tv: null,
-  Type: null,
-  Upload: null,
-  User: null,
-  UserCheck: null,
-  Users: null,
-  Wand2: null,
-  X: null,
-  ZoomIn: null,
-  ZoomOut: null,
+  // ═══════════════════════════════════════════════════════════════════════
+  // 🧭 SECTION 1: NAVIGATION & HEADER (Navbar.jsx, Footer.jsx)
+  // ═══════════════════════════════════════════════════════════════════════
+  LayoutDashboard: 'dashboard-svgrepo-com (1).svg',   // Top Navbar "Dashboard" button
+  LogOut: 'logout-svgrepo-com.svg',                    // User dropdown "Log Out" action
+  Settings: 'settings-svgrepo-com.svg',                // User dropdown "Settings" & Footer settings link
+  Sun: 'sun-svgrepo-com.svg',                          // Theme toggle: Sun icon (shown when Dark Mode is active)
+  Moon: 'moon-svgrepo-com.svg',                        // Theme toggle: Moon icon (shown when Light Mode is active)
+  Menu: null,                                          // Mobile navigation hamburger toggle
+  X: null,                                             // Modal close buttons, search clear, filter reset
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // 🔍 SECTION 2: SEARCH, DISCOVERY & FILTERS (EventDiscovery.jsx, BookingHistory.jsx)
+  // ═══════════════════════════════════════════════════════════════════════
+  Search: 'search-alt-2-svgrepo-com.svg',              // Main search inputs (Navbar, Discovery, Booking history, Organiser)
+  Filter: 'filter-svgrepo-com.svg',                    // Filter modal & filter dropdown buttons
+  SlidersHorizontal: 'sliders-1-svgrepo-com.svg',      // Discovery filter panel toggle & date range options
+  Sliders: 'sliders-1-svgrepo-com.svg',                // Seat layout settings & audio equalizer slider
+  Flame: 'fire-svgrepo-com.svg',                       // "Trending Now" hot badge & genre highlight
+  Star: 'star-svgrepo-com.svg',                        // Movie ratings, critic scores & star badges
+  Globe: null,                                         // Language selector & international currency badge
+  Globe2: null,                                        // "All Regions / Global" discovery filter chip
+  Play: 'play-svgrepo-com.svg',                        // "Watch Trailer" button & video player trigger
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // 🎬 SECTION 3: EVENT DETAILS & MEDIA (EventDetail.jsx, SeatSelection.jsx)
+  // ═══════════════════════════════════════════════════════════════════════
+  Film: 'movie-film-roll-for-movie-svgrepo-com.svg',   // Format badges (IMAX, 3D, 4DX, 2D) & movie listings
+  Volume2: 'speaker-wave-1-svgrepo-com.svg',           // Dolby Atmos, audio channels & language indicators
+  Info: 'info-circle-svgrepo-com.svg',                 // Tooltips, booking terms & event synopsis details
+  Compass: 'compass-square-svgrepo-com.svg',           // "Explore Nearby Venues" & navigation aid
+  Navigation: null,                                    // Directions to theatre & map route launcher
+  MessageSquare: null,                                 // Audience reviews, comments & ratings section
+  TrendingUp: 'trending-up-svgrepo-com.svg',           // High demand badge, trending indicators & analytics growth
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // 🎟️ SECTION 4: TICKETING, BOOKING & CHECKOUT (BookingHistory.jsx, Checkout.jsx, SeatSelection.jsx)
+  // ═══════════════════════════════════════════════════════════════════════
+  Ticket: 'ticket-sale-svgrepo-com.svg',               // Universal ticket icon (pass, booking card, logo badge)
+  Calendar: 'calender-svgrepo-com.svg',                // Showtime date selector & booking calendar
+  Clock: 'clock-circle-svgrepo-com.svg',               // Showtime time chips, session duration & countdown timers
+  MapPin: 'location-svgrepo-com.svg',                  // Theatre venue address & cinema location pins
+  Map: 'map-svgrepo-com.svg',                          // Interactive map & venue layout overview
+  DollarSign: 'dollar-circle-svgrepo-com.svg',         // Ticket pricing, grand total & revenue stats
+  CreditCard: 'credit-card-svgrepo-com.svg',           // Payment card input, Razorpay & checkout methods
+  Lock: 'lock-keyhole-svgrepo-com.svg',                // SSL security badge, encryption note & password inputs
+  QrCode: null,                                        // Digital ticket QR code pass & entrance scanner
+  Download: 'download-square-svgrepo-com.svg',         // Download PDF ticket pass & invoice receipt
+  Armchair: null,                                      // Seat map legend: Standard seat indicator
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // 📊 SECTION 5: ORGANISER STUDIO & ANALYTICS (OrganiserDashboard.jsx)
+  // ═══════════════════════════════════════════════════════════════════════
+  BarChart3: 'chart-bar-alt-square-svgrepo-com.svg',   // Revenue metrics chart & performance analytics card
+  PieChart: 'pie-chart-2-svgrepo-com.svg',             // Ticket tier distribution & occupancy breakdown
+  Percent: 'percent-circle-svgrepo-com.svg',           // Hall occupancy rate & seat fill percentage
+  Activity: 'graph-svgrepo-com.svg',                   // Live real-time booking stream & activity monitor
+  ArrowUpRight: null,                                  // Positive growth stat arrow & external dashboard link
+  Layers: 'layers-svgrepo-com.svg',                    // Tier layers, venue categories & studio sections
+  Edit3: 'pencil-svgrepo-com.svg',                     // Edit showtime timings, pricing & event listings
+  Users: null,                                         // Total attendees, customer count & audience analytics
+  Plus: null,                                          // "Create New Event" & "Add Showtime" modal triggers
+  Music: null,                                         // Concerts, musical events & live gigs category
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // 🏟️ SECTION 6: ADMIN VENUE DESIGNER & SEAT BUILDER (AdminVenues.jsx)
+  // ═══════════════════════════════════════════════════════════════════════
+  Save: 'save-svgrepo-com.svg',                        // Save venue grid, publish layout & store settings
+  Trash2: null,                                        // Delete venue, remove row & wipe tier category
+  Eye: 'eye-svgrepo-com.svg',                          // Preview seat map & reveal password toggle
+  EyeOff: 'eye-off-svgrepo-com.svg',                   // Hide password & exit canvas preview
+  Grid: 'apps-svgrepo-com.svg',                        // Snap-to-grid toggle in interactive seat designer
+  LayoutGrid: 'apps-svgrepo-com.svg',                  // Grid view toggle in booking history & venue manager
+  Tv: null,                                            // Cinema screen / stage placement indicator
+  Disc: null,                                          // Circular table / VIP booth seat geometry tool
+  Maximize2: null,                                     // Fullscreen canvas mode for large stadium designs
+  MousePointer: null,                                  // Pointer selection tool & multi-seat drag selector
+  RotateCw: null,                                      // Rotate stage / refresh captcha & reset showtimes
+  Minus: null,                                         // Zoom out / decrease row count button
+  ZoomIn: null,                                        // Zoom in on seat canvas
+  ZoomOut: null,                                       // Zoom out on seat canvas
+  Type: null,                                          // Add text label / aisle title tool
+  Square: null,                                        // Standard square seat shape tool
+  Slash: null,                                         // Seat gap / aisle divider tool
+  PenTool: null,                                       // Custom polygon / curved tier drawing tool
+  CornerUpLeft: null,                                  // Undo canvas edit action
+  CornerUpRight: null,                                 // Redo canvas edit action
+  Move: null,                                          // Pan canvas & drag section tool
+  Wand2: null,                                         // AI auto-generate seats magic wand
+  Copy: 'copy-svgrepo-com.svg',                        // Duplicate selected row / copy seat pattern
+  Hash: null,                                          // Auto-number seats tool (A1, A2, A3...)
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // 🏆 SECTION 7: SPORTS, ARENAS & SPECIAL VENUES (SportsVenueLayouts.jsx)
+  // ═══════════════════════════════════════════════════════════════════════
+  Trophy: 'trophy-svgrepo-com.svg',                    // Tournament & championship sports arena layout
+  Shield: 'shield-minimalistic-svgrepo-com.svg',       // VIP security badge & team defense arena zone
+  Flag: null,                                          // Race track / motorsport grandstand layout
+  Swords: null,                                        // Boxing ring & MMA combat arena layout
+  Mic: null,                                           // Comedy club & podcast live recording layout
+  CinemaIcon: 'cinema-film-movies-add-svgrepo-com.svg', // Multiplex cinema hall template
+  StadiumIcon: 'stadium-svgrepo-com.svg',              // Open-air sports stadium template
+  TheatreIcon: 'drama-masks-svgrepo-com.svg',          // Broadway & opera house tier template
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // 🔐 SECTION 8: AUTHENTICATION, ACCOUNTS & OTP (Login, Register, ResetPassword)
+  // ═══════════════════════════════════════════════════════════════════════
+  Mail: 'mail-pencil-svgrepo-com.svg',                 // Email address input icon & inbox alerts
+  KeyRound: null,                                      // 6-digit OTP verification code input
+  User: null,                                          // Profile avatar placeholder & user account tab
+  UserCheck: null,                                     // Verified customer badge & account active state
+  Building2: null,                                     // Organiser company & theatre chain registration
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // 👤 SECTION 9: USER SETTINGS & PREFERENCES (CustomerSettings.jsx)
+  // ═══════════════════════════════════════════════════════════════════════
+  Camera: 'camera-svgrepo-com.svg',                    // Profile photo upload & avatar camera overlay
+  Upload: 'upload-square-svgrepo-com.svg',             // Upload poster banner & identity verification document
+  Bell: 'bell-svgrepo-com.svg',                        // Push notification & email reminder preferences
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // 🔔 SECTION 10: ALERTS, STATUS & TOASTS (ToastContext.jsx, TTLTimer.jsx)
+  // ═══════════════════════════════════════════════════════════════════════
+  AlertCircle: 'alert-circle-svgrepo-com.svg',         // Error toast notifications & form validation errors
+  AlertTriangle: 'alert-triangle-svgrepo-com.svg',     // Warning toast & 10-minute seat hold expiring countdown
+  CheckCircle2: null,                                  // Booking confirmed green check & payment success
+  ShieldCheck: 'shield-minimalistic-svgrepo-com.svg',  // Verified badge (Footer security, SSL verification)
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // 🧩 SECTION 11: COMMON UI UTILITIES & BUTTONS (Select, DateTimePicker, Calendar)
+  // ═══════════════════════════════════════════════════════════════════════
+  Check: null,                                         // Selected item checkmark in dropdowns & color picker
+  ChevronLeft: null,                                   // Previous month button & pagination back
+  ChevronRight: null,                                  // Next month button & pagination next
+  ChevronDown: null,                                   // Dropdown arrow & collapsible accordion indicator
+  ChevronUp: null,                                     // Collapse accordion toggle
+  ArrowRight: null,                                    // "Proceed to Checkout", "Next Step" & submit buttons
+  ArrowLeft: null,                                     // "Back to Seat Selection" & return buttons
+  Loader2: null,                                       // Async loading spinner indicator
+  Sparkles: null,                                      // AI features & premium experience highlights
+  ExternalLink: 'link-alt-1-svgrepo-com.svg',          // External links (social media, maps, terms)
+  FileText: null,                                      // Privacy policy & terms of service document icon
+  HelpCircle: null,                                    // FAQ modal & customer support help icon
 };

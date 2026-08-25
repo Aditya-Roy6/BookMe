@@ -9,8 +9,8 @@ import {
 import api from '../api/client';
 import Select from '../components/Select';
 import DateTimePicker from '../components/DateTimePicker';
-import { Users, Plus, Loader2, AlertCircle, CheckCircle2, Music, Sparkles, TrendingUp, X, Activity, ArrowUpRight, Layers, ChevronRight, Edit3 } from 'lucide-react';
-import { DollarSign, Ticket, Calendar, Film, MapPin, Clock, Volume2, BarChart3, PieChart, Percent, Search, Filter, Star } from '../components/MappedIcons';
+
+import { DollarSign, Ticket, Calendar, Film, MapPin, Clock, Volume2, BarChart3, PieChart, Percent, Search, Filter, Star, Users, Plus, Loader2, AlertCircle, CheckCircle2, Music, Sparkles, TrendingUp, X, Activity, ArrowUpRight, Layers, ChevronRight, Edit3 } from '../components/MappedIcons';
 import { useToast } from '../context/ToastContext';
 import { StarRoundedIcon } from '../components/CustomRoundedIcons';
 

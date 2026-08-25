@@ -15,8 +15,8 @@ import api from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import TTLTimer from '../components/TTLTimer';
-import { AlertCircle, CheckCircle2, ArrowRight, Loader2, Sparkles, ShieldCheck, X } from 'lucide-react';
-import { Play } from '../components/MappedIcons';
+
+import { Play, AlertCircle, CheckCircle2, ArrowRight, Loader2, Sparkles, ShieldCheck, X } from '../components/MappedIcons';
 import { Ticket, Calendar, MapPin, Clock, Volume2 } from '../components/MappedIcons';
 import { VenuePitchVisual, resolveLayoutType } from '../components/SportsVenueLayouts';
 
@@ -558,7 +558,6 @@ function CircularStadiumMap({
 
 // ─── Main Full Page Seat Selection Component ───
 
-
 // ─── Freeform Customer Floorplan Component ───
 
 export function FreeformCustomerFloorplan({
@@ -820,7 +819,6 @@ export function FreeformCustomerFloorplan({
     </div>
   );
 }
-
 
 export default function SeatSelection() {
   const { id: showtimeId } = useParams();
@@ -1188,8 +1186,6 @@ export default function SeatSelection() {
           )}
         </div>
       </div>
-
-
 
       {/* FULL PAGE AUDITORIUM (Directly on page background) */}
       <div className="w-full flex flex-col items-center justify-center py-2 relative">

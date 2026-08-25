@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import { Mail, Lock, User as UserIcon, AlertCircle, ArrowRight, Loader2, UserCheck, Building2, Eye, EyeOff, ShieldCheck, RotateCw, ArrowLeft, CheckCircle2 } from 'lucide-react';
-import { Ticket, Clock } from '../components/MappedIcons';
+
+import { Ticket, Clock, Mail, Lock, User as UserIcon, AlertCircle, ArrowRight, Loader2, UserCheck, Building2, Eye, EyeOff, ShieldCheck, RotateCw, ArrowLeft, CheckCircle2 } from '../components/MappedIcons';
 
 export default function Register() {
   const [step, setStep] = useState(1); // 1: Form, 2: OTP Verification

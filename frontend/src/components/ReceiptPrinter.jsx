@@ -7,7 +7,7 @@ import React, {
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { CheckCircle2, Loader2, QrCode } from 'lucide-react';
+import { CheckCircle2, Loader2, QrCode } from './MappedIcons';
 
 export function cn(...inputs) {
   return twMerge(clsx(inputs));

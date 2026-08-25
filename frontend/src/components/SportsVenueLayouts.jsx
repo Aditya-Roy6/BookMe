@@ -1,6 +1,6 @@
 import React from 'react';
-import { Music, Trophy, Shield, Activity, Flag, Swords, Mic } from 'lucide-react';
-import { Film, Sun, Flame } from './MappedIcons';
+
+import { Film, Sun, Flame, Music, Trophy, Shield, Activity, Flag, Swords, Mic } from './MappedIcons';
 
 /**
  * Architectural Venue Presets - Core Focus: Movies & Concerts

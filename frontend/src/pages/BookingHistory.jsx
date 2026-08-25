@@ -19,8 +19,8 @@ import {
   RightSpeakerWave,
   AisleStairsGraphic,
 } from './SeatSelection';
-import { QrCode, AlertCircle, Loader2, SlidersHorizontal, X, CheckCircle2, LayoutGrid, ChevronRight, ShieldCheck, Check, Download } from 'lucide-react';
-import { Ticket, Calendar, MapPin, Info, Search, Filter, Clock, Film, DollarSign } from '../components/MappedIcons';
+
+import { Ticket, Calendar, MapPin, Info, Search, Filter, Clock, Film, DollarSign, QrCode, AlertCircle, Loader2, SlidersHorizontal, X, CheckCircle2, LayoutGrid, ChevronRight, ShieldCheck, Check, Download } from '../components/MappedIcons';
 
 export default function BookingHistory() {
   const navigate = useNavigate();

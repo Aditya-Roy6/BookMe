@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { Check } from 'lucide-react';
+import { Check } from './MappedIcons';
 
 const THEME_PALETTE = [
   { name: 'Spotify Green', hex: '#1ed760' },

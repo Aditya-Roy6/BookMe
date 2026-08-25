@@ -17,13 +17,24 @@ export function buildMappedIcons() {
   if (!fs.existsSync(configModulePath)) return;
 
   const configText = fs.readFileSync(configModulePath, 'utf8');
-  const mapMatch = configText.match(/export const ICON_MAP = ({[\s\S]*?});/);
+  const mapMatch = configText.match(/export const ICON_MAP = ({[\s\S]*});/);
   if (!mapMatch) {
     console.error('Could not find ICON_MAP in iconConfig.js');
     return;
   }
 
-  const ICON_MAP = new Function('return (' + mapMatch[1] + ')')();
+  // Strip comments before eval — new Function can't handle emoji/unicode in comments
+  const cleanedObj = mapMatch[1]
+    .replace(/\/\*[\s\S]*?\*\//g, '')   // remove block comments
+    .replace(/\/\/[^\n]*/g, '');        // remove line comments
+
+  let ICON_MAP;
+  try {
+    ICON_MAP = new Function('return (' + cleanedObj + ')')();
+  } catch (err) {
+    console.error('⚠️ [Icon System] Failed to parse ICON_MAP:', err.message);
+    return;
+  }
 
   let output = `import React from 'react';
 import * as Lucide from 'lucide-react';

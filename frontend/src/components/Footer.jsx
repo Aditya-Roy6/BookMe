@@ -14,8 +14,8 @@ import {
   CalendarRoundedIcon,
   MapPinRoundedIcon,
 } from './CustomRoundedIcons';
-import { ShieldCheck, FileText, Map, Lock, Globe, CheckCircle2, ExternalLink, ChevronRight, Sparkles, HelpCircle, Layers, Music, User, X } from 'lucide-react';
-import { Clock, Film, Settings } from './MappedIcons';
+
+import { Clock, Film, Settings, ShieldCheck, FileText, Map, Lock, Globe, CheckCircle2, ExternalLink, ChevronRight, Sparkles, HelpCircle, Layers, Music, User, X } from './MappedIcons';
 
 export default function Footer() {
   const [privacyOpen, setPrivacyOpen] = useState(false);

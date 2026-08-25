@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { ChevronLeft, ChevronRight, X } from 'lucide-react';
-import { Calendar as CalendarIcon } from './MappedIcons';
+
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, X } from './MappedIcons';
 
 export default function CalendarPicker({ value, onChange, placeholder = "Select Date" }) {
   const [isOpen, setIsOpen] = useState(false);

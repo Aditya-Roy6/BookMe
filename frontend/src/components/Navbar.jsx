@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
-import { Menu, X } from 'lucide-react';
-import { Ticket, LogOut, LayoutDashboard, Search, Settings, ShieldCheck, Sun, Moon } from './MappedIcons';
+
+import { Ticket, LogOut, LayoutDashboard, Search, Settings, ShieldCheck, Sun, Moon, Menu, X } from './MappedIcons';
 import { TicketRoundedIcon, SearchRoundedIcon } from './CustomRoundedIcons';
 
 export default function Navbar() {

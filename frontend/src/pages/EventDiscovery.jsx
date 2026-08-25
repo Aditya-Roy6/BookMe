@@ -9,8 +9,8 @@ import {
 } from '@heroui/react';
 import api from '../api/client';
 import CalendarPicker from '../components/CalendarPicker';
-import { Loader2, ArrowRight, Sparkles, SlidersHorizontal, Globe2, TrendingUp, X, Check, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Play } from '../components/MappedIcons';
+
+import { Play, Loader2, ArrowRight, Sparkles, SlidersHorizontal, Globe2, TrendingUp, X, Check, ChevronLeft, ChevronRight } from '../components/MappedIcons';
 import { Search, Calendar, MapPin, Clock, Ticket, Star, Film, Flame } from '../components/MappedIcons';
 import {
   TicketRoundedIcon,

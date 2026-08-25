@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import { Mail, Lock, Eye, EyeOff, AlertCircle, ArrowRight, Loader2, Sparkles } from 'lucide-react';
-import { Ticket } from '../components/MappedIcons';
+
+import { Ticket, Mail, Lock, Eye, EyeOff, AlertCircle, ArrowRight, Loader2, Sparkles } from '../components/MappedIcons';
 
 export default function Login() {
   const [email, setEmail] = useState('');

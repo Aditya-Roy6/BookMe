@@ -558,7 +558,7 @@ export default function Checkout() {
               )}
             </button>
             <p className="text-[10px] text-center text-[#7c7c7c] tracking-wide pt-1">
-              🔒 Instant Confirmation via Razorpay • UPI, Credit/Debit Cards, NetBanking
+              Instant Confirmation via Razorpay • UPI, Credit/Debit Cards, NetBanking
             </p>
           </form>
         </div>

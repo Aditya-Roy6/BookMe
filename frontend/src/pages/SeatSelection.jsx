@@ -1460,19 +1460,19 @@ export default function SeatSelection() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
+                transition={{ duration: 0.18, ease: 'easeOut' }}
                 onClick={() => setIsDrawerOpen(false)}
-                className="fixed inset-0 top-0 left-0 right-0 bottom-0 w-screen h-screen bg-black/60 backdrop-blur-md cursor-pointer"
+                className="fixed inset-0 top-0 left-0 right-0 bottom-0 w-screen h-screen bg-black/75 cursor-pointer transform-gpu"
               />
 
               {/* Bottom Sheet Drawer */}
               <div className="fixed inset-0 z-[100000] flex items-end justify-center pointer-events-none pb-0 sm:pb-6">
                 <motion.div
-                  initial={{ y: '100%' }}
-                  animate={{ y: 0 }}
-                  exit={{ y: '100%' }}
-                  transition={{ type: 'spring', damping: 28, stiffness: 300 }}
-                  className="w-full max-w-lg bg-[#181818] border border-[#282828] pointer-events-auto flex flex-col justify-between overflow-hidden text-white font-sans m-0 rounded-t-2xl sm:rounded-2xl shadow-2xl max-h-[85vh]"
+                  initial={{ y: '100%', opacity: 0.95 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: '100%', opacity: 0.95 }}
+                  transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                  className="w-full max-w-lg bg-[#181818] border border-[#282828] pointer-events-auto flex flex-col justify-between overflow-hidden text-white font-sans m-0 rounded-t-2xl sm:rounded-2xl shadow-2xl max-h-[85vh] transform-gpu will-change-transform"
                 >
                 {/* Drawer Header & Content */}
                 <div className="p-6 space-y-4 overflow-y-auto flex-1">

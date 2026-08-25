@@ -152,7 +152,7 @@ export default function Navbar() {
         </form>
 
         {isAuthenticated ? (
-          <div className="relative" ref={userMenuRef}>
+          <div className="relative hidden md:block" ref={userMenuRef}>
             <button
               type="button"
               onClick={() => setUserMenuOpen((prev) => !prev)}
@@ -277,7 +277,7 @@ export default function Navbar() {
         <button
           type="button"
           onClick={() => setMobileMenuOpen((prev) => !prev)}
-          className="lg:hidden w-8 h-8 rounded-full bg-[#181818] hover:bg-[#282828] border border-white/5 flex items-center justify-center text-white transition-colors cursor-pointer"
+          className="md:hidden w-9 h-9 rounded-full bg-[#181818] hover:bg-[#282828] border border-white/5 flex items-center justify-center text-white transition-colors cursor-pointer"
           title="Toggle Navigation Menu"
         >
           {mobileMenuOpen ? <X className="w-4 h-4 text-[#1ed760]" /> : <Menu className="w-4 h-4 text-white" />}
@@ -292,8 +292,29 @@ export default function Navbar() {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.2 }}
-            className="lg:hidden absolute top-full left-0 right-0 bg-[#141414]/95 backdrop-blur-2xl border-b border-white/10 px-4 py-5 shadow-2xl z-40 overflow-hidden space-y-4"
+            className="md:hidden absolute top-full left-0 right-0 bg-[#141414]/95 backdrop-blur-2xl border-b border-white/10 px-4 py-5 shadow-2xl z-40 overflow-hidden space-y-4"
           >
+            {/* Mobile User Profile Summary (If logged in) */}
+            {isAuthenticated && (
+              <div className="flex items-center gap-3 p-3 bg-white/5 rounded-2xl border border-white/10">
+                {avatarUrl ? (
+                  <img
+                    src={avatarUrl}
+                    alt={user?.name}
+                    className="w-10 h-10 rounded-full object-cover border border-white/20 preserve-color flex-shrink-0"
+                  />
+                ) : (
+                  <div className="w-10 h-10 rounded-full bg-[#1ed760] text-black font-black flex items-center justify-center text-sm preserve-color flex-shrink-0">
+                    {user?.name?.charAt(0)?.toUpperCase() || 'U'}
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <h4 className="text-white font-bold text-sm truncate">{user?.name}</h4>
+                  <p className="text-[#b3b3b3] text-xs truncate">{user?.email}</p>
+                </div>
+              </div>
+            )}
+
             {/* Mobile Search Input */}
             <form onSubmit={(e) => { handleNavSearch(e); setMobileMenuOpen(false); }} className="relative w-full">
               <Search className="w-4 h-4 text-[#7c7c7c] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -319,16 +340,29 @@ export default function Navbar() {
               </Link>
 
               {isAuthenticated && (
-                <Link
-                  to="/my-bookings"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-3 ${
-                    isActive('/my-bookings') ? 'bg-[#282828] text-[#1ed760]' : 'text-[#b3b3b3] hover:text-white'
-                  }`}
-                >
-                  <Ticket className="w-4 h-4 text-[#1ed760]" />
-                  <span>My Tickets</span>
-                </Link>
+                <>
+                  <Link
+                    to="/my-bookings"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-3 ${
+                      isActive('/my-bookings') ? 'bg-[#282828] text-[#1ed760]' : 'text-[#b3b3b3] hover:text-white'
+                    }`}
+                  >
+                    <Ticket className="w-4 h-4 text-[#1ed760]" />
+                    <span>My Tickets</span>
+                  </Link>
+
+                  <Link
+                    to="/settings"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-3 ${
+                      isActive('/settings') ? 'bg-[#282828] text-[#1ed760]' : 'text-[#b3b3b3] hover:text-white'
+                    }`}
+                  >
+                    <Settings className="w-4 h-4 text-[#b3b3b3]" />
+                    <span>Settings</span>
+                  </Link>
+                </>
               )}
 
               {user && (user.role === 'organiser' || user.role === 'admin') && (
@@ -355,6 +389,20 @@ export default function Navbar() {
                   <ShieldCheck className="w-4 h-4 text-[#1ed760]" />
                   <span>Venues Management</span>
                 </Link>
+              )}
+
+              {isAuthenticated && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    handleLogout();
+                  }}
+                  className="w-full text-left px-4 py-2.5 text-sm font-bold text-[#f3727f] hover:bg-[#281818] rounded-xl transition-colors flex items-center gap-3 border-t border-white/10 mt-2 cursor-pointer"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Log Out</span>
+                </button>
               )}
             </div>
 

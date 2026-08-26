@@ -43,13 +43,19 @@ async function joinWaitlist(customerId, showtimeId, categoryId) {
     },
   });
 
-  // Check how many seats are truly available (not booked and not held in Redis)
+  // Check how many seats are truly available (not booked and not held in Redis/DB)
+  const now = new Date();
   let availableCount = 0;
   for (const s of dbStatuses) {
     if (s.status === 'booked') continue;
-    const redisKey = `hold:${showtimeId}:${s.seatId}`;
-    const isHeld = await redis.exists(redisKey);
-    if (!isHeld && s.status === 'available') {
+    let isHeldInRedis = false;
+    try {
+      const redisKey = `hold:${showtimeId}:${s.seatId}`;
+      isHeldInRedis = await redis.exists(redisKey);
+    } catch (rErr) {}
+
+    const isHeldInDb = s.status === 'held' && s.holdExpiresAt && new Date(s.holdExpiresAt) > now;
+    if (!isHeldInRedis && !isHeldInDb && s.status === 'available') {
       availableCount++;
     }
   }
@@ -122,7 +128,9 @@ async function processNextInQueue(showtimeId, categoryId, seatId, offerTtlSecond
 
   // Reserve the seat for this user in Redis and DB
   const holdKey = `hold:${showtimeId}:${seatId}`;
-  await redis.set(holdKey, nextInLine.customerId, 'EX', offerTtlSeconds);
+  try {
+    await redis.set(holdKey, nextInLine.customerId, 'EX', offerTtlSeconds);
+  } catch (rErr) {}
 
   await SeatStatus.update(
     {
@@ -143,19 +151,21 @@ async function processNextInQueue(showtimeId, categoryId, seatId, offerTtlSecond
   });
 
   // Store offer metadata in Redis for fast lookup
-  await redis.set(
-    `waitlist_offer:${offerToken}`,
-    JSON.stringify({
-      waitlistId: nextInLine.id,
-      customerId: nextInLine.customerId,
-      showtimeId,
-      categoryId,
-      seatId,
-      offerExpiresAt,
-    }),
-    'EX',
-    offerTtlSeconds
-  );
+  try {
+    await redis.set(
+      `waitlist_offer:${offerToken}`,
+      JSON.stringify({
+        waitlistId: nextInLine.id,
+        customerId: nextInLine.customerId,
+        showtimeId,
+        categoryId,
+        seatId,
+        offerExpiresAt,
+      }),
+      'EX',
+      offerTtlSeconds
+    );
+  } catch (rErr) {}
 
   // Send waitlist offer email via email service
   try {
@@ -227,14 +237,16 @@ async function handleExpiredOffer(waitlistEntry) {
   await waitlistEntry.update({ status: 'expired' });
 
   // Find the seat currently held for this offer
-  const cachedDataStr = await redis.get(`waitlist_offer:${waitlistEntry.offerToken}`);
   let seatId = null;
-  if (cachedDataStr) {
-    const parsed = JSON.parse(cachedDataStr);
-    seatId = parsed.seatId;
-    await redis.del(`waitlist_offer:${waitlistEntry.offerToken}`);
-    await redis.del(`hold:${waitlistEntry.showtimeId}:${seatId}`);
-  }
+  try {
+    const cachedDataStr = await redis.get(`waitlist_offer:${waitlistEntry.offerToken}`);
+    if (cachedDataStr) {
+      const parsed = JSON.parse(cachedDataStr);
+      seatId = parsed.seatId;
+      await redis.del(`waitlist_offer:${waitlistEntry.offerToken}`);
+      await redis.del(`hold:${waitlistEntry.showtimeId}:${seatId}`);
+    }
+  } catch (rErr) {}
 
   if (seatId) {
     // Cascade to next customer in queue

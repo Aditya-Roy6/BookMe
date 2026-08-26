@@ -76,9 +76,15 @@ async function createBooking(customerId, showtimeId, seatIds, paymentDetails = {
   }
 
   // Check Redis or DB holds
+  const now = new Date();
   for (const seatId of seatIds) {
-    const redisKey = `hold:${showtimeId}:${seatId}`;
-    const heldUser = await redis.get(redisKey);
+    let heldUser = null;
+    try {
+      const redisKey = `hold:${showtimeId}:${seatId}`;
+      heldUser = await redis.get(redisKey);
+    } catch (rErr) {
+      // Non-fatal fallback to PostgreSQL SeatStatus
+    }
 
     const dbStatus = await SeatStatus.findOne({
       where: { showtimeId, seatId },
@@ -90,9 +96,9 @@ async function createBooking(customerId, showtimeId, seatIds, paymentDetails = {
       throw error;
     }
 
-    // Must be held by this user either in Redis or DB
+    // Must be held by this user either in Redis or DB (with valid expiry)
     const isHeldInRedis = heldUser === customerId;
-    const isHeldInDb = dbStatus && dbStatus.status === 'held' && dbStatus.heldBy === customerId;
+    const isHeldInDb = dbStatus && dbStatus.status === 'held' && dbStatus.heldBy === customerId && dbStatus.holdExpiresAt && new Date(dbStatus.holdExpiresAt) > now;
 
     if (!isHeldInRedis && !isHeldInDb) {
       const error = new Error(`Seat ${seatId} is not held by you or your hold has expired`);
@@ -182,8 +188,12 @@ async function createBooking(customerId, showtimeId, seatIds, paymentDetails = {
   });
 
   // 6. Delete Redis holds
-  for (const seatId of seatIds) {
-    await redis.del(`hold:${showtimeId}:${seatId}`);
+  try {
+    for (const seatId of seatIds) {
+      await redis.del(`hold:${showtimeId}:${seatId}`);
+    }
+  } catch (rErr) {
+    // Non-fatal
   }
 
   // 7. Send confirmation email (async)
@@ -282,8 +292,12 @@ async function cancelBooking(bookingId, customerId, isAdmin = false) {
   });
 
   // Ensure any lingering Redis keys for these seats are explicitly removed
-  for (const sId of seatIds) {
-    await redis.del(`hold:${showtimeId}:${sId}`);
+  try {
+    for (const sId of seatIds) {
+      await redis.del(`hold:${showtimeId}:${sId}`);
+    }
+  } catch (rErr) {
+    // Non-fatal
   }
 
   // 2. Automated Waitlist Cascade for each released seat

@@ -39,7 +39,8 @@ async function holdSeats(showtimeId, seatIds, userId, ttlSeconds = DEFAULT_TTL_S
     throw error;
   }
 
-  // 2. Check Database: ensure no requested seat is already booked
+  // 2. Check Database: ensure no requested seat is already booked or active-held by another user
+  const now = new Date();
   const dbStatuses = await SeatStatus.findAll({
     where: {
       showtimeId,
@@ -56,23 +57,41 @@ async function holdSeats(showtimeId, seatIds, userId, ttlSeconds = DEFAULT_TTL_S
     throw error;
   }
 
-  // 3. Atomic Redis hold using Lua script (Concurrency Protection)
-  const keys = seatIds.map(id => `hold:${showtimeId}:${id}`);
-  const [success, conflictingKey] = await redis.eval(
-    ATOMIC_HOLD_LUA,
-    keys.length,
-    ...keys,
-    userId,
-    ttlSeconds.toString()
+  const activeHeldByOther = dbStatuses.find(
+    s => s.status === 'held' && s.heldBy && s.heldBy !== userId && s.holdExpiresAt && new Date(s.holdExpiresAt) > now
   );
-
-  if (success !== 1) {
-    const conflictSeatId = conflictingKey.split(':')[2];
-    const conflictSeat = await Seat.findByPk(conflictSeatId);
-    const label = conflictSeat ? conflictSeat.label : conflictSeatId;
+  if (activeHeldByOther) {
+    const seatObj = await Seat.findByPk(activeHeldByOther.seatId);
+    const label = seatObj ? seatObj.label : activeHeldByOther.seatId;
     const error = new Error(`Seat ${label} is currently held by another user`);
     error.statusCode = 409;
     throw error;
+  }
+
+  // 3. Atomic Redis hold using Lua script (Concurrency Protection with Graceful DB Fallback)
+  try {
+    const keys = seatIds.map(id => `hold:${showtimeId}:${id}`);
+    const [success, conflictingKey] = await redis.eval(
+      ATOMIC_HOLD_LUA,
+      keys.length,
+      ...keys,
+      userId,
+      ttlSeconds.toString()
+    );
+
+    if (success !== 1) {
+      const conflictSeatId = conflictingKey.split(':')[2];
+      const conflictSeat = await Seat.findByPk(conflictSeatId);
+      const label = conflictSeat ? conflictSeat.label : conflictSeatId;
+      const error = new Error(`Seat ${label} is currently held by another user`);
+      error.statusCode = 409;
+      throw error;
+    }
+  } catch (redisErr) {
+    if (redisErr.statusCode === 409) {
+      throw redisErr;
+    }
+    console.warn('Redis hold fallback to PostgreSQL SeatStatus:', redisErr.message);
   }
 
   // 4. Update Database SeatStatus records
@@ -127,16 +146,20 @@ async function releaseSeats(showtimeId, seatIds, userId, isAdmin = false) {
     throw error;
   }
 
-  // Verify ownership in Redis/DB
+  // Verify ownership in Redis/DB with safe try-catch
   for (const seatId of seatIds) {
-    const key = `hold:${showtimeId}:${seatId}`;
-    const heldUser = await redis.get(key);
-    if (heldUser && heldUser !== userId && !isAdmin) {
-      const error = new Error(`You do not own the hold for seat ${seatId}`);
-      error.statusCode = 403;
-      throw error;
+    try {
+      const key = `hold:${showtimeId}:${seatId}`;
+      const heldUser = await redis.get(key);
+      if (heldUser && heldUser !== userId && !isAdmin) {
+        const error = new Error(`You do not own the hold for seat ${seatId}`);
+        error.statusCode = 403;
+        throw error;
+      }
+      await redis.del(key);
+    } catch (rErr) {
+      if (rErr.statusCode === 403) throw rErr;
     }
-    await redis.del(key);
   }
 
   // Update DB SeatStatus back to available
@@ -219,37 +242,43 @@ async function getShowtimeSeatMap(showtimeId, currentUserId = null) {
     where: { showtimeId },
   });
   const statusMap = new Map(dbStatuses.map(s => [s.seatId, s]));
-
-  // Inspect Redis holds in 1 single batched network roundtrip
   const { calculateDynamicSeatPrice } = require('./dynamicPricing');
   const bookedCount = dbStatuses.filter(s => s.status === 'booked').length;
   const enrichedSeats = [];
   const expiredSeatIdsToClean = [];
 
-  let redisData = [];
-  try {
-    const pipeline = redis.pipeline();
-    for (const seat of seats) {
-      const key = `hold:${showtimeId}:${seat.id}`;
-      pipeline.get(key);
-      pipeline.ttl(key);
-    }
-    const rawResults = await pipeline.exec();
-    if (rawResults && Array.isArray(rawResults)) {
-      for (let i = 0; i < seats.length; i++) {
-        const heldUser = rawResults[i * 2] ? rawResults[i * 2][1] : null;
-        const ttl = rawResults[i * 2 + 1] ? rawResults[i * 2 + 1][1] : 0;
-        redisData.push({ heldUser, ttl });
+  // Check if any seats are held to optimize Redis query volume
+  const now = new Date();
+  const heldDbSeats = dbStatuses.filter(
+    s => s.status === 'held' && s.holdExpiresAt && new Date(s.holdExpiresAt) > now
+  );
+
+  const redisHoldMap = new Map();
+  if (heldDbSeats.length > 0) {
+    try {
+      const pipeline = redis.pipeline();
+      for (const hSeat of heldDbSeats) {
+        const key = `hold:${showtimeId}:${hSeat.seatId}`;
+        pipeline.get(key);
+        pipeline.ttl(key);
       }
+      const rawResults = await pipeline.exec();
+      if (rawResults && Array.isArray(rawResults)) {
+        for (let i = 0; i < heldDbSeats.length; i++) {
+          const heldUser = rawResults[i * 2] && !rawResults[i * 2][0] ? rawResults[i * 2][1] : null;
+          const ttl = rawResults[i * 2 + 1] && !rawResults[i * 2 + 1][0] ? rawResults[i * 2 + 1][1] : 0;
+          redisHoldMap.set(heldDbSeats[i].seatId, { heldUser, ttl });
+        }
+      }
+    } catch (redisErr) {
+      console.warn('Redis pipeline fallback notice:', redisErr.message);
     }
-  } catch (redisErr) {
-    console.warn('Redis pipeline fallback notice:', redisErr.message);
   }
 
   for (let idx = 0; idx < seats.length; idx++) {
     const seat = seats[idx];
     const dbStatus = statusMap.get(seat.id);
-    const rHold = redisData[idx] || { heldUser: null, ttl: 0 };
+    const rHold = redisHoldMap.get(seat.id) || { heldUser: null, ttl: 0 };
     const redisHeldUser = rHold.heldUser;
     const ttl = rHold.ttl;
 
@@ -377,7 +406,11 @@ async function cleanupExpiredHolds() {
 
   const releasedCount = expiredDbHolds.length;
   for (const hold of expiredDbHolds) {
-    await redis.del(`hold:${hold.showtimeId}:${hold.seatId}`);
+    try {
+      await redis.del(`hold:${hold.showtimeId}:${hold.seatId}`);
+    } catch (rErr) {
+      // Non-fatal
+    }
   }
 
   await SeatStatus.update(

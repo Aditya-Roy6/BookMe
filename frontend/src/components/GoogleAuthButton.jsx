@@ -30,7 +30,6 @@ export function GoogleIcon({ className = 'w-4 h-4' }) {
 export default function GoogleAuthButton({ role = 'customer', mode = 'login' }) {
   const googleBtnRef = useRef(null);
   const [loading, setLoading] = useState(false);
-  const [sdkReady, setSdkReady] = useState(false);
   const { googleLogin } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -89,10 +88,9 @@ export default function GoogleAuthButton({ role = 'customer', mode = 'login' }) 
               text: mode === 'signup' ? 'signup_with' : 'signin_with',
               shape: 'pill',
               logo_alignment: 'left',
-              width: 320,
+              width: 340,
             });
           }
-          setSdkReady(true);
           return true;
         } catch (e) {
           console.warn('Google Identity Services init warning:', e);
@@ -114,11 +112,45 @@ export default function GoogleAuthButton({ role = 'customer', mode = 'login' }) 
     };
   }, [clientId, mode, role]);
 
+  const handleCustomClick = () => {
+    if (window.google?.accounts?.id) {
+      // Try triggering one-tap or click the native button
+      const nativeBtn = googleBtnRef.current?.querySelector('div[role="button"], button');
+      if (nativeBtn) {
+        nativeBtn.click();
+      } else {
+        window.google.accounts.id.prompt();
+      }
+    } else {
+      toast.info('Connecting to Google services... Please try again in a second.');
+    }
+  };
+
   return (
-    <div className="w-full flex flex-col items-center justify-center space-y-4 py-2">
-      {/* Google official rendered button container */}
-      <div className="w-full flex justify-center py-2">
-        <div ref={googleBtnRef} className="min-h-[44px] flex items-center justify-center" />
+    <div className="w-full flex flex-col items-center justify-center space-y-4 py-1">
+      {/* Spotify-styled Dark Pill Google Button with Invisible Interactive Overlay */}
+      <div className="relative w-full max-w-[340px] overflow-hidden rounded-full group">
+        {/* Visible Styled Button */}
+        <button
+          type="button"
+          onClick={handleCustomClick}
+          disabled={loading}
+          className="w-full py-3.5 px-6 bg-[#121212] hover:bg-[#202020] text-white border border-[#383838] group-hover:border-white/50 font-bold text-xs uppercase tracking-[1.4px] rounded-full shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-3 cursor-pointer disabled:opacity-50"
+        >
+          <div className="w-5 h-5 rounded-full bg-white flex items-center justify-center p-0.5 flex-shrink-0">
+            <GoogleIcon className="w-3.5 h-3.5" />
+          </div>
+          <span className="truncate">
+            {mode === 'signup' ? 'Sign up with Google' : 'Sign in with Google'}
+          </span>
+        </button>
+
+        {/* Native Google Button Overlay for 100% Click Compatibility & Zero White Artifacts */}
+        <div
+          ref={googleBtnRef}
+          className="absolute inset-0 opacity-0 pointer-events-auto cursor-pointer flex items-center justify-center overflow-hidden scale-110"
+          style={{ filter: 'opacity(0.001)' }}
+        />
       </div>
 
       {loading && (
@@ -128,7 +160,7 @@ export default function GoogleAuthButton({ role = 'customer', mode = 'login' }) 
         </div>
       )}
 
-      {/* Security note */}
+      {/* Security subtitle */}
       <div className="text-center text-[11px] text-[#7c7c7c] max-w-[280px] leading-relaxed">
         Google securely verifies your identity. Instant access without typing a password.
       </div>

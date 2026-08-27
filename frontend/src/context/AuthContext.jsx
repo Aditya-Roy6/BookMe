@@ -57,8 +57,9 @@ export function AuthProvider({ children }) {
     return res.data;
   };
 
-  const googleLogin = async (credential, role = 'customer') => {
-    const res = await api.post('/auth/google', { credential, role });
+  const googleLogin = async (payload, role = 'customer') => {
+    const body = typeof payload === 'string' ? { credential: payload, role } : { ...payload, role };
+    const res = await api.post('/auth/google', body);
     const { token, user: loggedInUser } = res.data;
     localStorage.setItem('luminatix_token', token);
     localStorage.setItem('luminatix_user', JSON.stringify(loggedInUser));

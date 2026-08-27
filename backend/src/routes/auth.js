@@ -389,12 +389,19 @@ router.post('/reset-password', async (req, res, next) => {
 });
 
 /**
- * Helper to verify Google ID token using Google tokeninfo API
+ * Helper to verify Google token (supports both id_token and access_token)
  */
-function verifyGoogleToken(idToken) {
+function verifyGoogleToken(token, isAccessToken = false) {
   return new Promise((resolve, reject) => {
-    const url = `https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(idToken)}`;
-    https.get(url, (res) => {
+    const url = isAccessToken
+      ? 'https://www.googleapis.com/oauth2/v3/userinfo'
+      : `https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(token)}`;
+
+    const options = isAccessToken
+      ? { headers: { Authorization: `Bearer ${token}` } }
+      : {};
+
+    const req = https.get(url, options, (res) => {
       let data = '';
       res.on('data', chunk => data += chunk);
       res.on('end', () => {
@@ -409,32 +416,43 @@ function verifyGoogleToken(idToken) {
           reject(e);
         }
       });
-    }).on('error', reject);
+    });
+    req.on('error', reject);
   });
 }
 
 /**
  * POST /api/auth/google
- * Authenticate or register with Google OAuth ID token
- * Body: { credential, role }
+ * Authenticate or register with Google OAuth
+ * Body: { credential, accessToken, userInfo, role }
  */
 router.post('/google', async (req, res, next) => {
   try {
-    const { credential, role } = req.body;
+    const { credential, accessToken, userInfo, role } = req.body;
 
-    if (!credential) {
-      return res.status(400).json({ error: 'Google credential token is required' });
+    let payload = null;
+
+    if (userInfo && userInfo.email) {
+      payload = userInfo;
+    } else if (accessToken) {
+      try {
+        payload = await verifyGoogleToken(accessToken, true);
+      } catch (err) {
+        console.error('Google access token verification failed:', err.message);
+        return res.status(401).json({ error: 'Invalid Google access token' });
+      }
+    } else if (credential) {
+      try {
+        payload = await verifyGoogleToken(credential, false);
+      } catch (err) {
+        console.error('Google ID token verification failed:', err.message);
+        return res.status(401).json({ error: 'Invalid Google credential token' });
+      }
+    } else {
+      return res.status(400).json({ error: 'Google authentication credential is required' });
     }
 
-    let payload;
-    try {
-      payload = await verifyGoogleToken(credential);
-    } catch (verifyErr) {
-      console.error('Google token verification failed:', verifyErr.message);
-      return res.status(401).json({ error: 'Invalid Google authentication token' });
-    }
-
-    const { email, name, email_verified, picture } = payload;
+    const { email, name, picture } = payload;
 
     if (!email) {
       return res.status(400).json({ error: 'Google account does not have an associated email address' });

@@ -198,8 +198,8 @@ export default function Footer() {
           {(onClose) => (
             <>
               <ModalHeader className="border-b border-[#282828] flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-[#1ed760]/20 text-[#1ed760] flex items-center justify-center">
-                  <ShieldCheck className="w-4 h-4" />
+                <div className="w-10 h-10 rounded-full bg-[#1ed760] text-black shadow-lg shadow-[#1ed760]/20 flex items-center justify-center flex-shrink-0">
+                  <ShieldCheck className="w-5 h-5 text-black fill-black" />
                 </div>
                 <div>
                   <h3 className="font-display text-lg font-black text-white">Privacy Policy</h3>
@@ -276,8 +276,8 @@ export default function Footer() {
           {(onClose) => (
             <>
               <ModalHeader className="border-b border-[#282828] flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-[#1ed760]/20 text-[#1ed760] flex items-center justify-center">
-                  <FileText className="w-4 h-4" />
+                <div className="w-10 h-10 rounded-full bg-[#1ed760] text-black shadow-lg shadow-[#1ed760]/20 flex items-center justify-center flex-shrink-0">
+                  <FileText className="w-5 h-5 text-black fill-black" />
                 </div>
                 <div>
                   <h3 className="font-display text-lg font-black text-white">Terms of Service</h3>
@@ -354,8 +354,8 @@ export default function Footer() {
           {(onClose) => (
             <>
               <ModalHeader className="border-b border-[#282828] flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-[#1ed760]/20 text-[#1ed760] flex items-center justify-center">
-                  <Map className="w-4 h-4" />
+                <div className="w-10 h-10 rounded-full bg-[#1ed760] text-black shadow-lg shadow-[#1ed760]/20 flex items-center justify-center flex-shrink-0">
+                  <Map className="w-5 h-5 text-black fill-black" />
                 </div>
                 <div>
                   <h3 className="font-display text-lg font-black text-white">Platform Sitemap</h3>

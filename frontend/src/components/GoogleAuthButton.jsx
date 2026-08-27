@@ -28,7 +28,6 @@ export function GoogleIcon({ className = 'w-4 h-4' }) {
 }
 
 export default function GoogleAuthButton({ role = 'customer', mode = 'login' }) {
-  const googleBtnRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const { googleLogin } = useAuth();
   const { toast } = useToast();
@@ -40,125 +39,104 @@ export default function GoogleAuthButton({ role = 'customer', mode = 'login' }) 
     import.meta.env.VITE_GOOGLE_CLIENT_ID ||
     '989140602013-nu51sssd0qln6d96ahmccaps6tlgc5e6.apps.googleusercontent.com';
 
-  const handleCredentialResponse = async (response) => {
-    if (!response || !response.credential) {
-      toast.error('Google sign-in was cancelled or failed.');
+  const handleGoogleClick = () => {
+    if (loading) return;
+
+    if (!window.google?.accounts?.oauth2) {
+      toast.info('Google services are initializing. Please try again in 2 seconds.');
       return;
     }
 
     setLoading(true);
+
     try {
-      const loggedUser = await googleLogin(response.credential, role);
-      toast.success(`Welcome to BooKMe, ${loggedUser.name || 'User'}!`);
-      const target =
-        typeof redirectPath === 'object' && redirectPath.pathname
-          ? `${redirectPath.pathname}${redirectPath.search || ''}`
-          : loggedUser.role === 'organiser'
-          ? '/organiser/dashboard'
-          : redirectPath;
-      navigate(target, { replace: true });
-    } catch (err) {
-      console.error('Google auth error:', err);
-      const errMsg = err.response?.data?.error || 'Google authentication failed. Please try again.';
-      toast.error(errMsg);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    let intervalId;
-
-    const initGsi = () => {
-      if (window.google?.accounts?.id) {
-        try {
-          window.google.accounts.id.initialize({
-            client_id: clientId,
-            callback: handleCredentialResponse,
-            auto_select: false,
-            cancel_on_tap_outside: true,
-          });
-
-          if (googleBtnRef.current) {
-            googleBtnRef.current.innerHTML = '';
-            window.google.accounts.id.renderButton(googleBtnRef.current, {
-              type: 'standard',
-              theme: 'filled_black',
-              size: 'large',
-              text: mode === 'signup' ? 'signup_with' : 'signin_with',
-              shape: 'pill',
-              logo_alignment: 'left',
-              width: 340,
-            });
+      const client = window.google.accounts.oauth2.initTokenClient({
+        client_id: clientId,
+        scope: 'openid email profile',
+        callback: async (tokenResponse) => {
+          if (tokenResponse.error) {
+            console.error('Google OAuth token error:', tokenResponse);
+            setLoading(false);
+            if (tokenResponse.error !== 'user_cancelled' && tokenResponse.error !== 'access_denied') {
+              toast.error(tokenResponse.error_description || 'Google sign-in was cancelled or failed.');
+            }
+            return;
           }
-          return true;
-        } catch (e) {
-          console.warn('Google Identity Services init warning:', e);
-        }
-      }
-      return false;
-    };
 
-    if (!initGsi()) {
-      intervalId = setInterval(() => {
-        if (initGsi()) {
-          clearInterval(intervalId);
-        }
-      }, 300);
-    }
+          try {
+            // Fetch Google user profile details using the access token
+            const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+              headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+            });
+            const userInfo = await res.json();
 
-    return () => {
-      if (intervalId) clearInterval(intervalId);
-    };
-  }, [clientId, mode, role]);
+            if (!userInfo.email) {
+              throw new Error('No email found in Google account profile');
+            }
 
-  const handleCustomClick = () => {
-    if (window.google?.accounts?.id) {
-      // Try triggering one-tap or click the native button
-      const nativeBtn = googleBtnRef.current?.querySelector('div[role="button"], button');
-      if (nativeBtn) {
-        nativeBtn.click();
-      } else {
-        window.google.accounts.id.prompt();
-      }
-    } else {
-      toast.info('Connecting to Google services... Please try again in a second.');
+            // Post to backend to issue JWT session
+            const loggedUser = await googleLogin(
+              { accessToken: tokenResponse.access_token, userInfo },
+              role
+            );
+
+            toast.success(`Welcome to BooKMe, ${loggedUser.name || 'User'}!`);
+
+            const target =
+              typeof redirectPath === 'object' && redirectPath.pathname
+                ? `${redirectPath.pathname}${redirectPath.search || ''}`
+                : loggedUser.role === 'organiser'
+                ? '/organiser/dashboard'
+                : redirectPath;
+
+            navigate(target, { replace: true });
+          } catch (apiErr) {
+            console.error('Backend Google auth error:', apiErr);
+            const msg =
+              apiErr.response?.data?.error ||
+              apiErr.message ||
+              'Google authentication failed on server.';
+            toast.error(msg);
+          } finally {
+            setLoading(false);
+          }
+        },
+      });
+
+      // Request token with popup account picker
+      client.requestAccessToken({ prompt: 'select_account' });
+    } catch (err) {
+      console.error('Error invoking Google token client:', err);
+      setLoading(false);
+      toast.error('Could not open Google sign-in window. Please check popup permissions.');
     }
   };
 
   return (
     <div className="w-full flex flex-col items-center justify-center space-y-4 py-1">
-      {/* Spotify-styled Dark Pill Google Button with Invisible Interactive Overlay */}
-      <div className="relative w-full max-w-[340px] overflow-hidden rounded-full group">
-        {/* Visible Styled Button */}
-        <button
-          type="button"
-          onClick={handleCustomClick}
-          disabled={loading}
-          className="w-full py-3.5 px-6 bg-[#121212] hover:bg-[#202020] text-white border border-[#383838] group-hover:border-white/50 font-bold text-xs uppercase tracking-[1.4px] rounded-full shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-3 cursor-pointer disabled:opacity-50"
-        >
-          <div className="w-5 h-5 rounded-full bg-white flex items-center justify-center p-0.5 flex-shrink-0">
-            <GoogleIcon className="w-3.5 h-3.5" />
-          </div>
-          <span className="truncate">
-            {mode === 'signup' ? 'Sign up with Google' : 'Sign in with Google'}
-          </span>
-        </button>
-
-        {/* Native Google Button Overlay for 100% Click Compatibility & Zero White Artifacts */}
-        <div
-          ref={googleBtnRef}
-          className="absolute inset-0 opacity-0 pointer-events-auto cursor-pointer flex items-center justify-center overflow-hidden scale-110"
-          style={{ filter: 'opacity(0.001)' }}
-        />
-      </div>
-
-      {loading && (
-        <div className="flex items-center justify-center gap-2 text-xs text-[#1ed760] font-bold">
-          <Loader2 className="w-4 h-4 animate-spin text-[#1ed760]" />
-          <span>Verifying Google account & signing in...</span>
-        </div>
-      )}
+      {/* Spotify-styled Dark Pill Google Button */}
+      <button
+        type="button"
+        onClick={handleGoogleClick}
+        disabled={loading}
+        className="w-full max-w-[340px] py-3.5 px-6 bg-[#121212] hover:bg-[#202020] active:bg-[#282828] text-white border border-[#383838] hover:border-white/50 font-bold text-xs uppercase tracking-[1.4px] rounded-full shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 cursor-pointer disabled:opacity-50"
+      >
+        {loading ? (
+          <>
+            <Loader2 className="w-4 h-4 animate-spin text-[#1ed760]" />
+            <span>Connecting to Google...</span>
+          </>
+        ) : (
+          <>
+            <div className="w-5 h-5 rounded-full bg-white flex items-center justify-center p-0.5 flex-shrink-0 shadow-sm">
+              <GoogleIcon className="w-3.5 h-3.5" />
+            </div>
+            <span className="truncate">
+              {mode === 'signup' ? 'Sign up with Google' : 'Sign in with Google'}
+            </span>
+          </>
+        )}
+      </button>
 
       {/* Security subtitle */}
       <div className="text-center text-[11px] text-[#7c7c7c] max-w-[280px] leading-relaxed">

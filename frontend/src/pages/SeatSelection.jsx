@@ -19,6 +19,7 @@ import TTLTimer from '../components/TTLTimer';
 import { Play, AlertCircle, CheckCircle2, ArrowRight, Loader2, Sparkles, ShieldCheck, X } from '../components/MappedIcons';
 import { Ticket, Calendar, MapPin, Clock, Volume2 } from '../components/MappedIcons';
 import { VenuePitchVisual, resolveLayoutType } from '../components/SportsVenueLayouts';
+import SeatSightlineTooltip from '../components/SeatSightlineTooltip';
 
 // ─── Normal SVG Seat Icon (Using Exact public/normal seats.svg) ───
 
@@ -849,15 +850,28 @@ export default function SeatSelection() {
     else if (isBooked) statusText = 'Booked';
     else if (isHeld) statusText = 'Temporarily Held';
 
+    const totalR = seatMap?.venue?.totalRows || 8;
+    const totalC = seatMap?.venue?.totalCols || 14;
+    const rowNum = seat.row || (seat.label ? seat.label.charCodeAt(0) - 64 : 1);
+    const colNum = seat.col || parseInt(seat.label?.replace(/\D/g, '') || '1');
+
     setTooltip({
       x: rect.left + rect.width / 2,
-      y: rect.top - 20,
+      y: rect.top - 12,
       label: seat.label,
-      categoryName: seat.categoryName || 'Standard',
+      categoryName: seat.categoryName || seat.category?.name || 'Prime Club',
+      categoryColor: seat.categoryColor || seat.category?.color || '#1ed760',
       price: seat.price,
       status: statusText,
       isSelected,
       isUnavailable: isBooked || isHeld,
+      row: rowNum,
+      col: colNum,
+      totalRows: totalR,
+      totalCols: totalC,
+      isRecliner: seat.isRecliner || seat.category?.isRecliner || seat.categoryName?.toLowerCase().includes('recliner'),
+      moviePoster: seatMap?.event?.imageUrl,
+      eventTitle: seatMap?.event?.title,
     });
   };
 

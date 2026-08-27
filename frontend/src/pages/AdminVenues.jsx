@@ -13,6 +13,7 @@ import { useToast } from '../context/ToastContext';
 
 import { MapPin, Save, Info, Volume2, CinemaIcon, StadiumIcon, TheatreIcon, ShieldCheck, Plus, Grid, Loader2, AlertCircle, CheckCircle2, Trash2, Layers, Sparkles, Sliders, Check, Eye, ArrowLeft, Tv, Disc, Armchair, Maximize2, MousePointer, Compass, RotateCw, Minus, ZoomIn, ZoomOut, Type, Square, Slash, PenTool, CornerUpLeft, CornerUpRight, Move, LayoutGrid, Wand2, Copy, Hash, X } from '../components/MappedIcons';
 import { NormalSeatSvg, ReclinerSeatSvg, AuditoriumScreen3D, AisleStairsGraphic } from './SeatSelection';
+import SeatSightlineTooltip from '../components/SeatSightlineTooltip';
 import { VENUE_LAYOUT_PRESETS } from '../components/SportsVenueLayouts';
 import {
   TicketRoundedIcon,
@@ -1811,7 +1812,8 @@ export default function AdminVenues() {
                                             <div
                                               key={seat.id}
                                               className="relative group/seat"
-                                              title={`${seat.label} • ${category.name}`}
+                                              onMouseEnter={(e) => handleVenueSeatHover(e, seat, category, totalR, totalC)}
+                                              onMouseLeave={handleVenueSeatLeave}
                                             >
                                               <div
                                                 className={`flex items-center justify-center select-none transition-transform duration-150 ${seatSizeClass} hover:scale-115 cursor-default`}
@@ -1841,7 +1843,8 @@ export default function AdminVenues() {
                                             <div
                                               key={seat.id}
                                               className="relative group/seat"
-                                              title={`${seat.label} • ${category.name}`}
+                                              onMouseEnter={(e) => handleVenueSeatHover(e, seat, category, totalR, totalC)}
+                                              onMouseLeave={handleVenueSeatLeave}
                                             >
                                               <div
                                                 className={`flex items-center justify-center select-none transition-transform duration-150 ${seatSizeClass} hover:scale-115 cursor-default`}
@@ -1896,6 +1899,9 @@ export default function AdminVenues() {
           }}
         </ModalContent>
       </Modal>
+
+      {/* ─── LIVE 3D SIGHTLINE HOVER TOOLTIP ─── */}
+      <SeatSightlineTooltip tooltip={tooltip} />
     </div>
   );
 }

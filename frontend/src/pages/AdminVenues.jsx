@@ -1657,6 +1657,17 @@ export default function AdminVenues() {
                   ))}
                 </div>
               </div>
+              {/* Actions: View Layout / Floorplan */}
+              <div className="pt-3 border-t border-white/5">
+                <button
+                  type="button"
+                  onClick={() => setViewingVenue(venue)}
+                  className="w-full py-2.5 px-4 bg-[#252525] hover:bg-[#1ed760] text-white hover:text-black font-black text-xs uppercase tracking-wider rounded-full transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm hover:scale-[1.02] border border-white/5 hover:border-[#1ed760]"
+                >
+                  <Eye className="w-3.5 h-3.5" />
+                  <span>View Seating Layout</span>
+                </button>
+              </div>
             </div>
           );
         })}

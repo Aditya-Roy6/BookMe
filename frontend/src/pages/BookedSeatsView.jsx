@@ -12,6 +12,7 @@ import {
 
 import { Calendar, MapPin, ArrowLeft, QrCode, Loader2, AlertCircle } from '../components/MappedIcons';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from '@heroui/react';
+import SeatSightlineTooltip from '../components/SeatSightlineTooltip';
 
 export default function BookedSeatsView() {
   const { id: bookingId } = useParams();
@@ -99,14 +100,28 @@ export default function BookedSeatsView() {
     const seatPrice = seat.price || pricing[seat.categoryId] || seat.category?.price;
     const catName = seat.categoryName || seat.category?.name || 'Standard Tier';
 
+    const totalR = venue?.totalRows || 8;
+    const totalC = venue?.totalCols || 14;
+    const rowNum = seat.row || (seat.label ? seat.label.charCodeAt(0) - 64 : 1);
+    const colNum = seat.col || parseInt(seat.label?.replace(/\D/g, '') || '1');
+
     setTooltip({
       x: rect.left + rect.width / 2,
-      y: rect.top - 20, // 20px above seat to ensure zero overlap!
+      y: rect.top - 12,
       label: seat.label,
       categoryName: catName,
+      categoryColor: seat.categoryColor || seat.category?.color || (isMySeat ? '#1ed760' : '#ffffff'),
       status: isMySeat ? 'Your Reserved Seat' : seat.status === 'booked' ? 'Booked' : 'Available',
+      isSelected: isMySeat,
       price: seatPrice,
       isMySeat,
+      row: rowNum,
+      col: colNum,
+      totalRows: totalR,
+      totalCols: totalC,
+      isRecliner: isRecliner || seat.isRecliner || catName.toLowerCase().includes('recliner'),
+      moviePoster: ev?.imageUrl,
+      eventTitle: ev?.title,
     });
   };
 

@@ -1708,38 +1708,8 @@ export default function SeatSelection() {
         </ModalContent>
       </Modal>
 
-      {/* ─── CUSTOM FLOATING DARK TOOLTIP (REPLACES NATIVE BROWSER TOOLTIP) ─── */}
-      {tooltip && (
-        <div
-          style={{
-            position: 'fixed',
-            left: `${tooltip.x}px`,
-            top: `${tooltip.y}px`,
-            transform: 'translate(-50%, -100%)',
-            pointerEvents: 'none',
-            zIndex: 9999,
-          }}
-          className="bg-[#1f1f1f] text-white border border-[#383838] px-3 py-1.5 rounded-xl shadow-2xl text-[11px] font-sans whitespace-nowrap animate-in fade-in zoom-in-95 duration-100 flex items-center gap-2"
-        >
-          <span className="font-mono font-black text-white">Seat {tooltip.label}</span>
-          <span className="text-[#7c7c7c]">&bull;</span>
-          <span className={tooltip.isSelected ? 'text-[#1ed760] font-black' : tooltip.isUnavailable ? 'text-[#7c7c7c]' : 'text-white font-bold'}>
-            {tooltip.status}
-          </span>
-          {tooltip.price && (
-            <>
-              <span className="text-[#7c7c7c]">&bull;</span>
-              <span className="text-[#1ed760] font-mono font-bold">₹{tooltip.price}</span>
-            </>
-          )}
-          {tooltip.categoryName && (
-            <>
-              <span className="text-[#7c7c7c]">&bull;</span>
-              <span className="text-amber-400 font-bold">{tooltip.categoryName}</span>
-            </>
-          )}
-        </div>
-      )}
+      {/* ─── CUSTOM FLOATING 3D SIGHTLINE POV TOOLTIP ─── */}
+      <SeatSightlineTooltip tooltip={tooltip} />
     </div>
   );
 }

@@ -60,7 +60,7 @@ export default function AdminVenues() {
       totalRows: totalR || 8,
       totalCols: totalC || 14,
       isRecliner: seat.isRecliner || category?.isRecliner,
-      venueType: venueType || loadedVenueDetail?.type || viewingVenue?.type || 'cinema',
+      venueType: (venueType === 'circular_stadium' || venueType === 'amphitheatre' || (loadedVenueDetail?.name || viewingVenue?.name || '').toLowerCase().includes('stadium') || (loadedVenueDetail?.name || viewingVenue?.name || '').toLowerCase().includes('arena')) ? 'circular_stadium' : (venueType === 'square_stadium' ? 'square_stadium' : 'cinema'),
     });
   };
 

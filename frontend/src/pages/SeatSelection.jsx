@@ -523,7 +523,7 @@ function CircularStadiumMap({
                       transform={`translate(${x}, ${y}) rotate(${rotationDeg})`}
                       className={isBooked || isHeld ? 'cursor-not-allowed' : 'cursor-pointer'}
                       onClick={() => !isBooked && !isHeld && handleSeatClick(seat)}
-                      onMouseEnter={(e) => handleSeatMouseEnter && handleSeatMouseEnter(e, seat)}
+                      onMouseEnter={(e) => handleSeatMouseEnter && handleSeatMouseEnter(e, seat, true)}
                       onMouseLeave={handleSeatMouseLeave}
                     >
                       <g transform={`translate(-${seatScale * 50}, -${seatScale * 50}) scale(${seatScale})`}>
@@ -844,7 +844,7 @@ export default function SeatSelection() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [tooltip, setTooltip] = useState(null);
 
-  const handleSeatMouseEnter = (e, seat) => {
+  const handleSeatMouseEnter = (e, seat, isFromCircular = false) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const isSelected = selectedSeatIds.includes(seat.id);
     const isHeld = seat.status === 'held' && !seat.isHeldByMe;
@@ -854,10 +854,36 @@ export default function SeatSelection() {
     else if (isBooked) statusText = 'Booked';
     else if (isHeld) statusText = 'Temporarily Held';
 
-    const totalR = seatMap?.venue?.totalRows || 8;
-    const totalC = seatMap?.venue?.totalCols || 14;
+    const totalR = seatMap?.showtime?.totalRows || seatMap?.venue?.totalRows || 8;
+    const totalC = seatMap?.showtime?.totalCols || seatMap?.venue?.totalCols || 14;
     const rowNum = seat.row || (seat.label ? seat.label.charCodeAt(0) - 64 : 1);
     const colNum = seat.col || parseInt(seat.label?.replace(/\D/g, '') || '1');
+
+    const activeMoviePoster =
+      seatMap?.showtime?.eventImageUrl ||
+      seatMap?.showtime?.eventBackdropUrl ||
+      showtime?.eventImageUrl ||
+      showtime?.eventBackdropUrl ||
+      showtime?.imageUrl;
+
+    const activeEventTitle =
+      seatMap?.showtime?.eventTitle ||
+      showtime?.eventTitle ||
+      'Feature Presentation';
+
+    const vName = (seatMap?.showtime?.venueName || showtime?.venueName || '').toLowerCase();
+    const eTitle = (activeEventTitle || '').toLowerCase();
+    const isCircularMap =
+      isFromCircular ||
+      isStadiumVenue ||
+      vName.includes('stadium') ||
+      vName.includes('arena') ||
+      vName.includes('amphi') ||
+      vName.includes('circle') ||
+      eTitle.includes('coldplay') ||
+      eTitle.includes('hans zimmer') ||
+      colNum > 16 ||
+      totalC > 16;
 
     setTooltip({
       x: rect.left + rect.width / 2,
@@ -874,11 +900,11 @@ export default function SeatSelection() {
       totalRows: totalR,
       totalCols: totalC,
       isRecliner: seat.isRecliner || seat.category?.isRecliner || seat.categoryName?.toLowerCase().includes('recliner'),
-      moviePoster: seatMap?.event?.imageUrl,
-      eventTitle: seatMap?.event?.title,
+      moviePoster: activeMoviePoster,
+      eventTitle: activeEventTitle,
+      venueType: isCircularMap ? 'circular_stadium' : 'cinema',
     });
   };
-
   const handleSeatMouseLeave = () => {
     setTooltip(null);
   };

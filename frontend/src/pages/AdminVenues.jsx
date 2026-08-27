@@ -43,6 +43,28 @@ export default function AdminVenues() {
   const [viewingVenue, setViewingVenue] = useState(null);
   const [loadedVenueDetail, setLoadedVenueDetail] = useState(null);
   const [venueDetailLoading, setVenueDetailLoading] = useState(false);
+  const [tooltip, setTooltip] = useState(null);
+
+  const handleVenueSeatHover = (e, seat, category, totalR, totalC) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setTooltip({
+      x: rect.left + rect.width / 2,
+      y: rect.top - 12,
+      label: seat.label,
+      categoryName: category?.name || 'Standard',
+      categoryColor: category?.color || '#1ed760',
+      status: 'Configured',
+      row: seat.row || (seat.label ? seat.label.charCodeAt(0) - 64 : 1),
+      col: seat.col || parseInt(seat.label?.replace(/\D/g, '') || '1'),
+      totalRows: totalR || 8,
+      totalCols: totalC || 14,
+      isRecliner: seat.isRecliner || category?.isRecliner,
+    });
+  };
+
+  const handleVenueSeatLeave = () => {
+    setTooltip(null);
+  };
 
   useEffect(() => {
     if (viewingVenue) {

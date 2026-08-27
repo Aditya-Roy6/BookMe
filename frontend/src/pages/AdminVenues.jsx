@@ -1018,6 +1018,8 @@ export default function AdminVenues() {
                                   <g
                                     key={`stadium-seat-${rIdx}-${seatNum}`}
                                     transform={`translate(${x}, ${y}) rotate(${rot})`}
+                                    onMouseEnter={(e) => handleVenueSeatHover(e, { label: `${rConfig.letter}${seatNum}`, row: rIdx + 1, col: seatNum, isRecliner: rConfig.isRecliner }, cat, rowConfigs.length, seatCount)}
+                                    onMouseLeave={handleVenueSeatLeave}
                                     className={`transition-transform duration-75 hover:scale-110 ${
                                       isSelected ? 'drop-shadow-[0_0_6px_rgba(255,255,255,0.8)]' : ''
                                     }`}
@@ -1178,6 +1180,8 @@ export default function AdminVenues() {
                                 <g
                                   key={`n-${rIdx}-${seatNum}`}
                                   transform={`translate(${x}, ${y}) rotate(0)`}
+                                  onMouseEnter={(e) => handleVenueSeatHover(e, { label: `${rConfig.letter}${seatNum}`, row: rIdx + 1, col: seatNum, isRecliner: rConfig.isRecliner }, cat, rowConfigs.length, rConfig.seatCount || 20)}
+                                  onMouseLeave={handleVenueSeatLeave}
                                   className={`transition-transform duration-75 hover:scale-110 ${
                                     isSelected ? 'drop-shadow-[0_0_6px_rgba(255,255,255,0.8)]' : ''
                                   }`}
@@ -1212,6 +1216,8 @@ export default function AdminVenues() {
                                 <g
                                   key={`s-${rIdx}-${seatNum}`}
                                   transform={`translate(${x}, ${y}) rotate(180)`}
+                                  onMouseEnter={(e) => handleVenueSeatHover(e, { label: `${rConfig.letter}${seatNum}`, row: rIdx + 1, col: seatNum, isRecliner: rConfig.isRecliner }, cat, rowConfigs.length, rConfig.seatCount || 20)}
+                                  onMouseLeave={handleVenueSeatLeave}
                                   className={`transition-transform duration-75 hover:scale-110 ${
                                     isSelected ? 'drop-shadow-[0_0_6px_rgba(255,255,255,0.8)]' : ''
                                   }`}
@@ -1246,6 +1252,8 @@ export default function AdminVenues() {
                                 <g
                                   key={`w-${rIdx}-${seatNum}`}
                                   transform={`translate(${x}, ${y}) rotate(-90)`}
+                                  onMouseEnter={(e) => handleVenueSeatHover(e, { label: `${rConfig.letter}${seatNum}`, row: rIdx + 1, col: seatNum, isRecliner: rConfig.isRecliner }, cat, rowConfigs.length, rConfig.seatCount || 20)}
+                                  onMouseLeave={handleVenueSeatLeave}
                                   className={`transition-transform duration-75 hover:scale-110 ${
                                     isSelected ? 'drop-shadow-[0_0_6px_rgba(255,255,255,0.8)]' : ''
                                   }`}
@@ -1280,6 +1288,8 @@ export default function AdminVenues() {
                                 <g
                                   key={`e-${rIdx}-${seatNum}`}
                                   transform={`translate(${x}, ${y}) rotate(90)`}
+                                  onMouseEnter={(e) => handleVenueSeatHover(e, { label: `${rConfig.letter}${seatNum}`, row: rIdx + 1, col: seatNum, isRecliner: rConfig.isRecliner }, cat, rowConfigs.length, rConfig.seatCount || 20)}
+                                  onMouseLeave={handleVenueSeatLeave}
                                   className={`transition-transform duration-75 hover:scale-110 ${
                                     isSelected ? 'drop-shadow-[0_0_6px_rgba(255,255,255,0.8)]' : ''
                                   }`}

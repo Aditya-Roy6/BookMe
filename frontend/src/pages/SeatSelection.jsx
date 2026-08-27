@@ -272,6 +272,8 @@ function CircularStadiumMap({
   sortedRows,
   selectedSeatIds,
   handleSeatClick,
+  handleSeatMouseEnter,
+  handleSeatMouseLeave,
 }) {
   const svgSize = 1240;
   const center = svgSize / 2;
@@ -521,6 +523,8 @@ function CircularStadiumMap({
                       transform={`translate(${x}, ${y}) rotate(${rotationDeg})`}
                       className={isBooked || isHeld ? 'cursor-not-allowed' : 'cursor-pointer'}
                       onClick={() => !isBooked && !isHeld && handleSeatClick(seat)}
+                      onMouseEnter={(e) => handleSeatMouseEnter && handleSeatMouseEnter(e, seat)}
+                      onMouseLeave={handleSeatMouseLeave}
                     >
                       <g transform={`translate(-${seatScale * 50}, -${seatScale * 50}) scale(${seatScale})`}>
                         <g transform="rotate(180 50 50)">
@@ -1220,6 +1224,8 @@ export default function SeatSelection() {
             sortedRows={sortedRows}
             selectedSeatIds={selectedSeatIds}
             handleSeatClick={handleSeatClick}
+            handleSeatMouseEnter={handleSeatMouseEnter}
+            handleSeatMouseLeave={handleSeatMouseLeave}
           />
         ) : (
           /* ─── MULTI-SPORT & ENTERTAINMENT AUDITORIUM / STADIUM ENGINE ─── */

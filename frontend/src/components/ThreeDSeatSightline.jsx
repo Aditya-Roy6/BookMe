@@ -2,9 +2,13 @@ import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
 /**
- * Bright, Photorealistic 3D Seat Sightline WebGL Engine
- * Zero dark voids. Vibrant lighting, crystal-clear 4K screen, plush red velvet seating tiers,
- * and authentic 3D stadium & concert environments.
+ * Photorealistic 3D Seat Sightline First-Person Engine
+ * Faithfully matches real multiplex cinema auditoriums with:
+ *  - Deep red acoustic fabric walls with warm golden architectural sconce light wash
+ *  - Recessed ceiling downlights & warm step-edge LED guides
+ *  - Contoured red velvet cinema seating with headrests, armrests & cup holders
+ *  - Giant 16:9 / Cinemascope screen with real movie texture and dynamic projection bounce
+ *  - High-fidelity concert arena, football stadium, and cricket ground environments
  */
 export default function ThreeDSeatSightline({
   row = 1,
@@ -39,24 +43,24 @@ export default function ThreeDSeatSightline({
     const isCricket =
       typeStr.includes('cricket') || typeStr.includes('oval');
 
-    // 1. Scene & Camera Setup (Bright background, no dark fog)
+    // 1. Scene & High-FOV First-Person Camera
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x0e1118);
+    scene.background = new THREE.Color(0x0a0a0f);
 
-    const camera = new THREE.PerspectiveCamera(54, width / height, 0.1, 100);
+    const camera = new THREE.PerspectiveCamera(58, width / height, 0.1, 100);
 
-    // Coordinate Math: Tight, well-framed room
+    // Coordinate Calculations
     const numRows = Math.max(totalRows, 6);
     const numCols = Math.max(totalCols, 10);
 
-    const getRowY = (r) => 0.6 + (r - 1) * 0.55;
-    const getRowZ = (r) => 4.2 + (r - 1) * 1.55;
+    const getRowY = (r) => 0.4 + (r - 1) * 0.48;
+    const getRowZ = (r) => 3.8 + (r - 1) * 1.45;
 
     const getSeatX = (c) => {
       const norm = (c - 0.5) / numCols - 0.5; // -0.5 to +0.5
-      let x = norm * 10.5;
-      if (x >= 0) x += 0.45;
-      else x -= 0.45;
+      let x = norm * 10.0;
+      if (x >= 0) x += 0.4;
+      else x -= 0.4;
       return x;
     };
 
@@ -64,11 +68,11 @@ export default function ThreeDSeatSightline({
     const mySeatY = getRowY(row);
     const mySeatZ = getRowZ(row);
 
-    // Human eye position: +0.75m above seat
-    camera.position.set(mySeatX, mySeatY + 0.75, mySeatZ);
+    // Human eye level: sitting height (+0.72m)
+    camera.position.set(mySeatX, mySeatY + 0.72, mySeatZ);
 
-    const screenCenter = new THREE.Vector3(0, 2.6, 0);
-    camera.lookAt(screenCenter);
+    const screenTarget = new THREE.Vector3(0, 2.4, 0);
+    camera.lookAt(screenTarget);
 
     // 2. High-Performance WebGL Renderer
     const renderer = new THREE.WebGLRenderer({
@@ -79,62 +83,54 @@ export default function ThreeDSeatSightline({
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.4;
+    renderer.toneMappingExposure = 1.3;
     container.innerHTML = '';
     container.appendChild(renderer.domElement);
 
-    // 3. BRIGHT, BEAUTIFUL LIGHTING
-    // Ambient Light (Bright enough to clearly see all seats and floors)
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.6);
+    // 3. PHOTOREALISTIC LIGHTING SETUP
+    // Ambient Light (warm dark tone)
+    const ambientLight = new THREE.AmbientLight(0x2a1820, 1.8);
     scene.add(ambientLight);
 
-    // Main Overhead Directional Light (Casts crisp soft highlights on seat cushions)
-    const dirLightTop = new THREE.DirectionalLight(0xfff5ea, 2.4);
-    dirLightTop.position.set(0, 15, 8);
-    scene.add(dirLightTop);
+    // Overhead Ceiling Warm Downlights (Scattered downlights like real cinema ceiling)
+    for (const zPos of [4, 8, 12, 16]) {
+      const downlight = new THREE.PointLight(0xffeedd, 1.6, 12);
+      downlight.position.set(0, 7.5, zPos);
+      scene.add(downlight);
+    }
 
-    // Fill Light from Back
-    const backFill = new THREE.DirectionalLight(0x38bdf8, 1.2);
-    backFill.position.set(0, 6, 20);
-    scene.add(backFill);
+    // Screen Projection Bounce Light
+    const screenBounce = new THREE.PointLight(0xffffff, 2.8, 18);
+    screenBounce.position.set(0, 2.8, 1.2);
+    scene.add(screenBounce);
 
-    // Dynamic Colored Screen / Stage Light
-    const stageLightColor = isConcert
-      ? 0xc084fc
-      : isFootball || isCricket
-      ? 0x38bdf8
-      : 0x4ade80;
-    const screenGlow = new THREE.PointLight(stageLightColor, 3.0, 20);
-    screenGlow.position.set(0, 3.0, 1.5);
-    scene.add(screenGlow);
-
-    // 4. Create Screen Material & Direct Texture Loading
+    // 4. Screen Texture & Material
     const canvas = document.createElement('canvas');
-    canvas.width = 1024;
-    canvas.height = 512;
+    canvas.width = 1280;
+    canvas.height = 720;
     const ctx = canvas.getContext('2d');
 
     const renderDefaultScreen = () => {
-      const grad = ctx.createLinearGradient(0, 0, 1024, 512);
-      grad.addColorStop(0, '#0f172a');
-      grad.addColorStop(0.5, '#1e293b');
+      const grad = ctx.createLinearGradient(0, 0, 1280, 720);
+      grad.addColorStop(0, '#1e1b4b');
+      grad.addColorStop(0.5, '#4338ca');
       grad.addColorStop(1, '#0f172a');
       ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, 1024, 512);
+      ctx.fillRect(0, 0, 1280, 720);
 
-      // Ambient Cinema Visuals
+      // Movie credits styling matching real cinema
       ctx.fillStyle = '#ffffff';
-      ctx.font = '900 64px sans-serif';
+      ctx.font = '900 68px sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText('4K DOLBY CINEMA', 512, 220);
+      ctx.fillText('DOLBY CINEMA 4K LASER', 640, 320);
 
       ctx.fillStyle = '#1ed760';
-      ctx.font = '800 32px sans-serif';
-      ctx.fillText('FEATURE PRESENTATION', 512, 280);
+      ctx.font = '700 36px monospace';
+      ctx.fillText('DIRECT FIRST-PERSON SIGHTLINE', 640, 390);
 
-      ctx.strokeStyle = '#1ed760';
-      ctx.lineWidth = 10;
-      ctx.strokeRect(20, 20, 984, 472);
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(30, 30, 1220, 660);
     };
 
     renderDefaultScreen();
@@ -146,7 +142,10 @@ export default function ThreeDSeatSightline({
       side: THREE.DoubleSide,
     });
 
-    const activePoster = moviePoster || 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1024&q=80';
+    const activePoster =
+      moviePoster ||
+      'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1024&q=80';
+
     if (activePoster) {
       const loader = new THREE.TextureLoader();
       loader.setCrossOrigin('anonymous');
@@ -154,322 +153,262 @@ export default function ThreeDSeatSightline({
         activePoster,
         (loadedTex) => {
           loadedTex.colorSpace = THREE.SRGBColorSpace;
-          loadedTex.wrapS = THREE.ClampToEdgeWrapping;
-          loadedTex.wrapT = THREE.ClampToEdgeWrapping;
           screenMat.map = loadedTex;
           screenMat.needsUpdate = true;
         },
         undefined,
         () => {
-          console.warn('Could not load 3D screen poster, using default 4K Dolby texture');
+          console.warn('Fallback to 4K showcase screen');
         }
       );
     }
 
-    // ─── 5. VENUE SPECIFIC 3D WORLD ───
+    // ─── 5. PHOTOREALISTIC VENUE ARCHITECTURE ───
     if (isFootball) {
-      // ⚽ FOOTBALL STADIUM
-      const turf = new THREE.Mesh(
-        new THREE.PlaneGeometry(24, 16),
-        new THREE.MeshStandardMaterial({ color: 0x16a34a, roughness: 0.5 })
-      );
-      turf.rotation.x = -Math.PI / 2;
-      turf.position.set(0, 0, 0);
-      scene.add(turf);
+      // ⚽ FOOTBALL STADIUM ENVIRONMENT
+      const turfMat = new THREE.MeshStandardMaterial({ color: 0x15803d, roughness: 0.5 });
+      const pitch = new THREE.Mesh(new THREE.PlaneGeometry(26, 18), turfMat);
+      pitch.rotation.x = -Math.PI / 2;
+      scene.add(pitch);
 
-      // Pitch Markings
       const lineMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-      const centerLine = new THREE.Mesh(new THREE.PlaneGeometry(0.12, 16), lineMat);
+      const centerLine = new THREE.Mesh(new THREE.PlaneGeometry(0.12, 18), lineMat);
       centerLine.rotation.x = -Math.PI / 2;
       centerLine.position.set(0, 0.02, 0);
       scene.add(centerLine);
 
-      // Center Circle
-      const circleMat = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true });
-      const centerCircle = new THREE.Mesh(new THREE.CircleGeometry(3.0, 32), circleMat);
-      centerCircle.rotation.x = -Math.PI / 2;
-      centerCircle.position.set(0, 0.02, 0);
-      scene.add(centerCircle);
-
-      // Goalpost Frame
-      const goalMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-      const goalTop = new THREE.Mesh(new THREE.BoxGeometry(5.0, 0.12, 0.12), goalMat);
-      goalTop.position.set(0, 2.2, -6.5);
-      scene.add(goalTop);
-
-      const goalL = new THREE.Mesh(new THREE.BoxGeometry(0.12, 2.2, 0.12), goalMat);
-      goalL.position.set(-2.5, 1.1, -6.5);
-      scene.add(goalL);
-
-      const goalR = new THREE.Mesh(new THREE.BoxGeometry(0.12, 2.2, 0.12), goalMat);
-      goalR.position.set(2.5, 1.1, -6.5);
-      scene.add(goalR);
-
-      // 4 Bright Stadium Floodlight Towers
-      for (const [fx, fz] of [[-10, -7], [10, -7], [-10, 8], [10, 8]]) {
-        const pole = new THREE.Mesh(
-          new THREE.CylinderGeometry(0.15, 0.25, 9),
-          new THREE.MeshStandardMaterial({ color: 0x94a3b8 })
-        );
-        pole.position.set(fx, 4.5, fz);
+      // Floodlights
+      for (const [fx, fz] of [[-11, -8], [11, -8], [-11, 9], [11, 9]]) {
+        const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.25, 10), new THREE.MeshStandardMaterial({ color: 0x64748b }));
+        pole.position.set(fx, 5, fz);
         scene.add(pole);
 
-        const head = new THREE.Mesh(
-          new THREE.BoxGeometry(1.2, 0.6, 0.4),
-          new THREE.MeshBasicMaterial({ color: 0xffffff })
-        );
-        head.position.set(fx, 9.0, fz);
-        scene.add(head);
-
         const fl = new THREE.PointLight(0xffffff, 2.5, 25);
-        fl.position.set(fx, 8.8, fz);
+        fl.position.set(fx, 9.8, fz);
         scene.add(fl);
       }
     } else if (isCricket) {
-      // 🏏 CRICKET OVAL
-      const turf = new THREE.Mesh(
-        new THREE.CylinderGeometry(13, 13, 0.15, 32),
-        new THREE.MeshStandardMaterial({ color: 0x22c55e, roughness: 0.55 })
-      );
-      turf.position.set(0, 0, 0);
-      scene.add(turf);
+      // 🏏 CRICKET STADIUM ENVIRONMENT
+      const turfMat = new THREE.MeshStandardMaterial({ color: 0x16a34a, roughness: 0.55 });
+      const oval = new THREE.Mesh(new THREE.CylinderGeometry(14, 14, 0.15, 32), turfMat);
+      scene.add(oval);
 
-      // 22-Yard Pitch Strip (Brown/Clay)
       const pitchStrip = new THREE.Mesh(
-        new THREE.BoxGeometry(2.2, 0.04, 10),
-        new THREE.MeshStandardMaterial({ color: 0xe0a96d, roughness: 0.8 })
+        new THREE.BoxGeometry(2.4, 0.04, 10),
+        new THREE.MeshStandardMaterial({ color: 0xd4a373, roughness: 0.8 })
       );
       pitchStrip.position.set(0, 0.1, 0);
       scene.add(pitchStrip);
-
-      // Wickets
-      const stumpMat = new THREE.MeshBasicMaterial({ color: 0xfde047 });
-      for (const sz of [-3.8, 5.2]) {
-        for (let sx = -0.15; sx <= 0.15; sx += 0.15) {
-          const stump = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.6), stumpMat);
-          stump.position.set(sx, 0.4, sz);
-          scene.add(stump);
-        }
-      }
-
-      // Boundary Rope
-      const rope = new THREE.Mesh(
-        new THREE.TorusGeometry(12.5, 0.07, 8, 36),
-        new THREE.MeshBasicMaterial({ color: 0xffffff })
-      );
-      rope.rotation.x = Math.PI / 2;
-      rope.position.set(0, 0.12, 0);
-      scene.add(rope);
     } else if (isConcert) {
-      // 🎸 CONCERT ARENA / AMPHITHEATRE
+      // 🎸 CONCERT ARENA / FESTIVAL ENVIRONMENT
       const stage = new THREE.Mesh(
-        new THREE.BoxGeometry(14, 1.0, 5.5),
-        new THREE.MeshStandardMaterial({ color: 0x27272a, roughness: 0.3, metalness: 0.2 })
+        new THREE.BoxGeometry(15, 1.0, 5.5),
+        new THREE.MeshStandardMaterial({ color: 0x18181b, roughness: 0.3 })
       );
       stage.position.set(0, 0.5, -1.0);
       scene.add(stage);
 
-      // Bright Live Video Wall
-      // uses shared screenMat
-      const videoWall = new THREE.Mesh(new THREE.BoxGeometry(12, 5.5, 0.2), screenMat);
-      videoWall.position.set(0, 3.8, -3.5);
+      const videoWall = new THREE.Mesh(new THREE.BoxGeometry(13, 6.0, 0.2), screenMat);
+      videoWall.position.set(0, 4.0, -3.6);
       scene.add(videoWall);
 
-      // Concert Truss & Colored Spotlights
-      const truss = new THREE.Mesh(
-        new THREE.BoxGeometry(14, 0.3, 0.3),
-        new THREE.MeshStandardMaterial({ color: 0x64748b, metalness: 0.8 })
-      );
-      truss.position.set(0, 6.8, -1.0);
-      scene.add(truss);
-
       for (let tx = -5; tx <= 5; tx += 2.5) {
-        const spot = new THREE.Mesh(
-          new THREE.BoxGeometry(0.3, 0.4, 0.3),
-          new THREE.MeshBasicMaterial({ color: 0xd946ef })
-        );
-        spot.position.set(tx, 6.6, -1.0);
-        scene.add(spot);
-
-        const sLight = new THREE.PointLight(0xd946ef, 2.0, 12);
-        sLight.position.set(tx, 6.3, -1.0);
+        const sLight = new THREE.PointLight(0xd946ef, 2.2, 14);
+        sLight.position.set(tx, 6.5, -1.0);
         scene.add(sLight);
       }
     } else {
-      // 🎬 DOLBY CINEMA / IMAX AUDITORIUM (Bright & Crisp)
-      // Giant Curved 4K Cinema Screen
-      const screenRadius = 14;
-      const screenHeight = 5.6;
-      const screenGeo = new THREE.CylinderGeometry(
-        screenRadius,
-        screenRadius,
-        screenHeight,
-        36,
-        1,
-        true,
-        Math.PI * 0.77,
-        Math.PI * 0.46
+      // 🎬 AUTHENTIC MULTIPLEX CINEMA AUDITORIUM (Matches Photo!)
+      // 1. Giant Widescreen (16:9 / 2.39:1 Cinemascope)
+      const screenWidth = 14.5;
+      const screenHeight = 6.2;
+      const screenMesh = new THREE.Mesh(
+        new THREE.PlaneGeometry(screenWidth, screenHeight),
+        screenMat
       );
-
-      // uses shared screenMat
-      const screenMesh = new THREE.Mesh(screenGeo, screenMat);
-      screenMesh.position.set(0, 2.8, -screenRadius + 2.0);
-      screenMesh.rotation.y = Math.PI;
+      screenMesh.position.set(0, 3.4, 0);
       scene.add(screenMesh);
+
+      // Black Acoustic Bezel Frame around Screen
+      const frameMat = new THREE.MeshStandardMaterial({ color: 0x050508, roughness: 0.9 });
+      const screenFrame = new THREE.Mesh(
+        new THREE.BoxGeometry(screenWidth + 0.6, screenHeight + 0.6, 0.15),
+        frameMat
+      );
+      screenFrame.position.set(0, 3.4, -0.1);
+      scene.add(screenFrame);
 
       // Stage Platform Under Screen
       const stage = new THREE.Mesh(
-        new THREE.BoxGeometry(16, 0.6, 4.0),
-        new THREE.MeshStandardMaterial({ color: 0x1f2937, roughness: 0.5 })
+        new THREE.BoxGeometry(17, 0.5, 3.5),
+        new THREE.MeshStandardMaterial({ color: 0x111116, roughness: 0.7 })
       );
-      stage.position.set(0, 0.3, 0.2);
+      stage.position.set(0, 0.25, 0.5);
       scene.add(stage);
 
-      // Stage Glowing LED Border
-      const stageLed = new THREE.Mesh(
-        new THREE.BoxGeometry(16, 0.08, 0.08),
-        new THREE.MeshBasicMaterial({ color: 0x4ade80 })
-      );
-      stageLed.position.set(0, 0.64, 2.2);
-      scene.add(stageLed);
+      // 2. Deep Red Acoustic Fabric Sidewalls with Warm Golden Sconce Wash
+      const wallMat = new THREE.MeshStandardMaterial({
+        color: 0x8b111a, // Deep Velvet Red
+        roughness: 0.65,
+      });
 
-      // Wooden Acoustic Sidewalls with Warm Lighting
-      const wallMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.6 });
       const wallL = new THREE.Mesh(new THREE.BoxGeometry(0.4, 10, 26), wallMat);
-      wallL.position.set(-8.5, 4.5, 9);
+      wallL.position.set(-8.2, 4.8, 9);
       scene.add(wallL);
 
       const wallR = new THREE.Mesh(new THREE.BoxGeometry(0.4, 10, 26), wallMat);
-      wallR.position.set(8.5, 4.5, 9);
+      wallR.position.set(8.2, 4.8, 9);
       scene.add(wallR);
 
-      // Warm Sconce Lights along walls
-      for (let z = 3; z < 20; z += 4) {
-        const sconce = new THREE.Mesh(
-          new THREE.BoxGeometry(0.12, 0.5, 0.25),
-          new THREE.MeshBasicMaterial({ color: 0x38bdf8 })
+      // Wall Architectural Sconces with Up/Down Light Cones (Matches photo!)
+      for (let z = 3.5; z < 20; z += 3.8) {
+        // Golden Trim Fixture
+        const fixtureL = new THREE.Mesh(
+          new THREE.BoxGeometry(0.1, 0.7, 0.25),
+          new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.3, metalness: 0.7 })
         );
-        sconce.position.set(-8.25, 4.0, z);
-        scene.add(sconce);
+        fixtureL.position.set(-7.95, 4.5, z);
+        scene.add(fixtureL);
 
-        const sconceR = new THREE.Mesh(
-          new THREE.BoxGeometry(0.12, 0.5, 0.25),
-          new THREE.MeshBasicMaterial({ color: 0x38bdf8 })
+        const fixtureR = new THREE.Mesh(
+          new THREE.BoxGeometry(0.1, 0.7, 0.25),
+          new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.3, metalness: 0.7 })
         );
-        sconceR.position.set(8.25, 4.0, z);
-        scene.add(sconceR);
+        fixtureR.position.set(7.95, 4.5, z);
+        scene.add(fixtureR);
+
+        // Golden Warm Light Wash Cones on Sidewall
+        const sconceLightL = new THREE.PointLight(0xffaa22, 1.8, 6.5);
+        sconceLightL.position.set(-7.7, 4.5, z);
+        scene.add(sconceLightL);
+
+        const sconceLightR = new THREE.PointLight(0xffaa22, 1.8, 6.5);
+        sconceLightR.position.set(7.7, 4.5, z);
+        scene.add(sconceLightR);
       }
+
+      // Ceiling Plane (Dark with pin lights)
+      const ceiling = new THREE.Mesh(
+        new THREE.PlaneGeometry(18, 26),
+        new THREE.MeshStandardMaterial({ color: 0x0a0a0e, roughness: 0.9 })
+      );
+      ceiling.rotation.x = Math.PI / 2;
+      ceiling.position.set(0, 8.5, 9);
+      scene.add(ceiling);
     }
 
-    // ─── 6. AUDITORIUM SEATING TIERS & PLUSH RED VELVET CHAIRS ───
-    const seatBackGeo = new THREE.BoxGeometry(0.5, 0.52, 0.12);
-    const seatHeadGeo = new THREE.BoxGeometry(0.4, 0.14, 0.14);
-    const seatCushionGeo = new THREE.BoxGeometry(0.5, 0.12, 0.48);
-    const armrestGeo = new THREE.BoxGeometry(0.08, 0.24, 0.44);
-
-    // Rich Cinema Red Velvet Material (Bright and clearly visible)
-    const redVelvetMat = new THREE.MeshStandardMaterial({
-      color: 0xdc2626,
-      roughness: 0.4,
-      metalness: 0.1,
+    // ─── 6. CONTOURED RED CINEMA SEATS & STEPPED RISERS ───
+    // Red Cinema Velvet Seat Material
+    const cinemaRedMat = new THREE.MeshStandardMaterial({
+      color: 0xc81e28, // Bright Velvet Red
+      roughness: 0.45,
+      metalness: 0.05,
     });
 
-    const highlightMat = new THREE.MeshStandardMaterial({
-      color: new THREE.Color(categoryColor || '#4ade80'),
-      emissive: new THREE.Color(categoryColor || '#4ade80'),
-      emissiveIntensity: 0.6,
-      roughness: 0.3,
+    // Dark Stepped Carpet Material
+    const carpetMat = new THREE.MeshStandardMaterial({
+      color: 0x5b1016, // Crimson Deep Carpet
+      roughness: 0.85,
     });
 
     const armrestMat = new THREE.MeshStandardMaterial({
-      color: 0x1e293b,
-      roughness: 0.5,
+      color: 0x18181f,
+      roughness: 0.4,
     });
 
-    // Concrete Stepped Tier Material
-    const stepMat = new THREE.MeshStandardMaterial({
-      color: 0x1e293b,
-      roughness: 0.7,
+    const highlightMat = new THREE.MeshStandardMaterial({
+      color: new THREE.Color(categoryColor || '#1ed760'),
+      emissive: new THREE.Color(categoryColor || '#1ed760'),
+      emissiveIntensity: 0.7,
+      roughness: 0.3,
     });
+
+    // Seat Geometries
+    const backGeo = new THREE.BoxGeometry(0.52, 0.54, 0.12);
+    const headGeo = new THREE.BoxGeometry(0.42, 0.15, 0.14);
+    const cushionGeo = new THREE.BoxGeometry(0.52, 0.11, 0.46);
+    const armGeo = new THREE.BoxGeometry(0.08, 0.22, 0.42);
 
     for (let r = 1; r <= numRows; r++) {
       const rowY = getRowY(r);
       const rowZ = getRowZ(r);
 
-      // Stepped Concrete Tier Platform
+      // Stepped Concrete Tier with Carpet
       const stepMesh = new THREE.Mesh(
-        new THREE.BoxGeometry(18, rowY, 1.55),
-        stepMat
+        new THREE.BoxGeometry(17, rowY, 1.45),
+        carpetMat
       );
       stepMesh.position.set(0, rowY / 2, rowZ);
       scene.add(stepMesh);
 
-      // Aisle LED Guide lights (Cyan)
-      const aisleLedL = new THREE.Mesh(
-        new THREE.BoxGeometry(0.1, 0.04, 1.5),
-        new THREE.MeshBasicMaterial({ color: 0x38bdf8 })
+      // Step Edge Golden Warm LED Runner Strip
+      const stepLip = new THREE.Mesh(
+        new THREE.BoxGeometry(17, 0.03, 0.04),
+        new THREE.MeshBasicMaterial({ color: 0xf59e0b })
       );
-      aisleLedL.position.set(-0.5, rowY + 0.02, rowZ);
-      scene.add(aisleLedL);
+      stepLip.position.set(0, rowY + 0.015, rowZ - 0.7);
+      scene.add(stepLip);
 
-      const aisleLedR = new THREE.Mesh(
-        new THREE.BoxGeometry(0.1, 0.04, 1.5),
-        new THREE.MeshBasicMaterial({ color: 0x38bdf8 })
-      );
-      aisleLedR.position.set(0.5, rowY + 0.02, rowZ);
-      scene.add(aisleLedR);
-
-      // Render chairs in front of viewer and immediate row neighbors
+      // Render seats in front of viewer
       for (let c = 1; c <= numCols; c++) {
-        if (r === row && c === col) continue; // Skip camera's own chair
-        if (r > row) continue; // Only render rows in front!
+        if (r === row && c === col) continue; // Skip camera's own seat
+        if (r > row) continue; // Only render rows in front
 
         const seatX = getSeatX(c);
         const isNeighbor = r === row && Math.abs(c - col) === 1;
-        const mat = isNeighbor ? highlightMat : redVelvetMat;
+        const mat = isNeighbor ? highlightMat : cinemaRedMat;
 
         // Seat Back
-        const back = new THREE.Mesh(seatBackGeo, mat);
-        back.position.set(seatX, rowY + 0.52, rowZ + 0.16);
+        const back = new THREE.Mesh(backGeo, mat);
+        back.position.set(seatX, rowY + 0.52, rowZ + 0.14);
         scene.add(back);
 
         // Headrest
-        const head = new THREE.Mesh(seatHeadGeo, mat);
-        head.position.set(seatX, rowY + 0.8, rowZ + 0.16);
+        const head = new THREE.Mesh(headGeo, mat);
+        head.position.set(seatX, rowY + 0.81, rowZ + 0.14);
         scene.add(head);
 
         // Cushion
-        const cushion = new THREE.Mesh(seatCushionGeo, mat);
-        cushion.position.set(seatX, rowY + 0.24, rowZ - 0.06);
+        const cushion = new THREE.Mesh(cushionGeo, mat);
+        cushion.position.set(seatX, rowY + 0.23, rowZ - 0.06);
         scene.add(cushion);
 
-        // Armrests
-        const armL = new THREE.Mesh(armrestGeo, armrestMat);
-        armL.position.set(seatX - 0.28, rowY + 0.32, rowZ - 0.06);
+        // Black Armrests with Cup Holders
+        const armL = new THREE.Mesh(armGeo, armrestMat);
+        armL.position.set(seatX - 0.29, rowY + 0.31, rowZ - 0.06);
         scene.add(armL);
 
-        const armR = new THREE.Mesh(armrestGeo, armrestMat);
-        armR.position.set(seatX + 0.28, rowY + 0.32, rowZ - 0.06);
+        const armR = new THREE.Mesh(armGeo, armrestMat);
+        armR.position.set(seatX + 0.29, rowY + 0.31, rowZ - 0.06);
         scene.add(armR);
       }
     }
 
-    // Viewer's Own Armrests in Immediate Bottom Foreground
-    const userArmL = new THREE.Mesh(
-      new THREE.BoxGeometry(0.12, 0.4, 0.65),
-      new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.5 })
-    );
-    userArmL.position.set(mySeatX - 0.4, mySeatY + 0.32, mySeatZ + 0.08);
-    scene.add(userArmL);
+    // ─── 7. VIP RECLINER ARMRESTS & CUP HOLDERS IN FOREGROUND ───
+    const fgArmMat = new THREE.MeshStandardMaterial({
+      color: 0x991b1b, // Red leather
+      roughness: 0.35,
+    });
 
-    const userArmR = new THREE.Mesh(
-      new THREE.BoxGeometry(0.12, 0.4, 0.65),
-      new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.5 })
-    );
-    userArmR.position.set(mySeatX + 0.4, mySeatY + 0.32, mySeatZ + 0.08);
-    scene.add(userArmR);
+    const fgArmL = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.38, 0.65), fgArmMat);
+    fgArmL.position.set(mySeatX - 0.38, mySeatY + 0.3, mySeatZ + 0.05);
+    scene.add(fgArmL);
 
-    // ─── 7. SMOOTH INTERACTIVE MOUSE PARALLAX (60 FPS) ───
+    const fgArmR = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.38, 0.65), fgArmMat);
+    fgArmR.position.set(mySeatX + 0.38, mySeatY + 0.3, mySeatZ + 0.05);
+    scene.add(fgArmR);
+
+    // Cup Holder Cylinders on Armrests
+    const cupMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.2, metalness: 0.8 });
+    const cupL = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.08, 16), cupMat);
+    cupL.position.set(mySeatX - 0.38, mySeatY + 0.5, mySeatZ - 0.15);
+    scene.add(cupL);
+
+    const cupR = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.08, 16), cupMat);
+    cupR.position.set(mySeatX + 0.38, mySeatY + 0.5, mySeatZ - 0.15);
+    scene.add(cupR);
+
+    // ─── 8. SMOOTH 60 FPS MOUSE PARALLAX ───
     let targetParallaxX = 0;
     let targetParallaxY = 0;
     let currentParallaxX = 0;
@@ -479,26 +418,26 @@ export default function ThreeDSeatSightline({
       const rect = container.getBoundingClientRect();
       const nx = ((e.clientX - rect.left) / rect.width) * 2 - 1;
       const ny = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
-      targetParallaxX = nx * 1.5;
-      targetParallaxY = ny * 0.8;
+      targetParallaxX = nx * 1.4;
+      targetParallaxY = ny * 0.7;
     };
 
     container.addEventListener('mousemove', handleMouseMove);
 
-    // ─── 8. ANIMATION LOOP ───
+    // ─── 9. ANIMATION LOOP ───
     let animId;
     const animate = () => {
       animId = requestAnimationFrame(animate);
 
-      currentParallaxX += (targetParallaxX - currentParallaxX) * 0.1;
-      currentParallaxY += (targetParallaxY - currentParallaxY) * 0.1;
+      currentParallaxX += (targetParallaxX - currentParallaxX) * 0.09;
+      currentParallaxY += (targetParallaxY - currentParallaxY) * 0.09;
 
-      const dynamicLookAt = new THREE.Vector3(
-        screenCenter.x + currentParallaxX,
-        screenCenter.y + currentParallaxY,
-        screenCenter.z
+      const dynamicTarget = new THREE.Vector3(
+        screenTarget.x + currentParallaxX,
+        screenTarget.y + currentParallaxY,
+        screenTarget.z
       );
-      camera.lookAt(dynamicLookAt);
+      camera.lookAt(dynamicTarget);
 
       renderer.render(scene, camera);
     };

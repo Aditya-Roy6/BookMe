@@ -108,69 +108,63 @@ export default function ThreeDSeatSightline({
     screenGlow.position.set(0, 3.0, 1.5);
     scene.add(screenGlow);
 
-    // 4. Create Screen Texture Canvas
+    // 4. Create Screen Material & Direct Texture Loading
     const canvas = document.createElement('canvas');
     canvas.width = 1024;
     canvas.height = 512;
     const ctx = canvas.getContext('2d');
 
-    const renderPosterTexture = (img) => {
-      if (img) {
-        ctx.drawImage(img, 0, 0, 1024, 512);
-        // Subtle cinema vignette
-        const grad = ctx.createRadialGradient(512, 256, 150, 512, 256, 512);
-        grad.addColorStop(0, 'rgba(0,0,0,0)');
-        grad.addColorStop(1, 'rgba(0,0,0,0.4)');
-        ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, 1024, 512);
-      } else {
-        // Bright Vibrant Showcase Screen
-        const grad = ctx.createLinearGradient(0, 0, 1024, 512);
-        grad.addColorStop(0, '#1e3a8a');
-        grad.addColorStop(0.5, '#0284c7');
-        grad.addColorStop(1, '#0f172a');
-        ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, 1024, 512);
+    const renderDefaultScreen = () => {
+      const grad = ctx.createLinearGradient(0, 0, 1024, 512);
+      grad.addColorStop(0, '#0f172a');
+      grad.addColorStop(0.5, '#1e293b');
+      grad.addColorStop(1, '#0f172a');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 1024, 512);
 
-        // Grid lines
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
-        ctx.lineWidth = 2;
-        for (let i = 0; i < 1024; i += 64) {
-          ctx.beginPath();
-          ctx.moveTo(i, 0);
-          ctx.lineTo(i, 512);
-          ctx.stroke();
-        }
+      // Ambient Cinema Visuals
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '900 64px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('4K DOLBY CINEMA', 512, 220);
 
-        ctx.fillStyle = '#ffffff';
-        ctx.font = '900 56px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText('4K DOLBY CINEMA', 512, 230);
+      ctx.fillStyle = '#1ed760';
+      ctx.font = '800 32px sans-serif';
+      ctx.fillText('FEATURE PRESENTATION', 512, 280);
 
-        ctx.fillStyle = '#4ade80';
-        ctx.font = '700 30px monospace';
-        ctx.fillText('IMMERSIVE SIGHTLINE', 512, 290);
-
-        ctx.strokeStyle = '#4ade80';
-        ctx.lineWidth = 8;
-        ctx.strokeRect(25, 25, 974, 462);
-      }
+      ctx.strokeStyle = '#1ed760';
+      ctx.lineWidth = 10;
+      ctx.strokeRect(20, 20, 984, 472);
     };
 
-    renderPosterTexture(null);
-
+    renderDefaultScreen();
     const screenTex = new THREE.CanvasTexture(canvas);
-    const posterUrl =
-      moviePoster ||
-      'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1024&q=80';
+    screenTex.colorSpace = THREE.SRGBColorSpace;
 
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.src = posterUrl;
-    img.onload = () => {
-      renderPosterTexture(img);
-      screenTex.needsUpdate = true;
-    };
+    const screenMat = new THREE.MeshBasicMaterial({
+      map: screenTex,
+      side: THREE.DoubleSide,
+    });
+
+    const activePoster = moviePoster || 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1024&q=80';
+    if (activePoster) {
+      const loader = new THREE.TextureLoader();
+      loader.setCrossOrigin('anonymous');
+      loader.load(
+        activePoster,
+        (loadedTex) => {
+          loadedTex.colorSpace = THREE.SRGBColorSpace;
+          loadedTex.wrapS = THREE.ClampToEdgeWrapping;
+          loadedTex.wrapT = THREE.ClampToEdgeWrapping;
+          screenMat.map = loadedTex;
+          screenMat.needsUpdate = true;
+        },
+        undefined,
+        () => {
+          console.warn('Could not load 3D screen poster, using default 4K Dolby texture');
+        }
+      );
+    }
 
     // ─── 5. VENUE SPECIFIC 3D WORLD ───
     if (isFootball) {
@@ -276,7 +270,7 @@ export default function ThreeDSeatSightline({
       scene.add(stage);
 
       // Bright Live Video Wall
-      const screenMat = new THREE.MeshBasicMaterial({ map: screenTex });
+      // uses shared screenMat
       const videoWall = new THREE.Mesh(new THREE.BoxGeometry(12, 5.5, 0.2), screenMat);
       videoWall.position.set(0, 3.8, -3.5);
       scene.add(videoWall);
@@ -317,10 +311,7 @@ export default function ThreeDSeatSightline({
         Math.PI * 0.46
       );
 
-      const screenMat = new THREE.MeshBasicMaterial({
-        map: screenTex,
-        side: THREE.BackSide,
-      });
+      // uses shared screenMat
       const screenMesh = new THREE.Mesh(screenGeo, screenMat);
       screenMesh.position.set(0, 2.8, -screenRadius + 2.0);
       screenMesh.rotation.y = Math.PI;

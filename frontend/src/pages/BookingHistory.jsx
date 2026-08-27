@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import api from '../api/client';
 import CalendarPicker from '../components/CalendarPicker';
 import FancyQRCode from '../components/FancyQRCode';
+import AddToCalendarDropdown from '../components/AddToCalendarDropdown';
 import { useToast } from '../context/ToastContext';
 import {
   NormalSeatSvg,
@@ -433,7 +434,18 @@ export default function BookingHistory() {
 
                     {!isCancelled && (
                       <>
-                        {/* 3. QR PASS BUTTON */}
+                        {/* 3. ADD TO CALENDAR BUTTON */}
+                        <AddToCalendarDropdown
+                          bookingRef={booking.bookingRef}
+                          eventTitle={booking.showtime?.event?.title || 'Movie Screening'}
+                          venueName={booking.showtime?.event?.venue?.name || 'Auditorium'}
+                          venueAddress={booking.showtime?.event?.venue?.address || ''}
+                          dateTime={booking.showtime?.dateTime}
+                          seats={(booking.items || []).map((i) => i.seat?.label || i.seatId)}
+                          buttonVariant="compact"
+                        />
+
+                        {/* 4. QR PASS BUTTON */}
                         <button
                           type="button"
                           onClick={() => setSelectedTicket(booking)}
@@ -443,7 +455,7 @@ export default function BookingHistory() {
                           <span>QR Pass</span>
                         </button>
 
-                        {/* 4. CANCEL RESERVATION BUTTON */}
+                        {/* 5. CANCEL RESERVATION BUTTON */}
                         <button
                           type="button"
                           disabled={cancellingId === booking.id}

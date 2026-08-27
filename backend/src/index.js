@@ -12,6 +12,7 @@ const eventRoutes = require('./routes/events');
 const seatRoutes = require('./routes/seats');
 const waitlistRoutes = require('./routes/waitlist');
 const bookingRoutes = require('./routes/bookings');
+const calendarRoutes = require('./routes/calendar');
 const { handleSSEConnection } = require('./sse/seatUpdates');
 
 const app = express();
@@ -78,6 +79,7 @@ app.use('/api/events', eventRoutes);
 app.use('/api/showtimes', seatRoutes);
 app.use('/api/waitlist', waitlistRoutes);
 app.use('/api/bookings', bookingRoutes);
+app.use('/api/calendar', calendarRoutes);
 
 // Error handler (must be last)
 app.use(errorHandler);

@@ -6,6 +6,7 @@ import TTLTimer from '../components/TTLTimer';
 import { ReceiptPrinter } from '../components/ReceiptPrinter';
 import FancyQRCode from '../components/FancyQRCode';
 import Select from '../components/Select';
+import AddToCalendarDropdown from '../components/AddToCalendarDropdown';
 
 import { Ticket, Calendar, MapPin, CheckCircle2, CreditCard, Lock, ArrowRight, Loader2, AlertCircle, ShieldCheck, Armchair, Sparkles } from '../components/MappedIcons';
 
@@ -391,6 +392,16 @@ export default function Checkout() {
             <Ticket className="w-4 h-4" />
             <span>My Tickets Library</span>
           </Link>
+
+          {/* Add to Calendar Sync Dropdown */}
+          <AddToCalendarDropdown
+            bookingRef={confirmedBooking.bookingRef}
+            eventTitle={showtime?.eventTitle || 'Movie Screening'}
+            venueName={showtime?.venueName || 'Auditorium'}
+            dateTime={showtime?.dateTime}
+            seats={heldSeats.map((s) => s.label)}
+            buttonVariant="pill"
+          />
 
           <Link
             to={`/my-bookings/${confirmedBooking.id}/seats`}

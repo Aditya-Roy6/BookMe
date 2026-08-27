@@ -308,6 +308,32 @@ async function sendBookingConfirmation(user, booking, showtime, items, qrDataUrl
       </div>
     `;
 
+    const { generateIcsContent, generateGoogleCalendarUrl } = require('./calendar');
+    const seatLabelsList = items.map((item) => item.seat?.label || item.seatId).filter(Boolean);
+
+    const icsContent = generateIcsContent({
+      bookingRef: booking.bookingRef,
+      eventTitle,
+      venueName,
+      venueAddress: showtime?.event?.venue?.address || '',
+      startDateTime: showtime?.dateTime,
+      seatLabels: seatLabelsList,
+      sequence: 0,
+      method: 'REQUEST',
+      status: 'CONFIRMED',
+      url: `${FRONTEND_URL}/my-bookings?ref=${booking.bookingRef}`,
+    });
+
+    const googleCalLink = generateGoogleCalendarUrl({
+      bookingRef: booking.bookingRef,
+      eventTitle,
+      venueName,
+      venueAddress: showtime?.event?.venue?.address || '',
+      startDateTime: showtime?.dateTime,
+      seatLabels: seatLabelsList,
+      url: `${FRONTEND_URL}/my-bookings?ref=${booking.bookingRef}`,
+    });
+
     const info = await dispatchEmail({
       from: SENDER,
       to: user.email,
@@ -319,6 +345,11 @@ async function sendBookingConfirmation(user, booking, showtime, items, qrDataUrl
           content: qrBuffer,
           cid: 'booking-qrcode',
           contentType: 'image/png',
+        },
+        {
+          filename: `invite-${booking.bookingRef}.ics`,
+          content: Buffer.from(icsContent, 'utf8'),
+          contentType: 'text/calendar; method=REQUEST; charset=UTF-8',
         },
       ],
     });
@@ -722,11 +753,31 @@ async function sendShowtimeRescheduledEmail(user, booking, event, oldShowtimeDat
       </div>
     `;
 
+    const { generateIcsContent } = require('./calendar');
+    const updatedIcs = generateIcsContent({
+      bookingRef: booking.bookingRef,
+      eventTitle,
+      venueName,
+      venueAddress: event?.venue?.address || '',
+      startDateTime: newDateObj,
+      sequence: 1, // RFC 5546 Sequence increment tells calendar clients to update existing event
+      method: 'REQUEST',
+      status: 'CONFIRMED',
+      url: `${FRONTEND_URL}/my-bookings?ref=${booking.bookingRef}`,
+    });
+
     const info = await dispatchEmail({
       from: SENDER,
       to: user.email,
       subject: `⚠️ Timing Updated for ${eventTitle} (${booking.bookingRef}) - New Schedule`,
       html,
+      attachments: [
+        {
+          filename: `rescheduled-${booking.bookingRef}.ics`,
+          content: Buffer.from(updatedIcs, 'utf8'),
+          contentType: 'text/calendar; method=REQUEST; charset=UTF-8',
+        },
+      ],
     });
 
     console.log(`📩 Showtime reschedule email sent to ${user.email} (Message ID: ${info.messageId})`);

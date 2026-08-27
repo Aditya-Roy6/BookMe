@@ -75,7 +75,7 @@ export default function AddToCalendarDropdown({
   };
 
   return (
-    <div className={`relative inline-block text-left ${className}`} ref={dropdownRef}>
+    <div className={`relative inline-block text-left ${isOpen ? 'z-[999]' : 'z-20'} ${className}`} ref={dropdownRef}>
       {/* ─── TRIGGER BUTTONS ─── */}
       {buttonVariant === 'compact' ? (
         <button
@@ -119,7 +119,7 @@ export default function AddToCalendarDropdown({
 
       {/* ─── DROPDOWN MENU (CLEAN MINIMAL DESIGN, NO DEFAULT EMOJIS/LOGOS) ─── */}
       {isOpen && (
-        <div className="absolute right-0 bottom-full mb-2 sm:bottom-auto sm:top-full sm:mt-2 w-64 rounded-2xl bg-[#181818] border border-[#333333] shadow-2xl shadow-black/90 p-2 z-50 animate-in fade-in zoom-in-95 duration-150 text-white">
+        <div className="absolute right-0 top-full mt-2 w-64 rounded-2xl bg-[#1c1c1e] border border-[#383838] shadow-2xl shadow-black/95 p-2 z-[9999] animate-in fade-in zoom-in-95 duration-150 text-white">
           <div className="px-3 py-2 border-b border-white/10 mb-1">
             <p className="text-[11px] font-black uppercase tracking-wider text-[#1ed760]">
               Calendar Sync

@@ -324,7 +324,7 @@ export default function BookingHistory() {
             return (
               <div
                 key={booking.id}
-                className={`bg-[#181818] hover:bg-[#1c1c1c] transition-all p-5 sm:p-6 rounded-2xl border border-[#282828] flex flex-col lg:flex-row lg:items-center justify-between gap-6 shadow-2xl overflow-hidden ${
+                className={`bg-[#181818] hover:bg-[#1c1c1c] transition-all p-5 sm:p-6 rounded-2xl border border-[#282828] flex flex-col lg:flex-row lg:items-center justify-between gap-6 shadow-2xl relative ${
                   isCancelled ? 'opacity-55' : ''
                 }`}
               >

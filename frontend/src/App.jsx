@@ -17,6 +17,7 @@ import WaitlistOfferClaim from './pages/WaitlistOfferClaim';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ResetPassword from './pages/ResetPassword';
+import PolicyModalPage from './pages/PolicyModalPage';
 
 function ProtectedRoute({ children, allowedRoles }) {
   const { user, loading, isAuthenticated } = useAuth();
@@ -54,6 +55,13 @@ export default function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/reset-password" element={<ResetPassword />} />
+
+              {/* Policy & Terms Direct Routes */}
+              <Route path="/privacy-policy" element={<PolicyModalPage type="privacy" />} />
+              <Route path="/privacy" element={<PolicyModalPage type="privacy" />} />
+              <Route path="/toc" element={<PolicyModalPage type="toc" />} />
+              <Route path="/terms" element={<PolicyModalPage type="toc" />} />
+              <Route path="/terms-of-service" element={<PolicyModalPage type="toc" />} />
 
               {/* Customer Routes */}
               <Route

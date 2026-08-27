@@ -1,6 +1,8 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
+const https = require('https');
 const { User } = require('../models');
 const { authenticate } = require('../middleware/auth');
 const { sendWelcomeEmail, sendOtpEmail, sendResetPasswordOtpEmail } = require('../services/email');
@@ -386,5 +388,100 @@ router.post('/reset-password', async (req, res, next) => {
   }
 });
 
+/**
+ * Helper to verify Google ID token using Google tokeninfo API
+ */
+function verifyGoogleToken(idToken) {
+  return new Promise((resolve, reject) => {
+    const url = `https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(idToken)}`;
+    https.get(url, (res) => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => {
+        try {
+          const parsed = JSON.parse(data);
+          if (parsed.error_description || parsed.error) {
+            reject(new Error(parsed.error_description || parsed.error));
+          } else {
+            resolve(parsed);
+          }
+        } catch (e) {
+          reject(e);
+        }
+      });
+    }).on('error', reject);
+  });
+}
+
+/**
+ * POST /api/auth/google
+ * Authenticate or register with Google OAuth ID token
+ * Body: { credential, role }
+ */
+router.post('/google', async (req, res, next) => {
+  try {
+    const { credential, role } = req.body;
+
+    if (!credential) {
+      return res.status(400).json({ error: 'Google credential token is required' });
+    }
+
+    let payload;
+    try {
+      payload = await verifyGoogleToken(credential);
+    } catch (verifyErr) {
+      console.error('Google token verification failed:', verifyErr.message);
+      return res.status(401).json({ error: 'Invalid Google authentication token' });
+    }
+
+    const { email, name, email_verified, picture } = payload;
+
+    if (!email) {
+      return res.status(400).json({ error: 'Google account does not have an associated email address' });
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+    const userName = name ? name.trim() : cleanEmail.split('@')[0];
+    const allowedRoles = ['customer', 'organiser'];
+    const userRole = role && allowedRoles.includes(role) ? role : 'customer';
+
+    let user = await User.findOne({ where: { email: cleanEmail } });
+
+    if (user) {
+      // If user exists, ensure they are marked as verified
+      if (!user.isVerified) {
+        user.isVerified = true;
+        user.otpCode = null;
+        user.otpExpiresAt = null;
+        await user.save();
+      }
+    } else {
+      // Create new verified user with a secure random password
+      const randomPassword = crypto.randomBytes(32).toString('hex');
+      user = await User.create({
+        name: userName,
+        email: cleanEmail,
+        password: randomPassword,
+        role: userRole,
+        isVerified: true,
+      });
+
+      // Send welcome email in background
+      sendWelcomeEmail(user).catch(console.error);
+    }
+
+    const token = generateToken(user);
+
+    res.json({
+      message: 'Google authentication successful',
+      token,
+      user: user.toJSON(),
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = router;
+
 

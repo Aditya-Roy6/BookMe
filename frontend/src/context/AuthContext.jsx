@@ -57,6 +57,15 @@ export function AuthProvider({ children }) {
     return res.data;
   };
 
+  const googleLogin = async (credential, role = 'customer') => {
+    const res = await api.post('/auth/google', { credential, role });
+    const { token, user: loggedInUser } = res.data;
+    localStorage.setItem('luminatix_token', token);
+    localStorage.setItem('luminatix_user', JSON.stringify(loggedInUser));
+    setUser(loggedInUser);
+    return loggedInUser;
+  };
+
   const logout = () => {
     localStorage.removeItem('luminatix_token');
     localStorage.removeItem('luminatix_user');
@@ -64,7 +73,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, verifyOtp, resendOtp, logout, isAuthenticated: !!user }}>
+    <AuthContext.Provider value={{ user, loading, login, googleLogin, register, verifyOtp, resendOtp, logout, isAuthenticated: !!user }}>
       {children}
     </AuthContext.Provider>
   );

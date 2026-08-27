@@ -2,10 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
+import GoogleAuthButton, { GoogleIcon } from '../components/GoogleAuthButton';
 
 import { Ticket, Clock, Mail, Lock, User as UserIcon, AlertCircle, ArrowRight, Loader2, UserCheck, Building2, Eye, EyeOff, ShieldCheck, RotateCw, ArrowLeft, CheckCircle2 } from '../components/MappedIcons';
 
 export default function Register() {
+  const [authMethod, setAuthMethod] = useState('email'); // 'email' | 'google'
   const [step, setStep] = useState(1); // 1: Form, 2: OTP Verification
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -206,40 +208,77 @@ export default function Register() {
               </div>
             )}
 
-            <form onSubmit={handleRegisterSubmit} className="space-y-4">
-              {/* Account Role Segmented Pill Switcher */}
-              <div className="space-y-1.5">
-                <label className="block text-[11px] font-bold uppercase tracking-wider text-[#b3b3b3]">
-                  Account Type
-                </label>
-                <div className="bg-[#121212] p-1 rounded-full flex items-center border border-[#383838]">
-                  <button
-                    type="button"
-                    onClick={() => setRole('customer')}
-                    className={`flex-1 py-2 rounded-full text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
-                      role === 'customer'
-                        ? 'bg-[#1ed760] text-black font-black'
-                        : 'text-[#b3b3b3] hover:text-white'
-                    }`}
-                  >
-                    <UserCheck className="w-3.5 h-3.5" />
-                    <span className="-mt-[1px]">Customer</span>
-                  </button>
+            {/* Auth Method Segmented Pill Bar: Email on Left, Google on Right */}
+            <div className="bg-[#121212] p-1 rounded-full flex items-center border border-[#383838]">
+              <button
+                type="button"
+                onClick={() => setAuthMethod('email')}
+                className={`flex-1 py-2 px-3 rounded-full text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                  authMethod === 'email'
+                    ? 'bg-[#1ed760] text-black font-black shadow-md shadow-[#1ed760]/20'
+                    : 'text-[#b3b3b3] hover:text-white'
+                }`}
+              >
+                <Mail className="w-3.5 h-3.5" />
+                <span>Email</span>
+              </button>
 
-                  <button
-                    type="button"
-                    onClick={() => setRole('organiser')}
-                    className={`flex-1 py-2 rounded-full text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
-                      role === 'organiser'
-                        ? 'bg-[#1ed760] text-black font-black'
-                        : 'text-[#b3b3b3] hover:text-white'
-                    }`}
-                  >
-                    <Building2 className="w-3.5 h-3.5" />
-                    <span className="-mt-[1px]">Organiser</span>
-                  </button>
-                </div>
+              <button
+                type="button"
+                onClick={() => setAuthMethod('google')}
+                className={`flex-1 py-2 px-3 rounded-full text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                  authMethod === 'google'
+                    ? 'bg-[#1ed760] text-black font-black shadow-md shadow-[#1ed760]/20'
+                    : 'text-[#b3b3b3] hover:text-white'
+                }`}
+              >
+                <GoogleIcon className="w-3.5 h-3.5" />
+                <span>Sign up with Google</span>
+              </button>
+            </div>
+
+            {/* Account Role Segmented Pill Switcher (Visible for both Email & Google) */}
+            <div className="space-y-1.5">
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-[#b3b3b3]">
+                Account Type
+              </label>
+              <div className="bg-[#121212] p-1 rounded-full flex items-center border border-[#383838]">
+                <button
+                  type="button"
+                  onClick={() => setRole('customer')}
+                  className={`flex-1 py-2 rounded-full text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                    role === 'customer'
+                      ? 'bg-[#1ed760] text-black font-black'
+                      : 'text-[#b3b3b3] hover:text-white'
+                  }`}
+                >
+                  <UserCheck className="w-3.5 h-3.5" />
+                  <span className="-mt-[1px]">Customer</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setRole('organiser')}
+                  className={`flex-1 py-2 rounded-full text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                    role === 'organiser'
+                      ? 'bg-[#1ed760] text-black font-black'
+                      : 'text-[#b3b3b3] hover:text-white'
+                  }`}
+                >
+                  <Building2 className="w-3.5 h-3.5" />
+                  <span className="-mt-[1px]">Organiser</span>
+                </button>
               </div>
+            </div>
+
+            {authMethod === 'google' ? (
+              /* Google Sign Up View */
+              <div className="py-2 space-y-4">
+                <GoogleAuthButton role={role} mode="signup" />
+              </div>
+            ) : (
+              /* Email & Password Registration Form */
+              <form onSubmit={handleRegisterSubmit} className="space-y-4">
 
               {/* Full Name */}
               <div className="space-y-1.5">
@@ -321,6 +360,7 @@ export default function Register() {
                 )}
               </button>
             </form>
+            )}
 
             {/* Footer Link */}
             <div className="pt-3 border-t border-[#282828] text-center text-xs text-[#b3b3b3]">

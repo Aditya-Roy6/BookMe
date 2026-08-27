@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
+import GoogleAuthButton, { GoogleIcon } from '../components/GoogleAuthButton';
 
 import { Ticket, Mail, Lock, Eye, EyeOff, AlertCircle, ArrowRight, Loader2, Sparkles } from '../components/MappedIcons';
 
 export default function Login() {
+  const [authMethod, setAuthMethod] = useState('email'); // 'email' | 'google'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -66,8 +68,44 @@ export default function Login() {
           </p>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Auth Method Segmented Pill Bar: Email on Left, Google on Right */}
+        <div className="bg-[#121212] p-1 rounded-full flex items-center border border-[#383838]">
+          <button
+            type="button"
+            onClick={() => setAuthMethod('email')}
+            className={`flex-1 py-2 px-3 rounded-full text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
+              authMethod === 'email'
+                ? 'bg-[#1ed760] text-black font-black shadow-md shadow-[#1ed760]/20'
+                : 'text-[#b3b3b3] hover:text-white'
+            }`}
+          >
+            <Mail className="w-3.5 h-3.5" />
+            <span>Email</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setAuthMethod('google')}
+            className={`flex-1 py-2 px-3 rounded-full text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
+              authMethod === 'google'
+                ? 'bg-[#1ed760] text-black font-black shadow-md shadow-[#1ed760]/20'
+                : 'text-[#b3b3b3] hover:text-white'
+            }`}
+          >
+            <GoogleIcon className="w-3.5 h-3.5" />
+            <span>Sign in with Google</span>
+          </button>
+        </div>
+
+        {authMethod === 'google' ? (
+          /* Google Sign In View */
+          <div className="py-2 space-y-4">
+            <GoogleAuthButton mode="login" />
+          </div>
+        ) : (
+          /* Email & Password Form */
+          <>
+          <form onSubmit={handleSubmit} className="space-y-4">
           {/* Email */}
           <div className="space-y-1.5">
             <label className="block text-[11px] font-bold uppercase tracking-wider text-[#b3b3b3]">
@@ -161,6 +199,8 @@ export default function Login() {
             </button>
           </div>
         </div>
+        </>
+        )}
 
         {/* Footer Link */}
         <div className="pt-2 text-center text-xs text-[#b3b3b3] flex flex-col gap-2">

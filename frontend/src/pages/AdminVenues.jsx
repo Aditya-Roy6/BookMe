@@ -1753,7 +1753,7 @@ export default function AdminVenues() {
                         />
                         <span>{c.name}</span>
                         <span className="text-[10px] text-[#777777] font-mono">
-                          (Rows {c.rowStart}-{c.rowEnd})
+                          (Rows {String.fromCharCode(64 + c.rowStart)}-{String.fromCharCode(64 + c.rowEnd)})
                         </span>
                       </div>
                     ))}
@@ -1764,91 +1764,137 @@ export default function AdminVenues() {
                   {venueDetailLoading ? (
                     <div className="py-20 flex flex-col items-center justify-center gap-3 text-[#b3b3b3]">
                       <Loader2 className="w-8 h-8 animate-spin text-[#1ed760]" />
-                      <span className="text-xs font-mono">Loading venue architecture floorplan...</span>
+                      <span className="text-xs font-mono">Loading authentic venue architecture...</span>
                     </div>
                   ) : (
-                    <div className="space-y-6">
-                      {/* Curved Screen Banner */}
-                      <div className="max-w-xl mx-auto text-center space-y-2">
-                        <div className="relative h-6 flex items-center justify-center">
-                          <div className="w-full h-2 rounded-full bg-gradient-to-r from-transparent via-[#1ed760] to-transparent opacity-80 blur-[2px]" />
-                          <div className="absolute inset-x-8 top-1 h-0.5 rounded-full bg-white shadow-[0_0_12px_#1ed760]" />
-                        </div>
-                        <span className="text-[10px] font-mono uppercase tracking-[3px] text-[#7c7c7c] block">
-                          ━━━━━ AUDITORIUM 4K LASER SCREEN / STAGE ━━━━━
-                        </span>
-                      </div>
+                    <div className="space-y-8">
+                      {/* Authentic 3D Cinema Screen */}
+                      <AuditoriumScreen3D />
 
-                      {/* Interactive Seating Layout Canvas */}
-                      <div className="bg-[#18181c] p-6 sm:p-8 rounded-2xl border border-white/5 overflow-x-auto shadow-inner">
-                        <div className="min-w-[640px] flex flex-col items-center space-y-3.5">
-                          {rowsList.map((rowObj) => {
-                            const halfIndex = Math.ceil(rowObj.seats.length / 2);
-                            const leftWing = rowObj.seats.slice(0, halfIndex);
-                            const rightWing = rowObj.seats.slice(halfIndex);
+                      {/* Authentic Theatre Seating Floorplan Grouped by Categories */}
+                      <div className="bg-[#141416] p-6 sm:p-10 rounded-2xl border border-white/5 overflow-x-auto shadow-2xl">
+                        <div className="min-w-[680px] flex flex-col items-center space-y-6">
+                          {venueCategories.map((category) => {
+                            // Find rows belonging to this category
+                            const catRows = rowsList.filter(
+                              (r) => r.rowNumber >= category.rowStart && r.rowNumber <= category.rowEnd
+                            );
+
+                            if (catRows.length === 0) return null;
 
                             return (
-                              <div key={rowObj.letter} className="flex items-center gap-3 w-full justify-center">
-                                {/* Left Row Letter */}
-                                <span className="w-6 text-center font-mono font-bold text-xs text-[#7c7c7c]">
-                                  {rowObj.letter}
-                                </span>
-
-                                {/* Left Wing */}
-                                <div className="flex items-center gap-1.5">
-                                  {leftWing.map((seat) => (
+                              <div key={category.id || category.name} className="w-full space-y-2.5">
+                                {/* Category Section Header */}
+                                <div className="flex items-center justify-between border-b border-white/10 pb-1.5 px-2">
+                                  <div className="flex items-center gap-2">
                                     <div
-                                      key={seat.id}
-                                      className="group relative cursor-default"
-                                      title={`${seat.label} • ${seat.category.name}`}
-                                    >
+                                      className="w-2.5 h-2.5 rounded-full"
+                                      style={{ backgroundColor: category.color || '#1ed760' }}
+                                    />
+                                    <span className="text-xs font-black uppercase tracking-wider text-white">
+                                      {category.name}
+                                    </span>
+                                    {(category.isRecliner || category.name?.toLowerCase().includes('recliner')) && (
+                                      <span className="text-[10px] bg-amber-500/20 text-amber-300 font-bold px-2 py-0.5 rounded-full border border-amber-500/30">
+                                        LUXURY RECLINERS
+                                      </span>
+                                    )}
+                                  </div>
+                                  <span className="text-[11px] font-mono text-[#b3b3b3]">
+                                    Rows {String.fromCharCode(64 + category.rowStart)} - {String.fromCharCode(64 + category.rowEnd)}
+                                  </span>
+                                </div>
+
+                                {/* Rows inside this category */}
+                                <div className="space-y-2">
+                                  {catRows.map((rowObj) => {
+                                    const halfIndex = Math.ceil(rowObj.seats.length / 2);
+                                    const leftWing = rowObj.seats.slice(0, halfIndex);
+                                    const rightWing = rowObj.seats.slice(halfIndex);
+
+                                    return (
                                       <div
-                                        className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center font-mono font-bold text-[10px] sm:text-[11px] transition-transform hover:scale-110 shadow-sm"
-                                        style={{
-                                          backgroundColor: `${seat.category.color}22`,
-                                          borderColor: seat.category.color,
-                                          borderWidth: '1.5px',
-                                          color: seat.category.color === '#ffffff' ? '#ffffff' : seat.category.color,
-                                        }}
+                                        key={rowObj.letter}
+                                        className="flex items-center justify-center gap-2 sm:gap-3 hover:bg-[#1a1a1f] px-2 py-1 rounded-xl transition-colors group/row"
                                       >
-                                        {seat.col}
+                                        {/* Left Row Letter */}
+                                        <span className="w-6 text-right font-mono font-bold text-xs text-[#b3b3b3] group-hover/row:text-[#1ed760] transition-colors">
+                                          {rowObj.letter}
+                                        </span>
+
+                                        {/* Left Bank Seats */}
+                                        <div className="flex items-center gap-1 sm:gap-1.5">
+                                          {leftWing.map((seat) => (
+                                            <div
+                                              key={seat.id}
+                                              className="relative group/seat"
+                                              title={`${seat.label} • ${category.name}`}
+                                            >
+                                              <div
+                                                className={`flex items-center justify-center select-none transition-transform duration-150 ${
+                                                  rowObj.isRecliner
+                                                    ? 'w-10 h-13 sm:w-12 sm:h-15'
+                                                    : 'w-7 h-7 sm:w-9 sm:h-9'
+                                                } hover:scale-115 cursor-default`}
+                                              >
+                                                {rowObj.isRecliner ? (
+                                                  <ReclinerSeatSvg
+                                                    col={seat.col}
+                                                    categoryColor={category.color || '#1ed760'}
+                                                  />
+                                                ) : (
+                                                  <NormalSeatSvg
+                                                    col={seat.col}
+                                                    categoryColor={category.color || '#1ed760'}
+                                                  />
+                                                )}
+                                              </div>
+                                            </div>
+                                          ))}
+                                        </div>
+
+                                        {/* Central Aisle Stairs */}
+                                        <AisleStairsGraphic label="AISLE" />
+
+                                        {/* Right Bank Seats */}
+                                        <div className="flex items-center gap-1 sm:gap-1.5">
+                                          {rightWing.map((seat) => (
+                                            <div
+                                              key={seat.id}
+                                              className="relative group/seat"
+                                              title={`${seat.label} • ${category.name}`}
+                                            >
+                                              <div
+                                                className={`flex items-center justify-center select-none transition-transform duration-150 ${
+                                                  rowObj.isRecliner
+                                                    ? 'w-10 h-13 sm:w-12 sm:h-15'
+                                                    : 'w-7 h-7 sm:w-9 sm:h-9'
+                                                } hover:scale-115 cursor-default`}
+                                              >
+                                                {rowObj.isRecliner ? (
+                                                  <ReclinerSeatSvg
+                                                    col={seat.col}
+                                                    categoryColor={category.color || '#1ed760'}
+                                                  />
+                                                ) : (
+                                                  <NormalSeatSvg
+                                                    col={seat.col}
+                                                    categoryColor={category.color || '#1ed760'}
+                                                  />
+                                                )}
+                                              </div>
+                                            </div>
+                                          ))}
+                                        </div>
+
+                                        {/* Right Row Letter */}
+                                        <span className="w-6 text-left font-mono font-bold text-xs text-[#b3b3b3] group-hover/row:text-[#1ed760] transition-colors">
+                                          {rowObj.letter}
+                                        </span>
                                       </div>
-                                    </div>
-                                  ))}
+                                    );
+                                  })}
                                 </div>
-
-                                {/* Central Aisle */}
-                                <div className="w-8 sm:w-12 flex items-center justify-center">
-                                  <div className="h-5 w-0.5 border-r border-dashed border-white/20" />
-                                </div>
-
-                                {/* Right Wing */}
-                                <div className="flex items-center gap-1.5">
-                                  {rightWing.map((seat) => (
-                                    <div
-                                      key={seat.id}
-                                      className="group relative cursor-default"
-                                      title={`${seat.label} • ${seat.category.name}`}
-                                    >
-                                      <div
-                                        className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center font-mono font-bold text-[10px] sm:text-[11px] transition-transform hover:scale-110 shadow-sm"
-                                        style={{
-                                          backgroundColor: `${seat.category.color}22`,
-                                          borderColor: seat.category.color,
-                                          borderWidth: '1.5px',
-                                          color: seat.category.color === '#ffffff' ? '#ffffff' : seat.category.color,
-                                        }}
-                                      >
-                                        {seat.col}
-                                      </div>
-                                    </div>
-                                  ))}
-                                </div>
-
-                                {/* Right Row Letter */}
-                                <span className="w-6 text-center font-mono font-bold text-xs text-[#7c7c7c]">
-                                  {rowObj.letter}
-                                </span>
                               </div>
                             );
                           })}
@@ -1857,19 +1903,19 @@ export default function AdminVenues() {
 
                       {/* Floorplan Specifications Strip */}
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                        <div className="bg-[#18181c] p-3 rounded-xl border border-white/5 text-center">
+                        <div className="bg-[#18181c] p-3.5 rounded-xl border border-white/5 text-center">
                           <span className="text-[10px] uppercase font-bold text-[#7c7c7c] block">Total Capacity</span>
                           <span className="text-base font-mono font-black text-white">{v.seats?.length || (v.totalRows * v.totalCols)} Seats</span>
                         </div>
-                        <div className="bg-[#18181c] p-3 rounded-xl border border-white/5 text-center">
+                        <div className="bg-[#18181c] p-3.5 rounded-xl border border-white/5 text-center">
                           <span className="text-[10px] uppercase font-bold text-[#7c7c7c] block">Row Depth</span>
                           <span className="text-base font-mono font-black text-[#1ed760]">{v.totalRows} Rows (A - {String.fromCharCode(64 + v.totalRows)})</span>
                         </div>
-                        <div className="bg-[#18181c] p-3 rounded-xl border border-white/5 text-center">
+                        <div className="bg-[#18181c] p-3.5 rounded-xl border border-white/5 text-center">
                           <span className="text-[10px] uppercase font-bold text-[#7c7c7c] block">Seats Per Row</span>
                           <span className="text-base font-mono font-black text-white">{v.totalCols} Chairs</span>
                         </div>
-                        <div className="bg-[#18181c] p-3 rounded-xl border border-white/5 text-center">
+                        <div className="bg-[#18181c] p-3.5 rounded-xl border border-white/5 text-center">
                           <span className="text-[10px] uppercase font-bold text-[#7c7c7c] block">Aisle Matrix</span>
                           <span className="text-base font-mono font-black text-[#38bdf8]">Dual-Wing Center</span>
                         </div>

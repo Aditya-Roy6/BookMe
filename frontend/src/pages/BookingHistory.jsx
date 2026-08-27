@@ -324,12 +324,12 @@ export default function BookingHistory() {
             return (
               <div
                 key={booking.id}
-                className={`bg-[#181818] hover:bg-[#1c1c1c] transition-all p-5 sm:p-6 rounded-2xl border border-[#282828] flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-2xl ${
+                className={`bg-[#181818] hover:bg-[#1c1c1c] transition-all p-5 sm:p-6 rounded-2xl border border-[#282828] flex flex-col lg:flex-row lg:items-center justify-between gap-6 shadow-2xl overflow-hidden ${
                   isCancelled ? 'opacity-55' : ''
                 }`}
               >
                 {/* Event Details & Poster */}
-                <div className="flex items-start gap-4 max-w-xl">
+                <div className="flex items-start gap-4 min-w-0 flex-1">
                   {event?.imageUrl ? (
                     <img
                       src={event.imageUrl}
@@ -346,7 +346,7 @@ export default function BookingHistory() {
                     </div>
                   )}
 
-                  <div className="space-y-2 overflow-hidden">
+                  <div className="space-y-2 min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <span
                         className={`text-[10px] uppercase font-black px-2 py-0.5 rounded-full ${
@@ -357,7 +357,7 @@ export default function BookingHistory() {
                       >
                         {booking.status}
                       </span>
-                      <span className="text-xs text-[#b3b3b3] font-mono font-bold">
+                      <span className="text-xs text-[#b3b3b3] font-mono font-bold truncate">
                         Ref: {booking.bookingRef}
                       </span>
                     </div>
@@ -402,8 +402,8 @@ export default function BookingHistory() {
                 </div>
 
                 {/* Actions, Price & Modal Buttons */}
-                <div className="flex flex-col md:items-end gap-3 pt-3 md:pt-0 border-t md:border-t-0 border-white/5 flex-shrink-0">
-                  <div className="text-left md:text-right">
+                <div className="flex flex-col sm:flex-row lg:flex-col lg:items-end justify-between gap-4 pt-4 lg:pt-0 border-t lg:border-t-0 border-white/5 flex-shrink-0">
+                  <div className="text-left lg:text-right">
                     <span className="text-[11px] text-[#b3b3b3] block uppercase font-bold">Total Paid</span>
                     <span className="text-2xl font-black text-white font-mono">
                       ₹{booking.totalAmount}
@@ -411,7 +411,7 @@ export default function BookingHistory() {
                   </div>
 
                   {/* Pass Action Buttons */}
-                  <div className="flex flex-wrap items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2 lg:justify-end">
                     {/* 1. INFO BUTTON (Opens Movie & Ticket Info Modal) */}
                     <button
                       type="button"

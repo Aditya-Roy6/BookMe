@@ -9,6 +9,7 @@ import {
 import api from '../api/client';
 import Select from '../components/Select';
 import DateTimePicker from '../components/DateTimePicker';
+import AnimatedCheckbox from '../components/AnimatedCheckbox';
 
 import { DollarSign, Ticket, Calendar, Film, MapPin, Clock, Volume2, BarChart3, PieChart, Percent, Search, Filter, Star, Users, Plus, Loader2, AlertCircle, CheckCircle2, Music, Sparkles, TrendingUp, X, Activity, ArrowUpRight, Layers, ChevronRight, Edit3, Sliders, Eye } from '../components/MappedIcons';
 import { useToast } from '../context/ToastContext';
@@ -1175,25 +1176,19 @@ export default function OrganiserDashboard() {
                         <label className="block text-[11px] font-bold uppercase tracking-wider text-[#b3b3b3]">
                           Experience Display Options
                         </label>
-                        <div className="flex flex-col sm:flex-row gap-2.5">
-                          <label className="flex items-center gap-2 bg-[#121212] hover:bg-[#1a1a1a] p-2.5 rounded-xl border border-white/5 cursor-pointer flex-1 transition-colors">
-                            <input
-                              type="checkbox"
-                              checked={showCast}
-                              onChange={(e) => setShowCast(e.target.checked)}
-                              className="w-4 h-4 rounded text-[#1ed760] focus:ring-[#1ed760] accent-[#1ed760] cursor-pointer"
-                            />
-                            <span className="text-xs font-bold text-white">Show Cast & Actors</span>
-                          </label>
-                          <label className="flex items-center gap-2 bg-[#121212] hover:bg-[#1a1a1a] p-2.5 rounded-xl border border-white/5 cursor-pointer flex-1 transition-colors">
-                            <input
-                              type="checkbox"
-                              checked={showReviews}
-                              onChange={(e) => setShowReviews(e.target.checked)}
-                              className="w-4 h-4 rounded text-[#1ed760] focus:ring-[#1ed760] accent-[#1ed760] cursor-pointer"
-                            />
-                            <span className="text-xs font-bold text-white">Show Reviews</span>
-                          </label>
+                        <div className="flex flex-col sm:flex-row gap-3">
+                          <AnimatedCheckbox
+                            checked={showCast}
+                            onChange={setShowCast}
+                            label="Show Cast & Actors"
+                            className="flex-1"
+                          />
+                          <AnimatedCheckbox
+                            checked={showReviews}
+                            onChange={setShowReviews}
+                            label="Show Reviews"
+                            className="flex-1"
+                          />
                         </div>
                       </div>
                     </div>
@@ -1287,10 +1282,11 @@ export default function OrganiserDashboard() {
         isOpen={editShowtimeModalOpen}
         onOpenChange={setEditShowtimeModalOpen}
         backdrop="blur"
-        size="3xl"
-        className="bg-[#181818] border border-[#282828] text-white rounded-2xl shadow-2xl max-w-3xl w-[94vw] !overflow-visible my-auto max-h-[90vh] overflow-y-auto"
+        size="5xl"
+        scrollBehavior="inside"
+        className="bg-[#181818] border border-[#282828] text-white rounded-2xl shadow-2xl max-w-5xl w-[96vw] my-auto max-h-[92vh]"
       >
-        <ModalContent className="!overflow-visible">
+        <ModalContent className="overflow-hidden">
           {(onClose) => {
             const catPrices = Object.values(editPricingMap).map(Number).filter(Boolean);
             const lowestBasePrice = catPrices.length > 0 ? Math.min(...catPrices) : 250;
@@ -1310,7 +1306,7 @@ export default function OrganiserDashboard() {
                   </div>
                 </ModalHeader>
 
-                <ModalBody className="py-6 px-6 sm:px-8 space-y-6 !overflow-visible">
+                <ModalBody className="py-6 px-6 sm:px-8 space-y-6 overflow-y-auto">
                   <form id="editShowtimeForm" onSubmit={handleSaveEditShowtime} className="space-y-6">
                     {/* Top Group: DateTime, Format, Language */}
                     <div className="space-y-4">
@@ -1352,7 +1348,7 @@ export default function OrganiserDashboard() {
                     </div>
 
                     {/* Dynamic Pricing & Category Base Rates Container */}
-                    <div className="bg-[#121212] p-5 rounded-2xl border border-white/10 space-y-5">
+                    <div className="bg-[#121212] p-5 sm:p-6 rounded-2xl border border-white/10 space-y-5">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/5 pb-3.5">
                         <div className="space-y-1">
                           <div className="flex items-center gap-2">
@@ -1366,16 +1362,13 @@ export default function OrganiserDashboard() {
                           </p>
                         </div>
 
-                        {/* Toggle Checkbox */}
-                        <label className="flex items-center gap-2 bg-[#1a1a1a] hover:bg-[#242424] px-3.5 py-2 rounded-xl border border-white/10 cursor-pointer transition-colors flex-shrink-0 self-start sm:self-auto">
-                          <input
-                            type="checkbox"
-                            checked={editDynamicPricing}
-                            onChange={(e) => setEditDynamicPricing(e.target.checked)}
-                            className="w-4 h-4 rounded text-[#1ed760] focus:ring-[#1ed760] accent-[#1ed760] cursor-pointer"
-                          />
-                          <span className="text-xs font-bold text-white">Dynamic Center Boost</span>
-                        </label>
+                        {/* Animated Toggle Checkbox */}
+                        <AnimatedCheckbox
+                          checked={editDynamicPricing}
+                          onChange={setEditDynamicPricing}
+                          label="Dynamic Center Boost"
+                          className="flex-shrink-0 self-start sm:self-auto"
+                        />
                       </div>
 
                       {/* Category Base Pricing Matrix */}
@@ -1384,25 +1377,25 @@ export default function OrganiserDashboard() {
                           Category Base Rates (₹ INR)
                         </label>
                         {editVenue?.categories && editVenue.categories.length > 0 ? (
-                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
                             {editVenue.categories.map((cat) => (
                               <div
                                 key={cat.id}
-                                className="flex items-center justify-between bg-[#181818] p-3 rounded-xl border border-white/5"
+                                className="flex items-center justify-between bg-[#181818] p-3.5 rounded-xl border border-white/5 gap-2"
                               >
-                                <div className="flex items-center gap-2.5 min-w-0">
+                                <div className="flex items-center gap-2.5 min-w-0 pr-1">
                                   <div
                                     className="w-3 h-3 rounded-full shadow-sm flex-shrink-0"
                                     style={{ backgroundColor: cat.color }}
                                   />
                                   <div className="min-w-0">
-                                    <span className="text-xs font-bold text-white block truncate">{cat.name}</span>
+                                    <span className="text-xs font-bold text-white block">{cat.name}</span>
                                     <span className="text-[10px] text-[#7c7c7c]">
                                       Rows {cat.rowStart} - {cat.rowEnd}
                                     </span>
                                   </div>
                                 </div>
-                                <div className="flex items-center gap-1 flex-shrink-0 ml-2">
+                                <div className="flex items-center gap-1 flex-shrink-0 ml-auto">
                                   <span className="text-xs text-[#b3b3b3] font-bold">₹</span>
                                   <input
                                     type="number"

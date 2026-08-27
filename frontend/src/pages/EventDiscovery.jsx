@@ -546,7 +546,7 @@ export default function EventDiscovery() {
 
                 <div className="p-4 pt-3 border-t border-[#282828] flex items-center justify-between text-xs text-[#b3b3b3]">
                   <span className="flex items-center gap-1.5 text-[11px] text-[#7c7c7c]">
-                    <ClockRoundedIcon className="w-3.5 h-3.5 text-[#1ed760]" />
+                    <ClockRoundedIcon className="w-3.5 h-3.5 fill-[#1ed760] text-[#1ed760] shrink-0" />
                     <span>{event.duration || '2h 25m'}</span>
                   </span>
                   <div className="px-4 py-1.5 rounded-full bg-[#222222] border border-[#383838] text-white font-bold text-xs flex items-center gap-1.5 transition-all duration-200 group-hover:bg-[#1ed760] group-hover:text-black group-hover:border-[#1ed760] shadow-sm">
@@ -600,7 +600,7 @@ export default function EventDiscovery() {
 
           {/* Sub-Filters */}
           {liveTabType === 'movies' ? (
-            <div className="flex items-center gap-2 bg-[#181818] p-1 rounded-xl border border-white/5 self-start lg:self-auto">
+            <div className="flex items-center gap-1.5 bg-[#181818] p-1 rounded-full border border-white/10 self-start lg:self-auto shadow-inner">
               {[
                 { label: 'All Hits', value: 'all' },
                 { label: 'Bollywood / Indian', value: 'bollywood' },
@@ -609,9 +609,9 @@ export default function EventDiscovery() {
                 <button
                   key={tab.value}
                   onClick={() => setTmdbTab(tab.value)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
                     tmdbTab === tab.value
-                      ? 'bg-[#1ed760] text-black font-black shadow-md'
+                      ? 'bg-[#1ed760] text-black font-black shadow-md shadow-[#1ed760]/20'
                       : 'text-[#b3b3b3] hover:text-white'
                   }`}
                 >
@@ -620,7 +620,7 @@ export default function EventDiscovery() {
               ))}
             </div>
           ) : (
-            <div className="flex items-center gap-2 bg-[#181818] p-1 rounded-xl border border-white/5 self-start lg:self-auto">
+            <div className="flex items-center gap-1.5 bg-[#181818] p-1 rounded-full border border-white/10 self-start lg:self-auto shadow-inner">
               {[
                 { label: 'Music & Tours', value: 'music' },
                 { label: 'Theatre & Arts', value: 'arts' },
@@ -629,9 +629,9 @@ export default function EventDiscovery() {
                 <button
                   key={tab.value}
                   onClick={() => setTmCategory(tab.value)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
                     tmCategory === tab.value
-                      ? 'bg-[#1ed760] text-black font-black shadow-md'
+                      ? 'bg-[#1ed760] text-black font-black shadow-md shadow-[#1ed760]/20'
                       : 'text-[#b3b3b3] hover:text-white'
                   }`}
                 >

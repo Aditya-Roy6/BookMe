@@ -2,17 +2,8 @@ import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
 /**
- * Ultra-Optimized Photorealistic 3D Seat Sightline WebGL Engine (60 FPS)
- * Uses GPU InstancedMesh for zero-lag 1-draw-call stadium rendering.
- *
- * Supported Venue Modes:
- *  1. circular_stadium / amphitheatre / concert:
- *     True 360° Circular Arena Bowl with radial seating tiers, 4 Grandstand Sectors (North/East/South/West),
- *     illuminated center stage/pitch, and overhead stadium floodlight clusters.
- *  2. square_stadium / football / cricket:
- *     Rectangular grandstand bowl with floodlit green pitch & goalposts.
- *  3. cinema / movie:
- *     Multiplex cinema auditorium with red velvet tiers, widescreen projection & golden wall sconces.
+ * Ultra-Vibrant Photorealistic 3D Stadium & Cinema Sightline Engine
+ * 60 FPS GPU InstancedMesh Architecture with Dynamic Stage Beams & Stadium Floodlights
  */
 export default function ThreeDSeatSightline({
   row = 1,
@@ -41,16 +32,14 @@ export default function ThreeDSeatSightline({
       typeStr.includes('amphi') ||
       typeStr.includes('arena') ||
       typeStr.includes('concert') ||
-      typeStr.includes('festival');
-
-    const isSquareStadium = typeStr.includes('square');
-    const isCinema = !isCircular && !isSquareStadium;
+      typeStr.includes('festival') ||
+      typeStr.includes('square');
 
     // 1. Scene & Camera Setup
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(isCircular ? 0x08090d : 0x0a0a0f);
+    scene.background = new THREE.Color(isCircular ? 0x060810 : 0x0a0a0f);
 
-    const camera = new THREE.PerspectiveCamera(58, width / height, 0.1, 120);
+    const camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 150);
 
     // 2. High-Performance WebGL Renderer
     const renderer = new THREE.WebGLRenderer({
@@ -61,26 +50,25 @@ export default function ThreeDSeatSightline({
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = isCircular ? 1.4 : 1.25;
+    renderer.toneMappingExposure = isCircular ? 1.6 : 1.3;
     container.innerHTML = '';
     container.appendChild(renderer.domElement);
 
-    let targetLookAt = new THREE.Vector3(0, 0.6, 0);
+    let targetLookAt = new THREE.Vector3(0, 0.8, 0);
 
-    // ─── 3. CIRCULAR 360° STADIUM ARENA WORLD ───
+    // ─── 3. PHOTOREALISTIC VIBRANT CIRCULAR STADIUM ARENA WORLD ───
     if (isCircular) {
-      const numR = Math.max(totalRows, 6);
-      const numC = Math.max(totalCols, 24);
+      const numR = Math.max(totalRows, 8);
+      const numC = Math.max(totalCols, 28);
 
       // Radial Calculations
-      const innerRadius = 5.5;
-      const rowSpacing = 1.35;
+      const innerRadius = 5.2;
+      const rowSpacing = 1.3;
       const getRadius = (r) => innerRadius + (r - 1) * rowSpacing;
-      const getHeight = (r) => 0.6 + (r - 1) * 0.52;
+      const getHeight = (r) => 0.5 + (r - 1) * 0.58;
 
       const myRadius = getRadius(row);
       const myHeight = getHeight(row);
-      // Normalized angle in radians (matching 2D circular map)
       const seatAngle = ((col - 0.5) / numC) * 2 * Math.PI - Math.PI / 2;
 
       const mySeatX = myRadius * Math.cos(seatAngle);
@@ -88,113 +76,210 @@ export default function ThreeDSeatSightline({
       const mySeatY = myHeight;
 
       // Position Camera at viewer's exact radial seat + sitting eye level
-      camera.position.set(mySeatX, mySeatY + 0.72, mySeatZ);
-      targetLookAt.set(0, 0.5, 0);
+      camera.position.set(mySeatX, mySeatY + 0.75, mySeatZ);
+      targetLookAt.set(0, 0.8, 0);
       camera.lookAt(targetLookAt);
 
-      // Ambient & Stadium Arena Lights
-      const ambientLight = new THREE.AmbientLight(0xffffff, 1.7);
+      // ─── STADIUM ARENA LIGHTING ───
+      // Bright Ambient Light with deep night-blue undertones
+      const ambientLight = new THREE.AmbientLight(0x384c6e, 2.2);
       scene.add(ambientLight);
 
-      // Center Stage Spotlight
-      const stageSpot = new THREE.PointLight(0x1ed760, 3.5, 30);
-      stageSpot.position.set(0, 4.0, 0);
-      scene.add(stageSpot);
+      // Overhead Sun/Arena Main Flood
+      const mainArenaLight = new THREE.DirectionalLight(0xffeedd, 3.2);
+      mainArenaLight.position.set(0, 25, 0);
+      scene.add(mainArenaLight);
 
-      // Overhead Arena Downlight
-      const overheadArenaLight = new THREE.DirectionalLight(0xffeedd, 2.0);
-      overheadArenaLight.position.set(0, 20, 0);
-      scene.add(overheadArenaLight);
+      // ─── 4 MASSIVE CORNER FLOODLIGHT TOWERS ───
+      const floodDist = myRadius + 5.0;
+      const towerColors = [0xffffff, 0xdbeafe, 0xffedd5, 0xe0f2fe];
 
-      // Infield Turf / Arena Floor
-      const floorMat = new THREE.MeshStandardMaterial({ color: 0x111218, roughness: 0.8 });
-      const floor = new THREE.Mesh(new THREE.CylinderGeometry(myRadius + 4, myRadius + 4, 0.2, 40), floorMat);
-      floor.position.set(0, -0.1, 0);
+      for (let fi = 0; fi < 4; fi++) {
+        const fa = (fi / 4) * 2 * Math.PI + Math.PI / 4;
+        const fx = floodDist * Math.cos(fa);
+        const fz = floodDist * Math.sin(fa);
+
+        // Tower Lattice Pole
+        const poleMat = new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.8, roughness: 0.3 });
+        const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.35, 18, 8), poleMat);
+        pole.position.set(fx, 9, fz);
+        scene.add(pole);
+
+        // Gantry Head with 8 Bright Floodlamps
+        const headGeo = new THREE.BoxGeometry(2.2, 1.2, 0.6);
+        const headMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        const head = new THREE.Mesh(headGeo, headMat);
+        head.position.set(fx, 17.5, fz);
+        head.lookAt(0, 2, 0);
+        scene.add(head);
+
+        // Tower Spotlight focused onto center stage & bowl
+        const towerSpot = new THREE.SpotLight(towerColors[fi], 5.0, 65, Math.PI / 3, 0.3, 0.5);
+        towerSpot.position.set(fx, 17.5, fz);
+        towerSpot.target.position.set(0, 0.5, 0);
+        scene.add(towerSpot);
+        scene.add(towerSpot.target);
+      }
+
+      // ─── INFIELD ARENA FLOOR ───
+      const floorMat = new THREE.MeshStandardMaterial({
+        color: 0x0f172a,
+        roughness: 0.7,
+        metalness: 0.2,
+      });
+      const floor = new THREE.Mesh(new THREE.CylinderGeometry(myRadius + 6, myRadius + 6, 0.3, 48), floorMat);
+      floor.position.set(0, -0.15, 0);
       scene.add(floor);
 
-      // Center Stage Platform (Hexagon with Glowing Border)
-      const stageGeo = new THREE.CylinderGeometry(2.8, 3.0, 0.6, 6);
+      // ─── SPECTACULAR CENTER CONCERT STAGE / ARENA ───
+      // Hexagonal Elevated Stage
+      const stageGeo = new THREE.CylinderGeometry(3.0, 3.2, 0.7, 6);
       const stageMat = new THREE.MeshStandardMaterial({
-        color: 0x181822,
-        roughness: 0.3,
-        metalness: 0.4,
+        color: 0x111827,
+        roughness: 0.2,
+        metalness: 0.6,
       });
       const centerStage = new THREE.Mesh(stageGeo, stageMat);
-      centerStage.position.set(0, 0.3, 0);
+      centerStage.position.set(0, 0.35, 0);
       scene.add(centerStage);
 
-      // Glowing Stage Rim
+      // Glowing Neon Stage Rim
       const stageRim = new THREE.Mesh(
-        new THREE.TorusGeometry(2.9, 0.06, 8, 6),
+        new THREE.TorusGeometry(3.05, 0.08, 12, 6),
         new THREE.MeshBasicMaterial({ color: 0x1ed760 })
       );
       stageRim.rotation.x = Math.PI / 2;
-      stageRim.position.set(0, 0.62, 0);
+      stageRim.position.set(0, 0.72, 0);
       scene.add(stageRim);
 
-      // 4 Aisle Corridor Lines radiating from center
+      // Inner Glowing Star / Hexagon Decal
+      const innerDecal = new THREE.Mesh(
+        new THREE.CylinderGeometry(1.8, 1.8, 0.02, 6),
+        new THREE.MeshBasicMaterial({ color: 0x065f46 })
+      );
+      innerDecal.position.set(0, 0.72, 0);
+      scene.add(innerDecal);
+
+      // Central Stage Laser / Light Emitter
+      const stageGlow = new THREE.PointLight(0x1ed760, 4.5, 25);
+      stageGlow.position.set(0, 2.5, 0);
+      scene.add(stageGlow);
+
+      // ─── DYNAMIC CONCERT LASER BEAMS & MOVING HEADS ───
+      const beamColors = [0x00f2fe, 0x1ed760, 0xf43f5e, 0x8b5cf6, 0xf59e0b, 0x06b6d4];
+      for (let b = 0; b < 6; b++) {
+        const bAngle = (b / 6) * 2 * Math.PI;
+        const bx = 2.4 * Math.cos(bAngle);
+        const bz = 2.4 * Math.sin(bAngle);
+
+        // Spotlight fixture
+        const fixture = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.12, 0.15, 0.3, 8),
+          new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.9 })
+        );
+        fixture.position.set(bx, 0.8, bz);
+        scene.add(fixture);
+
+        // Volumetric Laser Light Cone
+        const coneGeo = new THREE.ConeGeometry(0.8, 14, 16, 1, true);
+        const coneMat = new THREE.MeshBasicMaterial({
+          color: beamColors[b],
+          transparent: true,
+          opacity: 0.18,
+          side: THREE.DoubleSide,
+        });
+        const beamCone = new THREE.Mesh(coneGeo, coneMat);
+        beamCone.position.set(bx, 7.5, bz);
+        beamCone.rotation.x = (Math.PI / 180) * 16 * Math.sin(b);
+        beamCone.rotation.z = (Math.PI / 180) * 16 * Math.cos(b);
+        scene.add(beamCone);
+
+        const spot = new THREE.SpotLight(beamColors[b], 3.0, 30, Math.PI / 6, 0.4);
+        spot.position.set(bx, 0.9, bz);
+        spot.target.position.set(bx * 2.5, 12, bz * 2.5);
+        scene.add(spot);
+        scene.add(spot.target);
+      }
+
+      // Overhead Truss Ring Suspended Above Center Stage
+      const trussRing = new THREE.Mesh(
+        new THREE.TorusGeometry(3.5, 0.12, 8, 24),
+        new THREE.MeshStandardMaterial({ color: 0x475569, metalness: 0.8 })
+      );
+      trussRing.rotation.x = Math.PI / 2;
+      trussRing.position.set(0, 6.5, 0);
+      scene.add(trussRing);
+
+      // 4 Main Aisle Stairways with Glowing Step LED Runners
       for (let a = 0; a < 4; a++) {
         const aisleAngle = (a / 4) * 2 * Math.PI - Math.PI / 2;
-        const aisleLine = new THREE.Mesh(
-          new THREE.BoxGeometry(0.5, 0.02, myRadius + 3),
-          new THREE.MeshBasicMaterial({ color: 0x222230 })
+        const aisleLength = myRadius + 4;
+        const aisleMesh = new THREE.Mesh(
+          new THREE.BoxGeometry(0.7, 0.04, aisleLength),
+          new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.9 })
         );
-        aisleLine.position.set((myRadius / 2 + 1) * Math.cos(aisleAngle), 0.01, (myRadius / 2 + 1) * Math.sin(aisleAngle));
-        aisleLine.rotation.y = -aisleAngle + Math.PI / 2;
-        scene.add(aisleLine);
+        aisleMesh.position.set((aisleLength / 2 + 0.5) * Math.cos(aisleAngle), 0.02, (aisleLength / 2 + 0.5) * Math.sin(aisleAngle));
+        aisleMesh.rotation.y = -aisleAngle + Math.PI / 2;
+        scene.add(aisleMesh);
+
+        // Amber Aisle LED Strip
+        const ledStrip = new THREE.Mesh(
+          new THREE.BoxGeometry(0.08, 0.05, aisleLength),
+          new THREE.MeshBasicMaterial({ color: 0xf59e0b })
+        );
+        ledStrip.position.set((aisleLength / 2 + 0.5) * Math.cos(aisleAngle) + 0.3 * Math.sin(aisleAngle), 0.03, (aisleLength / 2 + 0.5) * Math.sin(aisleAngle) - 0.3 * Math.cos(aisleAngle));
+        ledStrip.rotation.y = -aisleAngle + Math.PI / 2;
+        scene.add(ledStrip);
       }
 
-      // 4 Tall Stadium Floodlight Towers around the perimeter
-      const floodlightDist = myRadius + 3.5;
-      for (let fi = 0; fi < 4; fi++) {
-        const fa = (fi / 4) * 2 * Math.PI + Math.PI / 4;
-        const fx = floodlightDist * Math.cos(fa);
-        const fz = floodlightDist * Math.sin(fa);
+      // ─── 360° RIBBON DISPLAY BOARDS AROUND BOWL ───
+      const ribbonRadius = myRadius + 3.2;
+      const ribbonGeo = new THREE.CylinderGeometry(ribbonRadius, ribbonRadius, 0.6, 48, 1, true);
+      const ribbonMat = new THREE.MeshBasicMaterial({
+        color: 0x1ed760,
+        side: THREE.BackSide,
+        transparent: true,
+        opacity: 0.35,
+      });
+      const ribbon = new THREE.Mesh(ribbonGeo, ribbonMat);
+      ribbon.position.set(0, getHeight(numR) + 0.8, 0);
+      scene.add(ribbon);
 
-        const pole = new THREE.Mesh(
-          new THREE.CylinderGeometry(0.18, 0.3, 14),
-          new THREE.MeshStandardMaterial({ color: 0x475569, metalness: 0.6 })
-        );
-        pole.position.set(fx, 7, fz);
-        scene.add(pole);
-
-        const head = new THREE.Mesh(
-          new THREE.BoxGeometry(1.6, 0.8, 0.5),
-          new THREE.MeshBasicMaterial({ color: 0xffffff })
-        );
-        head.position.set(fx, 14, fz);
-        scene.add(head);
-
-        const fl = new THREE.PointLight(0xffffff, 2.5, 35);
-        fl.position.set(fx, 13.8, fz);
-        scene.add(fl);
-      }
-
-      // ─── INSTANCED MESH FOR ZERO-LAG STADIUM SEATING ───
-      // Calculate total seats in viewing range
-      const seatBoxGeo = new THREE.BoxGeometry(0.44, 0.46, 0.38);
+      // ─── GPU INSTANCED HIGH-DETAIL STADIUM SEATING ───
+      // Composite detailed seat geometry (Cushion + Ergonomic Backrest)
+      const seatGroupGeo = new THREE.BoxGeometry(0.48, 0.52, 0.42);
       const seatMat = new THREE.MeshStandardMaterial({
-        color: 0x272733,
-        roughness: 0.5,
+        roughness: 0.4,
+        metalness: 0.2,
       });
 
-      // Count only seats that will be rendered (in front of viewer or nearby sectors)
+      // Tier Color Palette
+      const tierColors = [
+        new THREE.Color('#1ed760'), // Front Rows (VIP)
+        new THREE.Color('#10b981'),
+        new THREE.Color('#3b82f6'), // Mid Rows (Club)
+        new THREE.Color('#2563eb'),
+        new THREE.Color('#8b5cf6'), // Grand Tier
+        new THREE.Color('#6366f1'),
+        new THREE.Color('#ec4899'), // Upper Tier
+        new THREE.Color('#f43f5e'),
+      ];
+
+      // Count Visible Seats in Camera FOV
       let instanceCount = 0;
       for (let r = 1; r <= numR; r++) {
         for (let c = 1; c <= numC; c++) {
-          if (r === row && c === col) continue; // Skip camera's seat
+          if (r === row && c === col) continue;
           const theta = ((c - 0.5) / numC) * 2 * Math.PI - Math.PI / 2;
-          // Angular difference from viewer
           let diff = Math.abs(theta - seatAngle);
           if (diff > Math.PI) diff = 2 * Math.PI - diff;
-          // Only render visible seats within 140° field of view or in front rows
-          if (diff < (140 * Math.PI) / 180 || r < row) {
+          if (diff < (150 * Math.PI) / 180 || r < row) {
             instanceCount++;
           }
         }
       }
 
-      const instancedSeats = new THREE.InstancedMesh(seatBoxGeo, seatMat, Math.max(1, instanceCount));
+      const instancedSeats = new THREE.InstancedMesh(seatGroupGeo, seatMat, Math.max(1, instanceCount));
       const dummy = new THREE.Object3D();
       let instIdx = 0;
 
@@ -202,12 +287,24 @@ export default function ThreeDSeatSightline({
         const rad = getRadius(r);
         const y = getHeight(r);
 
-        // Stepped ring platform
-        const ringGeo = new THREE.TorusGeometry(rad, 0.65, 4, 36);
-        const ring = new THREE.Mesh(ringGeo, new THREE.MeshStandardMaterial({ color: 0x14141c, roughness: 0.8 }));
-        ring.rotation.x = Math.PI / 2;
-        ring.position.set(0, y - 0.2, 0);
-        scene.add(ring);
+        // Concrete Stepped Grandstand Tier
+        const riserGeo = new THREE.TorusGeometry(rad, 0.72, 4, 40);
+        const riserMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.85 });
+        const riser = new THREE.Mesh(riserGeo, riserMat);
+        riser.rotation.x = Math.PI / 2;
+        riser.position.set(0, y - 0.24, 0);
+        scene.add(riser);
+
+        // Step-edge Glowing Amber Light Strip along every tier riser
+        const stepLed = new THREE.Mesh(
+          new THREE.TorusGeometry(rad + 0.65, 0.025, 4, 36),
+          new THREE.MeshBasicMaterial({ color: 0xf59e0b })
+        );
+        stepLed.rotation.x = Math.PI / 2;
+        stepLed.position.set(0, y - 0.02, 0);
+        scene.add(stepLed);
+
+        const baseTierColor = tierColors[(r - 1) % tierColors.length];
 
         for (let c = 1; c <= numC; c++) {
           if (r === row && c === col) continue;
@@ -215,20 +312,19 @@ export default function ThreeDSeatSightline({
           let diff = Math.abs(theta - seatAngle);
           if (diff > Math.PI) diff = 2 * Math.PI - diff;
 
-          if (diff < (140 * Math.PI) / 180 || r < row) {
+          if (diff < (150 * Math.PI) / 180 || r < row) {
             const sx = rad * Math.cos(theta);
             const sz = rad * Math.sin(theta);
-            dummy.position.set(sx, y + 0.23, sz);
-            // Orient seat facing directly towards the center stage
+            dummy.position.set(sx, y + 0.26, sz);
             dummy.rotation.y = -theta - Math.PI / 2;
             dummy.updateMatrix();
             instancedSeats.setMatrixAt(instIdx, dummy.matrix);
 
-            // Highlight category for neighbors
-            if (r === row && Math.abs(c - col) === 1) {
+            // Give vibrant stadium colors: active category for neighbors, else tier palette
+            if (r === row && Math.abs(c - col) <= 2) {
               instancedSeats.setColorAt(instIdx, new THREE.Color(categoryColor || '#1ed760'));
             } else {
-              instancedSeats.setColorAt(instIdx, new THREE.Color(0x272733));
+              instancedSeats.setColorAt(instIdx, baseTierColor);
             }
             instIdx++;
           }
@@ -239,19 +335,34 @@ export default function ThreeDSeatSightline({
       if (instancedSeats.instanceColor) instancedSeats.instanceColor.needsUpdate = true;
       scene.add(instancedSeats);
 
-      // Foreground Armrests for sitting immersion
-      const fgArmMat = new THREE.MeshStandardMaterial({ color: 0x181822, roughness: 0.5 });
-      const fgArmL = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.35, 0.55), fgArmMat);
-      fgArmL.position.set(mySeatX - 0.35 * Math.sin(seatAngle), mySeatY + 0.28, mySeatZ + 0.35 * Math.cos(seatAngle));
-      fgArmL.rotation.y = -seatAngle + Math.PI / 2;
-      scene.add(fgArmL);
+      // ─── FIRST-PERSON VIP FOREGROUND CHAIR ARMRESTS ───
+      const fgArmMat = new THREE.MeshStandardMaterial({
+        color: new THREE.Color(categoryColor || '#1ed760').multiplyScalar(0.7),
+        roughness: 0.35,
+        metalness: 0.4,
+      });
 
-      const fgArmR = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.35, 0.55), fgArmMat);
-      fgArmR.position.set(mySeatX + 0.35 * Math.sin(seatAngle), mySeatY + 0.28, mySeatZ - 0.35 * Math.cos(seatAngle));
-      fgArmR.rotation.y = -seatAngle + Math.PI / 2;
-      scene.add(fgArmR);
+      const armL = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.42, 0.65), fgArmMat);
+      armL.position.set(mySeatX - 0.38 * Math.sin(seatAngle), mySeatY + 0.32, mySeatZ + 0.38 * Math.cos(seatAngle));
+      armL.rotation.y = -seatAngle + Math.PI / 2;
+      scene.add(armL);
+
+      const armR = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.42, 0.65), fgArmMat);
+      armR.position.set(mySeatX + 0.38 * Math.sin(seatAngle), mySeatY + 0.32, mySeatZ - 0.38 * Math.cos(seatAngle));
+      armR.rotation.y = -seatAngle + Math.PI / 2;
+      scene.add(armR);
+
+      // Cup Holders on Armrests
+      const cupMat = new THREE.MeshBasicMaterial({ color: 0x0f172a });
+      const cupL = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.1, 12), cupMat);
+      cupL.position.set(armL.position.x, armL.position.y + 0.22, armL.position.z);
+      scene.add(cupL);
+
+      const cupR = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.1, 12), cupMat);
+      cupR.position.set(armR.position.x, armR.position.y + 0.22, armR.position.z);
+      scene.add(cupR);
     } else {
-      // ─── 4. MULTIPLEX CINEMA AUDITORIUM WORLD ───
+      // ─── MULTIPLEX CINEMA AUDITORIUM WORLD ───
       const numRows = Math.max(totalRows, 6);
       const numCols = Math.max(totalCols, 10);
 
@@ -419,13 +530,13 @@ export default function ThreeDSeatSightline({
       const rect = container.getBoundingClientRect();
       const nx = ((e.clientX - rect.left) / rect.width) * 2 - 1;
       const ny = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
-      targetParallaxX = nx * 1.5;
-      targetParallaxY = ny * 0.7;
+      targetParallaxX = nx * 1.6;
+      targetParallaxY = ny * 0.8;
     };
 
     container.addEventListener('mousemove', handleMouseMove);
 
-    // ─── 6. CLEAN ANIMATION LOOP ───
+    // ─── 6. ANIMATION LOOP ───
     let animId;
     const animate = () => {
       animId = requestAnimationFrame(animate);

@@ -53,13 +53,14 @@ export default function AdminVenues() {
       label: seat.label,
       categoryName: category?.name || 'Standard',
       categoryColor: category?.color || '#1ed760',
+      price: category?.price || 500,
       status: 'Configured',
       row: seat.row || (seat.label ? seat.label.charCodeAt(0) - 64 : 1),
       col: seat.col || parseInt(seat.label?.replace(/\D/g, '') || '1'),
       totalRows: totalR || 8,
       totalCols: totalC || 14,
       isRecliner: seat.isRecliner || category?.isRecliner,
-      venueType: loadedVenueDetail?.type || viewingVenue?.type || 'cinema',
+      venueType: venueType || loadedVenueDetail?.type || viewingVenue?.type || 'cinema',
     });
   };
 

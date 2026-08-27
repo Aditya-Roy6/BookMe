@@ -1,10 +1,11 @@
 import React from 'react';
-import { Sparkles, Eye, MapPin, Volume2 } from 'lucide-react';
+import { Eye, MapPin, Volume2 } from 'lucide-react';
+import { StarRoundedIcon } from './CustomRoundedIcons';
 import ThreeDSeatSightline from './ThreeDSeatSightline';
 
 /**
  * Photorealistic First-Person 3D Seat Sightline / POV Hover Tooltip (WebGL Powered)
- * Dynamically computes 3D perspective angle, screen curvature, distance and elevation based on seat coordinates.
+ * Supports Cinema, Concert Amphitheatres, Football, and Cricket Stadiums.
  */
 export default function SeatSightlineTooltip({ tooltip }) {
   if (!tooltip) return null;
@@ -26,13 +27,13 @@ export default function SeatSightlineTooltip({ tooltip }) {
     isRecliner = false,
     moviePoster,
     eventTitle = 'Feature Presentation',
-    venueType = 'movie',
+    venueType = 'cinema',
   } = tooltip;
 
   // Compute 3D Sightline Geometry
-  const colPercent = totalCols > 1 ? (col - 1) / (totalCols - 1) : 0.5; // 0 (left) -> 0.5 (center) -> 1.0 (right)
-  const panAngle = (colPercent - 0.5) * 32; // -16 deg (left) to +16 deg (right)
-  const rowPercent = totalRows > 1 ? (row - 1) / (totalRows - 1) : 0.5; // 0 (front) to 1.0 (back)
+  const colPercent = totalCols > 1 ? (col - 1) / (totalCols - 1) : 0.5;
+  const panAngle = (colPercent - 0.5) * 32;
+  const rowPercent = totalRows > 1 ? (row - 1) / (totalRows - 1) : 0.5;
 
   const distanceMeters = (7.5 + row * 1.6).toFixed(1);
   const isCenterSweetSpot = Math.abs(colPercent - 0.5) <= 0.18;
@@ -108,7 +109,7 @@ export default function SeatSightlineTooltip({ tooltip }) {
 
       {/* ─── Real 3D WebGL First-Person Seat Sightline Window (16:9) ─── */}
       <div className="relative h-36 w-full rounded-xl overflow-hidden bg-[#060608] border border-white/15 shadow-2xl flex items-center justify-center">
-        {/* Real 3D WebGL Scene */}
+        {/* Real 3D WebGL Multi-Venue Scene */}
         <ThreeDSeatSightline
           row={row}
           col={col}
@@ -117,6 +118,7 @@ export default function SeatSightlineTooltip({ tooltip }) {
           moviePoster={moviePoster}
           categoryName={categoryName}
           categoryColor={categoryColor}
+          venueType={venueType}
         />
 
         {/* Live 3D POV Live Watermark Badge */}
@@ -127,13 +129,13 @@ export default function SeatSightlineTooltip({ tooltip }) {
 
         {/* Distance Badge */}
         <div className="absolute top-2 right-2 px-2 py-0.5 bg-black/75 backdrop-blur-md rounded-md text-[9px] font-mono text-[#b3b3b3] border border-white/15 pointer-events-none">
-          {distanceMeters}m to screen
+          {distanceMeters}m to {venueType?.toLowerCase().includes('cinema') || venueType === 'movie' ? 'screen' : 'stage / pitch'}
         </div>
 
-        {/* Sightline Sweet-Spot Indicator */}
+        {/* Sightline Sweet-Spot Indicator with Custom Star Icon */}
         <div className="absolute bottom-2 inset-x-2 flex items-center justify-between px-2.5 py-1 bg-black/85 backdrop-blur-md rounded-lg text-[9px] border border-white/15 pointer-events-none shadow-md">
           <div className="flex items-center gap-1.5 text-[#1ed760] font-bold">
-            <Sparkles className="w-2.5 h-2.5" />
+            <StarRoundedIcon className="w-3.5 h-3.5 text-[#1ed760]" fill="currentColor" />
             <span>{sightlineTag}</span>
           </div>
           <span className="font-mono font-bold text-white">{sightlineScore}</span>

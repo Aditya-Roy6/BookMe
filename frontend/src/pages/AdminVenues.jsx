@@ -59,6 +59,7 @@ export default function AdminVenues() {
       totalRows: totalR || 8,
       totalCols: totalC || 14,
       isRecliner: seat.isRecliner || category?.isRecliner,
+      venueType: loadedVenueDetail?.type || viewingVenue?.type || 'cinema',
     });
   };
 

@@ -1678,9 +1678,9 @@ export default function AdminVenues() {
         isOpen={!!viewingVenue}
         onOpenChange={(open) => !open && setViewingVenue(null)}
         backdrop="blur"
-        size="5xl"
+        size="full"
         scrollBehavior="inside"
-        className="bg-[#141416] border border-[#282828] text-white rounded-2xl shadow-2xl max-w-5xl w-[96vw] my-auto max-h-[92vh]"
+        className="bg-[#121214] border border-[#282828] text-white rounded-2xl shadow-2xl max-w-[98vw] w-[98vw] max-h-[96vh] my-auto"
       >
         <ModalContent className="overflow-hidden">
           {(onClose) => {
@@ -1693,6 +1693,7 @@ export default function AdminVenues() {
             
             const totalR = v.totalRows || 8;
             const totalC = v.totalCols || 14;
+            const isWideVenue = totalC >= 20;
 
             for (let r = 1; r <= totalR; r++) {
               const rowLetter = String.fromCharCode(64 + r);
@@ -1722,45 +1723,19 @@ export default function AdminVenues() {
 
             return (
               <>
-                <ModalHeader className="border-b border-[#282828] py-4 px-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#18181a]">
+                <ModalHeader className="border-b border-white/10 py-4 px-6 sm:px-8 flex items-center justify-between bg-[#161618]">
                   <div className="space-y-1">
-                    <div className="flex items-center gap-2.5">
-                      <span className="px-2.5 py-0.5 rounded-full bg-[#1ed760]/20 text-[#1ed760] font-mono font-black text-[11px] border border-[#1ed760]/30">
-                        {v.totalRows}x{v.totalCols} Floorplan
-                      </span>
-                      <h3 className="font-display text-lg font-black text-white tracking-tight">
-                        {v.name}
-                      </h3>
-                    </div>
-                    <p className="text-xs text-[#b3b3b3] flex items-center gap-1.5">
-                      <MapPinRoundedIcon className="w-3.5 h-3.5 text-[#1ed760]" />
-                      <span>{v.address || 'Standard Layout'}</span>
-                      <span>&bull;</span>
-                      <span className="text-white font-bold">{v.seats?.length || (v.totalRows * v.totalCols)} Configured Seats</span>
+                    <h3 className="font-display text-xl sm:text-2xl font-black text-white tracking-tight">
+                      {v.name}
+                    </h3>
+                    <p className="text-xs sm:text-sm text-[#b3b3b3] flex items-center gap-1.5 font-medium">
+                      <MapPinRoundedIcon className="w-4 h-4 text-[#1ed760] flex-shrink-0" />
+                      <span>{v.address || 'Standard Venue Location'}</span>
                     </p>
-                  </div>
-
-                  {/* Category Legend Badges */}
-                  <div className="flex flex-wrap items-center gap-2">
-                    {venueCategories.map((c) => (
-                      <div
-                        key={c.id || c.name}
-                        className="flex items-center gap-1.5 px-3 py-1 bg-[#202022] border border-white/10 rounded-full text-xs font-bold text-white shadow-sm"
-                      >
-                        <div
-                          className="w-2.5 h-2.5 rounded-full"
-                          style={{ backgroundColor: c.color || '#1ed760' }}
-                        />
-                        <span>{c.name}</span>
-                        <span className="text-[10px] text-[#777777] font-mono">
-                          (Rows {String.fromCharCode(64 + c.rowStart)}-{String.fromCharCode(64 + c.rowEnd)})
-                        </span>
-                      </div>
-                    ))}
                   </div>
                 </ModalHeader>
 
-                <ModalBody className="py-6 px-4 sm:px-8 space-y-6 overflow-y-auto bg-[#101012]">
+                <ModalBody className="py-6 px-4 sm:px-8 space-y-6 overflow-y-auto bg-[#0d0d0f]">
                   {venueDetailLoading ? (
                     <div className="py-20 flex flex-col items-center justify-center gap-3 text-[#b3b3b3]">
                       <Loader2 className="w-8 h-8 animate-spin text-[#1ed760]" />
@@ -1773,7 +1748,7 @@ export default function AdminVenues() {
 
                       {/* Authentic Theatre Seating Floorplan Grouped by Categories */}
                       <div className="bg-[#141416] p-6 sm:p-10 rounded-2xl border border-white/5 overflow-x-auto shadow-2xl">
-                        <div className="min-w-[680px] flex flex-col items-center space-y-6">
+                        <div className="min-w-fit flex flex-col items-center space-y-6 mx-auto">
                           {venueCategories.map((category) => {
                             // Find rows belonging to this category
                             const catRows = rowsList.filter(
@@ -1812,18 +1787,26 @@ export default function AdminVenues() {
                                     const leftWing = rowObj.seats.slice(0, halfIndex);
                                     const rightWing = rowObj.seats.slice(halfIndex);
 
+                                    const seatSizeClass = rowObj.isRecliner
+                                      ? isWideVenue
+                                        ? 'w-8 h-11 sm:w-10 sm:h-13'
+                                        : 'w-10 h-13 sm:w-12 sm:h-15'
+                                      : isWideVenue
+                                      ? 'w-5 h-5 sm:w-7 sm:h-7 md:w-8 md:h-8'
+                                      : 'w-7 h-7 sm:w-9 sm:h-9 md:w-10 md:h-10';
+
                                     return (
                                       <div
                                         key={rowObj.letter}
-                                        className="flex items-center justify-center gap-2 sm:gap-3 hover:bg-[#1a1a1f] px-2 py-1 rounded-xl transition-colors group/row"
+                                        className="flex items-center justify-center gap-1.5 sm:gap-2.5 hover:bg-[#1a1a1f] px-2 py-1 rounded-xl transition-colors group/row"
                                       >
                                         {/* Left Row Letter */}
-                                        <span className="w-6 text-right font-mono font-bold text-xs text-[#b3b3b3] group-hover/row:text-[#1ed760] transition-colors">
+                                        <span className="w-5 sm:w-6 text-right font-mono font-bold text-[11px] sm:text-xs text-[#b3b3b3] group-hover/row:text-[#1ed760] transition-colors">
                                           {rowObj.letter}
                                         </span>
 
                                         {/* Left Bank Seats */}
-                                        <div className="flex items-center gap-1 sm:gap-1.5">
+                                        <div className="flex items-center gap-0.5 sm:gap-1.5">
                                           {leftWing.map((seat) => (
                                             <div
                                               key={seat.id}
@@ -1831,11 +1814,7 @@ export default function AdminVenues() {
                                               title={`${seat.label} • ${category.name}`}
                                             >
                                               <div
-                                                className={`flex items-center justify-center select-none transition-transform duration-150 ${
-                                                  rowObj.isRecliner
-                                                    ? 'w-10 h-13 sm:w-12 sm:h-15'
-                                                    : 'w-7 h-7 sm:w-9 sm:h-9'
-                                                } hover:scale-115 cursor-default`}
+                                                className={`flex items-center justify-center select-none transition-transform duration-150 ${seatSizeClass} hover:scale-115 cursor-default`}
                                               >
                                                 {rowObj.isRecliner ? (
                                                   <ReclinerSeatSvg
@@ -1857,7 +1836,7 @@ export default function AdminVenues() {
                                         <AisleStairsGraphic label="AISLE" />
 
                                         {/* Right Bank Seats */}
-                                        <div className="flex items-center gap-1 sm:gap-1.5">
+                                        <div className="flex items-center gap-0.5 sm:gap-1.5">
                                           {rightWing.map((seat) => (
                                             <div
                                               key={seat.id}
@@ -1865,11 +1844,7 @@ export default function AdminVenues() {
                                               title={`${seat.label} • ${category.name}`}
                                             >
                                               <div
-                                                className={`flex items-center justify-center select-none transition-transform duration-150 ${
-                                                  rowObj.isRecliner
-                                                    ? 'w-10 h-13 sm:w-12 sm:h-15'
-                                                    : 'w-7 h-7 sm:w-9 sm:h-9'
-                                                } hover:scale-115 cursor-default`}
+                                                className={`flex items-center justify-center select-none transition-transform duration-150 ${seatSizeClass} hover:scale-115 cursor-default`}
                                               >
                                                 {rowObj.isRecliner ? (
                                                   <ReclinerSeatSvg
@@ -1888,7 +1863,7 @@ export default function AdminVenues() {
                                         </div>
 
                                         {/* Right Row Letter */}
-                                        <span className="w-6 text-left font-mono font-bold text-xs text-[#b3b3b3] group-hover/row:text-[#1ed760] transition-colors">
+                                        <span className="w-5 sm:w-6 text-left font-mono font-bold text-[11px] sm:text-xs text-[#b3b3b3] group-hover/row:text-[#1ed760] transition-colors">
                                           {rowObj.letter}
                                         </span>
                                       </div>
@@ -1900,33 +1875,13 @@ export default function AdminVenues() {
                           })}
                         </div>
                       </div>
-
-                      {/* Floorplan Specifications Strip */}
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                        <div className="bg-[#18181c] p-3.5 rounded-xl border border-white/5 text-center">
-                          <span className="text-[10px] uppercase font-bold text-[#7c7c7c] block">Total Capacity</span>
-                          <span className="text-base font-mono font-black text-white">{v.seats?.length || (v.totalRows * v.totalCols)} Seats</span>
-                        </div>
-                        <div className="bg-[#18181c] p-3.5 rounded-xl border border-white/5 text-center">
-                          <span className="text-[10px] uppercase font-bold text-[#7c7c7c] block">Row Depth</span>
-                          <span className="text-base font-mono font-black text-[#1ed760]">{v.totalRows} Rows (A - {String.fromCharCode(64 + v.totalRows)})</span>
-                        </div>
-                        <div className="bg-[#18181c] p-3.5 rounded-xl border border-white/5 text-center">
-                          <span className="text-[10px] uppercase font-bold text-[#7c7c7c] block">Seats Per Row</span>
-                          <span className="text-base font-mono font-black text-white">{v.totalCols} Chairs</span>
-                        </div>
-                        <div className="bg-[#18181c] p-3.5 rounded-xl border border-white/5 text-center">
-                          <span className="text-[10px] uppercase font-bold text-[#7c7c7c] block">Aisle Matrix</span>
-                          <span className="text-base font-mono font-black text-[#38bdf8]">Dual-Wing Center</span>
-                        </div>
-                      </div>
                     </div>
                   )}
                 </ModalBody>
 
-                <ModalFooter className="border-t border-[#282828] flex items-center justify-between py-4 px-6 bg-[#18181a]">
+                <ModalFooter className="border-t border-white/10 flex items-center justify-between py-4 px-6 sm:px-8 bg-[#161618]">
                   <span className="text-xs text-[#7c7c7c] font-mono">
-                    All seats dynamically mapped for real-time live booking & lock engine.
+                    All seats mapped for live booking & lock engine.
                   </span>
                   <button
                     type="button"
